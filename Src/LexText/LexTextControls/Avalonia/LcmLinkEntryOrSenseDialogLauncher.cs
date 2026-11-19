@@ -118,6 +118,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			bool sensesOnly = false, string title = null, string okButtonText = null)
 		{
 			var sensesEnabled = allowSenses || sensesOnly;
+			var searchWs = new EntryGoLauncherShared.SearchWritingSystem();
 			return new EntryGoDialogInput
 			{
 				Title = string.IsNullOrEmpty(title) ? FwAvaloniaDialogsStrings.LinkEntryOrSenseTitle : title,
@@ -127,12 +128,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				HelpTopic = helpTopic,
 				ShowEntrySenseToggle = sensesEnabled,
 				SensesOnly = sensesOnly,
-				Search = BuildSearch(cache, mediator, propertyTable, startingEntry),
+				Search = BuildSearch(cache, mediator, propertyTable, startingEntry, searchWs),
 				SearchByMode = sensesEnabled
-					? BuildSearchByMode(cache, mediator, propertyTable, startingEntry)
+					? BuildSearchByMode(cache, mediator, propertyTable, startingEntry, searchWs)
 					: null,
-				// The search box types the vernacular text being searched (see BuildVernacularSearchFieldSpec).
-				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache),
+				SearchField = EntryGoLauncherShared.BuildSearchFieldSpec(cache, searchWs),
 				// The matching list's default columns (headword + glosses in their ws typography).
 				ResultColumns = EntryGoLauncherShared.BuildDefaultResultColumns(cache)
 			};
@@ -143,10 +143,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// the starting entry (the legacy <c>m_startingEntry</c> cannot be a match). Internal so it is unit-testable.
 		/// </summary>
 		internal static Func<string, IReadOnlyList<EntryGoSearchResult>> BuildSearch(LcmCache cache,
-			Mediator mediator, PropertyTable propertyTable, ILexEntry startingEntry)
+			Mediator mediator, PropertyTable propertyTable, ILexEntry startingEntry,
+			EntryGoLauncherShared.SearchWritingSystem searchWs = null)
 		{
 			return EntryGoLauncherShared.BuildEntrySearch(cache, mediator, propertyTable,
-				startingEntry?.Hvo ?? 0, "AvaloniaLinkEntryOrSenseSearchEngine", filter: null);
+				startingEntry?.Hvo ?? 0, "AvaloniaLinkEntryOrSenseSearchEngine", filter: null,
+				searchWs);
 		}
 
 		/// <summary>
@@ -154,10 +156,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// excluding the starting entry. Internal so it is unit-testable.
 		/// </summary>
 		internal static Func<string, bool, IReadOnlyList<EntryGoSearchResult>> BuildSearchByMode(LcmCache cache,
-			Mediator mediator, PropertyTable propertyTable, ILexEntry startingEntry)
+			Mediator mediator, PropertyTable propertyTable, ILexEntry startingEntry,
+			EntryGoLauncherShared.SearchWritingSystem searchWs = null)
 		{
 			return EntryGoLauncherShared.BuildEntryOrSenseSearch(cache, mediator, propertyTable,
-				startingEntry?.Hvo ?? 0, "AvaloniaLinkEntryOrSenseSearchEngine");
+				startingEntry?.Hvo ?? 0, "AvaloniaLinkEntryOrSenseSearchEngine", searchWs);
 		}
 
 		protected override EntryGoDialogViewModel CreateViewModel(EntryGoDialogInput state)

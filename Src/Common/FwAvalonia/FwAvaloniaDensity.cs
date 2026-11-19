@@ -123,8 +123,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Section header text colour, collapsible or not.</summary>
 		public static Avalonia.Media.IBrush SectionHeaderBrush => FwThemeResources.RequireBrush(GeneratedTokenKeys.FwSectionHeaderBrush);
 
-		/// <summary>Size of the command links under a section header ("Field Options"): the same
-		/// 10pt as a slice label.</summary>
+		/// <summary>Size of a section header's hotlinks: the same 10pt as a slice
+		/// label.</summary>
 		public const double HotlinkFontSize = LabelFontSize;
 
 		/// <summary>Writing-system abbreviation colour: #404040, measured from the legacy
@@ -334,6 +334,30 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <summary>Horizontal gap between the link-prompt URL box and its Apply
 		/// button.</summary>
 		public static double LinkPromptGap => FwThemeResources.RequireDouble(GeneratedTokenKeys.DataTree_LinkPromptGap);
+
+		/// <summary>Horizontal gap between two hotlinks on a section header's line.</summary>
+		public static double HotlinkGap => FwThemeResources.RequireDouble(GeneratedTokenKeys.DataTree_HotlinkGap);
+
+		/// <summary>Padding inside one hotlink button on a section header's line.</summary>
+		public static Thickness HotlinkPadding => FwThemeResources.RequireThickness(GeneratedTokenKeys.DataTree_HotlinkPadding);
+
+		/// <summary>Corner radius of a hotlink button on a section header's line.</summary>
+		public static CornerRadius HotlinkCornerRadius => FwThemeResources.RequireCornerRadius(GeneratedTokenKeys.DataTree_HotlinkCornerRadius);
+
+		/// <summary>
+		/// Text of an available hotlink button. Resolves Semi's primary role, the text colour
+		/// Semi pairs with the light primary tint behind it.
+		/// </summary>
+		public static Avalonia.Media.IBrush HotlinkButtonForeground => FwThemeResources.RequireBrush("SemiColorPrimary");
+
+		/// <summary>The light primary tint behind an available hotlink button's text.</summary>
+		public static Avalonia.Media.IBrush HotlinkButtonBackground => FwThemeResources.RequireBrush("SemiColorPrimaryLight");
+
+		/// <summary>The hotlink button tint while the pointer is over it.</summary>
+		public static Avalonia.Media.IBrush HotlinkButtonPointeroverBackground => FwThemeResources.RequireBrush("SemiColorPrimaryLightPointerover");
+
+		/// <summary>The hotlink button tint while it is pressed.</summary>
+		public static Avalonia.Media.IBrush HotlinkButtonPressedBackground => FwThemeResources.RequireBrush("SemiColorPrimaryLightActive");
 
 		/// <summary>
 		/// Horizontal gap between a chooser field's value text and its trailing configure-gear

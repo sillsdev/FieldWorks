@@ -67,6 +67,40 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		/// <summary>
+		/// The index of the header whose hotlinks apply to the field at <paramref name="index"/>:
+		/// that field itself when it is a header with hotlinks, else the nearest header with
+		/// hotlinks whose section contains it. A section contains every following field up to
+		/// the next one at or above the header's indent. -1 when no such header exists.
+		/// </summary>
+		/// <exception cref="ArgumentNullException"><paramref name="fields"/> is null.</exception>
+		/// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is not an index
+		/// of <paramref name="fields"/>.</exception>
+		public static int GetHotlinksHeaderIndex(IReadOnlyList<DetailField> fields, int index)
+		{
+			if (fields == null)
+				throw new ArgumentNullException(nameof(fields));
+			if (index < 0 || index >= fields.Count)
+				throw new ArgumentOutOfRangeException(nameof(index));
+
+			if (HasHotlinks(fields[index]))
+				return index;
+			// The least indent between a candidate header and the field: a header contains the
+			// field only when it is less indented than every row after it up to the field.
+			var leastIndent = fields[index].Indent;
+			for (var i = index - 1; i >= 0 && leastIndent > 0; i--)
+			{
+				var candidate = fields[i];
+				if (candidate.Indent < leastIndent && HasHotlinks(candidate))
+					return i;
+				leastIndent = Math.Min(leastIndent, candidate.Indent);
+			}
+			return -1;
+		}
+
+		private static bool HasHotlinks(DetailField field)
+			=> field.Kind == DetailFieldKind.Header && !string.IsNullOrEmpty(field.HotlinksId);
+
+		/// <summary>
 		/// Per-field visibility: a field is visible iff every collapsible header whose range owns
 		/// it is expanded. Ranges nest, so a field owned by a collapsed ancestor stays hidden
 		/// even

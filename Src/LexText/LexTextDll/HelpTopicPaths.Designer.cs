@@ -2610,27 +2610,27 @@ namespace SIL.FieldWorks.XWorks.LexText {
         /// <summary>
         ///   Looks up a localized string similar to User_Interface/Field_Descriptions/Lists/Dialect_Labels/Abbreviation_field_(Dialect_Labels).htm.
         /// </summary>
-        internal static string khtpField_dialectsListEdit_CmPossibility_Abbreviation {
+        internal static string khtpField_dialectLabelListEdit_CmPossibility_Abbreviation {
             get {
-                return ResourceManager.GetString("khtpField-dialectsListEdit-CmPossibility-Abbreviation", resourceCulture);
+                return ResourceManager.GetString("khtpField-dialectLabelListEdit-CmPossibility-Abbreviation", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to User_Interface/Field_Descriptions/Lists/Dialect_Labels/Short_Description_field_(Dialect_Labels).htm.
         /// </summary>
-        internal static string khtpField_dialectsListEdit_CmPossibility_Description {
+        internal static string khtpField_dialectLabelListEdit_CmPossibility_Description {
             get {
-                return ResourceManager.GetString("khtpField-dialectsListEdit-CmPossibility-Description", resourceCulture);
+                return ResourceManager.GetString("khtpField-dialectLabelListEdit-CmPossibility-Description", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to User_Interface/Field_Descriptions/Lists/Dialect_Labels/Full_Name_field_(Dialect_Labels).htm.
         /// </summary>
-        internal static string khtpField_dialectsListEdit_CmPossibility_Name {
+        internal static string khtpField_dialectLabelListEdit_CmPossibility_Name {
             get {
-                return ResourceManager.GetString("khtpField-dialectsListEdit-CmPossibility-Name", resourceCulture);
+                return ResourceManager.GetString("khtpField-dialectLabelListEdit-CmPossibility-Name", resourceCulture);
             }
         }
         

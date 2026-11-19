@@ -83,14 +83,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		internal static EntryGoDialogInput BuildInput(LcmCache cache, Mediator mediator, PropertyTable propertyTable)
 		{
+			var searchWs = new EntryGoLauncherShared.SearchWritingSystem();
 			return new EntryGoDialogInput
 			{
 				Title = LexTextControls.ksFindLexEntry,
 				SearchPrompt = FwAvaloniaDialogsStrings.EntryGoResultsLabel,
 				HelpTopic = "khtpFindLexicalEntry",
-				Search = BuildSearch(cache, mediator, propertyTable),
-				// The search box types the vernacular text being searched (see BuildVernacularSearchFieldSpec).
-				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache),
+				Search = BuildSearch(cache, mediator, propertyTable, searchWs),
+				SearchField = EntryGoLauncherShared.BuildSearchFieldSpec(cache, searchWs),
 				// The matching list's default columns (headword + glosses in their ws typography).
 				ResultColumns = EntryGoLauncherShared.BuildDefaultResultColumns(cache)
 			};
@@ -101,10 +101,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// entry (the plain Go-to-Entry dialog has no starting entry to exclude). Internal so it is unit-testable.
 		/// </summary>
 		internal static Func<string, System.Collections.Generic.IReadOnlyList<EntryGoSearchResult>> BuildSearch(
-			LcmCache cache, Mediator mediator, PropertyTable propertyTable)
+			LcmCache cache, Mediator mediator, PropertyTable propertyTable,
+			EntryGoLauncherShared.SearchWritingSystem searchWs = null)
 		{
 			return EntryGoLauncherShared.BuildEntrySearch(cache, mediator, propertyTable,
-				excludedEntryHvo: 0, "AvaloniaGoToEntrySearchEngine", filter: null);
+				excludedEntryHvo: 0, "AvaloniaGoToEntrySearchEngine", filter: null,
+				searchWs);
 		}
 
 		protected override EntryGoDialogViewModel CreateViewModel(EntryGoDialogInput state)

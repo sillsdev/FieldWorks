@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 				var window = m_propertyTable.GetValue<XWindow>("window");
-				XCoreMenuBridge.CreateMenuItems(window, new[] { itemUi.ContextMenuId }, null, null, authority);
+				XCoreMenuBridge.CreateMenuItems(window, new[] { itemUi.ContextMenuId }, authority);
 				authority.DefaultActivation?.Invoke();
 			}
 		}
@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				var window = m_propertyTable.GetValue<XWindow>("window");
-				items = XCoreMenuBridge.CreateMenuItems(window, new[] { ui.ContextMenuId }, null, null, authority);
+				items = XCoreMenuBridge.CreateMenuItems(window, new[] { ui.ContextMenuId }, authority);
 			}
 			catch
 			{
@@ -131,26 +131,10 @@ namespace SIL.FieldWorks.XWorks
 			return items;
 		}
 
-		// Every id an item's object UI can name is owned; a new one shows no menu rather than
-		// reaching for the hidden adapter.
+		// Every id an item's object UI can name is owned; a new one shows no menu.
 		private static void LogUnownedItemMenu(string menuId)
 			=> Logger.WriteEvent(string.Format("Detail item menu '{0}' has no native authority; nothing shown.",
 				menuId));
-
-		// Points the hidden command adapter at the row, so the row's own slice answers the
-		// commands that need slice context; when that fails, those commands stay hidden.
-		private void SyncMenuCommandAdapter(DetailField field)
-		{
-			try
-			{
-				EnsureMenuCommandAdapter(field.ObjectHvo, field.Field);
-			}
-			catch (Exception adapterError)
-			{
-				Logger.WriteError("Detail menu command adapter failed; the commands that need "
-					+ "the hidden colleague chain stay hidden.", adapterError);
-			}
-		}
 
 		/// <summary>
 		/// The native authority for the item menu of the request's selected item, with the
@@ -231,8 +215,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// The native authority for the reorder-vector menu of the request's row: it answers
-		/// Move Left, Move Right and Alphabetical Order from the row itself, so a label menu
-		/// carrying that id needs nothing from the hidden command adapter for those leaves.
+		/// Move Left, Move Right and Alphabetical Order from the row itself.
 		/// </summary>
 		internal IDetailMenuAuthority CreateReorderVectorAuthority(DetailMenuRequest request)
 			=> new ReorderVectorMenuAuthority(request, MoveReferenceItem, ResetReferenceOrder);
@@ -304,19 +287,25 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// The same chooser the WinForms environment slices open, persisted under the same key.
+		// The typed environment stays unsaved while it is open, so the class goes into it.
 		IPhNaturalClass IEnvironmentMenuHost.ChooseNaturalClass()
 		{
 			var persistence = new PersistenceProvider(m_mediator, m_propertyTable, DataTreePersistContext);
-			return ReallySimpleListChooser.ChooseNaturalClass(Cache, persistence, m_mediator, m_propertyTable);
+			using (m_detailEditContext.HoldSettleOnDeactivate())
+				return ReallySimpleListChooser.ChooseNaturalClass(Cache, persistence, m_mediator, m_propertyTable);
 		}
 
 		string IEnvironmentMenuHost.DescribeEnvironmentError(string text)
 			=> EnvironmentErrors.Describe(EnvironmentErrors.CreateRecognizer(Cache), text);
 
+		// The environment being described stays unsaved, as in the WinForms slices.
 		void IEnvironmentMenuHost.ShowEnvironmentError(string message)
 		{
-			System.Windows.Forms.MessageBox.Show(FindForm(), message, xWorksStrings.ksEnvironmentErrorTitle,
-				System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+			using (m_detailEditContext.HoldSettleOnDeactivate())
+			{
+				System.Windows.Forms.MessageBox.Show(FindForm(), message, xWorksStrings.ksEnvironmentErrorTitle,
+					System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+			}
 		}
 	}
 }

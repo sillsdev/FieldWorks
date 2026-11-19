@@ -48,6 +48,7 @@ namespace SIL.PcPatrFLEx
 		const string m_strMaxAmbiguities = "MaxAmbiguities";
 		const string m_strTimeLimit = "TimeLimit";
 		const string m_strRunIndividually = "RunIndividually";
+		const string m_strShowFailures = "ShowFailures";
 		private int SplitterLocationRetrieved { get; set; }
 
 		const string m_strAll = "All";
@@ -67,12 +68,18 @@ namespace SIL.PcPatrFLEx
 		public int MaxAmbiguities { get; set; }
 		public int TimeLimit { get; set; }
 		public bool RunIndividually { get; set; }
+		public ShowFailures ShowFailures { get; set; }
+		private Timer flashTimer;
+		private bool isHighlightState = false;
+		// Track the currently selected radio button that needs to flash
+		private RadioButton activeFlashingButton = null;
 		public PropertyTable PropTable { get; set; }
 
 		private RegistryKey regkey;
 
 		private ContextMenuStrip helpContextMenu;
 		string UserDocumentation = PcPatrFLExDll_Strings.ksUserDocumentation;
+		string FLExCategories = PcPatrFLExDll_Strings.ksFLExCategories;
 		string PCPATRReferenceManual = PcPatrFLExDll_Strings.ksPcPatrReference;
 		string helpsPath = "";
 
@@ -128,6 +135,8 @@ namespace SIL.PcPatrFLEx
 						btnDisambiguate.Enabled = false;
 					Cursor.Current = Cursors.Default;
 				}
+				SetupFlashingTimer();
+				UpdateShowFailuresChecked();
 				AdjustSplitterLocation();
 			}
 			catch (Exception e)
@@ -145,16 +154,28 @@ namespace SIL.PcPatrFLEx
 			splitContainer1.Size = new Size(x, y);
 		}
 
+		private void Form_Shown(object sender, EventArgs e)
+		{
+			if (regkey == null)
+			{
+				// Center the vertical splitter as a default
+				splitContainer1.SplitterDistance = splitContainer1.Width / 2;
+			}
+		}
 		private void BuildHelpContextMenu()
 		{
 			helpContextMenu = new ContextMenuStrip();
 			ToolStripMenuItem userDoc = new ToolStripMenuItem(UserDocumentation);
 			userDoc.Click += new EventHandler(UserDoc_Click);
 			userDoc.Name = UserDocumentation;
+			ToolStripMenuItem flexCats = new ToolStripMenuItem(FLExCategories);
+			flexCats.Click += new EventHandler(FLExCats_Click);
+			flexCats.Name = FLExCategories;
 			ToolStripMenuItem pcpatrDoc = new ToolStripMenuItem(PCPATRReferenceManual);
 			pcpatrDoc.Click += new EventHandler(PCPATRDoc_Click);
 			pcpatrDoc.Name = PCPATRReferenceManual;
 			helpContextMenu.Items.Add(userDoc);
+			helpContextMenu.Items.Add(flexCats);
 			helpContextMenu.Items.Add(pcpatrDoc);
 		}
 
@@ -183,6 +204,13 @@ namespace SIL.PcPatrFLEx
 				RunIndividually = true;
 			else
 				RunIndividually = false;
+			sTemp = (string)regkey.GetValue(m_strShowFailures, "Off");
+			if (sTemp.Equals("Off"))
+				ShowFailures = ShowFailures.Off;
+			else if (sTemp.Equals("On"))
+				ShowFailures = ShowFailures.On;
+			else
+				ShowFailures = ShowFailures.PSROnly;
 		}
 
 		public void SaveRegistryInfo()
@@ -213,6 +241,7 @@ namespace SIL.PcPatrFLEx
 			regkey.SetValue(m_strMaxAmbiguities, MaxAmbiguities);
 			regkey.SetValue(m_strTimeLimit, TimeLimit);
 			regkey.SetValue(m_strRunIndividually, RunIndividually);
+			regkey.SetValue(m_strShowFailures, ShowFailures);
 			regkey.Close();
 		}
 
@@ -272,6 +301,8 @@ namespace SIL.PcPatrFLEx
 
 		private void OnFormClosing(object sender, EventArgs e)
 		{
+			flashTimer?.Stop();
+			flashTimer?.Dispose();
 			SaveRegistryInfo();
 		}
 
@@ -597,7 +628,7 @@ namespace SIL.PcPatrFLEx
 		{
 			string anaFile = Path.Combine(Path.GetTempPath(), "Invoker.ana");
 			File.WriteAllText(anaFile, ana);
-			var invoker = new PCPatrInvoker(GrammarFile, anaFile, LastRootGlossSelection);
+			var invoker = new PCPatrInvoker(GrammarFile, anaFile, LastRootGlossSelection, ShowFailures);
 			invoker.MaxAmbiguities = MaxAmbiguities.ToString();
 			invoker.TimeLimit = TimeLimit.ToString();
 			invoker.Invoke();
@@ -658,7 +689,7 @@ namespace SIL.PcPatrFLEx
 						}
 						string anaFile = Path.Combine(Path.GetTempPath(), "Invoker.ana");
 						File.WriteAllText(anaFile, sb.ToString());
-						var invoker = new PCPatrInvoker(GrammarFile, anaFile, LastRootGlossSelection);
+						var invoker = new PCPatrInvoker(GrammarFile, anaFile, LastRootGlossSelection, ShowFailures);
 						invoker.MaxAmbiguities = MaxAmbiguities.ToString();
 						invoker.TimeLimit = TimeLimit.ToString();
 						invoker.Invoke();
@@ -725,6 +756,14 @@ namespace SIL.PcPatrFLEx
 			}
 		}
 
+		void FLExCats_Click(object sender, EventArgs e)
+		{
+			ToolStripItem menuItem = (ToolStripItem)sender;
+			if (menuItem.Name == FLExCategories)
+			{
+				Process.Start(Path.Combine(helpsPath, "Language Explorer", "Utilities", "FLExCategories.htm"));
+			}
+		}
 		private static string GetAppBaseDir()
 		{
 			string basedir;
@@ -805,7 +844,98 @@ namespace SIL.PcPatrFLEx
 					MaxAmbiguities = dialog.MaxAmbigs;
 					TimeLimit = dialog.TimeLimit;
 					RunIndividually = dialog.RunIndividually;
+					//ShowFailures = dialog.ShowFailures;
 				}
+			}
+		}
+		private void rbShowFailuresOff_CheckedChanged(object sender, EventArgs e)
+		{
+			UpdateShowFailuresValue(sender);
+		}
+
+		private void rbShowFailuresPhraseStructureRules_CheckedChanged(object sender, EventArgs e)
+		{
+			UpdateShowFailuresValue(sender);
+
+		}
+
+		private void rbShowFailuresOn_CheckedChanged(object sender, EventArgs e)
+		{
+			UpdateShowFailuresValue(sender);
+
+		}
+		private void UpdateShowFailuresValue(object sender)
+		{
+			RadioButton rb = sender as RadioButton;
+			if (rb != null)
+			{
+				if (rbShowFailuresOff.Checked)
+				{
+					ShowFailures = ShowFailures.Off;
+					TurnOffShowFailuresWarningColors(activeFlashingButton);
+					flashTimer.Stop();
+				}
+				else if (rbShowFailuresPhraseStructureRules.Checked)
+				{
+					ShowFailures = ShowFailures.PSROnly;
+					FlashShowFailuresButton(rbShowFailuresPhraseStructureRules);
+					TurnOffShowFailuresWarningColors(rbShowFailuresOn);
+				}
+				else
+				{
+					ShowFailures = ShowFailures.On;
+					FlashShowFailuresButton(rbShowFailuresOn);
+					TurnOffShowFailuresWarningColors(rbShowFailuresPhraseStructureRules);
+				}
+			}
+		}
+		private void FlashShowFailuresButton(RadioButton rb)
+		{
+			activeFlashingButton = rb;
+			isHighlightState = true;
+			SetShowFailuresWarningColors();
+			flashTimer.Start();
+		}
+		private void UpdateShowFailuresChecked()
+		{
+			if (ShowFailures == ShowFailures.Off)
+				rbShowFailuresOff.Checked = true;
+			else if (ShowFailures == ShowFailures.PSROnly)
+				rbShowFailuresPhraseStructureRules.Checked = true;
+			else
+				rbShowFailuresOn.Checked = true;
+		}
+		// following for making the ShowFailures debug options flash or blink
+		// to help a user from invoking parsing options that might take a long time
+		private void SetupFlashingTimer()
+		{
+			flashTimer = new Timer();
+			flashTimer.Interval = 500; // Toggle display every 500ms
+			flashTimer.Tick += FlashTimer_Tick;
+		}
+
+		private void FlashTimer_Tick(object sender, EventArgs e)
+		{
+			if (activeFlashingButton != null && activeFlashingButton.Checked)
+			{
+				isHighlightState = !isHighlightState;
+				SetShowFailuresWarningColors();
+			}
+		}
+		private void SetShowFailuresWarningColors()
+		{
+			if (activeFlashingButton != null)
+			{
+				activeFlashingButton.ForeColor = isHighlightState ? Color.Yellow : rbOff.ForeColor;
+				activeFlashingButton.BackColor = isHighlightState ? Color.Red : rbOff.BackColor;
+			}
+		}
+		private void TurnOffShowFailuresWarningColors(RadioButton rb)
+		{
+			if (rb != null)
+			{
+				rb.ForeColor = rbOff.ForeColor;
+				rb.BackColor = rbOff.BackColor;
 			}
 		}
 	}

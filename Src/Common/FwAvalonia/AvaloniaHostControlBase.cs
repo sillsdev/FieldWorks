@@ -43,10 +43,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			Dock = DockStyle.Fill;
 			TabStop = true;
 
-			// The host claims the arrow keys for the hosted Avalonia control so WinForms does not consume them as
-			// control navigation before the hosted content sees them (Enter stays with WinForms in a pane).
+			// The host claims the arrow keys, so WinForms navigation does not take them first,
+			// and
+			// Ctrl+Z and Ctrl+Y, so the Edit menu's Undo does not run before a text box's own.
 			Host = new InputKeyClaimingAvaloniaHost
 			{
+				ClaimUndoRedoKeys = true,
 				Dock = DockStyle.Fill,
 				Name = "AvaloniaHost",
 				AccessibleName = FwAvaloniaStrings.AvaloniaHostName
@@ -75,6 +77,43 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 
 		protected void RaiseDetailInteractionCompleted()
 			=> DetailInteractionCompleted?.Invoke(this, EventArgs.Empty);
+
+		/// <summary>
+		/// Raised for an undo or redo key the hosted view left unhandled. Keys typed into
+		/// Avalonia never reach the form's own key handling, so the owner passes this one on
+		/// to FieldWorks' shortcuts and marks it handled.
+		/// </summary>
+		public event EventHandler<KeyEventArgs> UndoRedoKeyUnhandled;
+
+		/// <summary>
+		/// Offers an undo or redo key the hosted view left unhandled to the owner.
+		/// </summary>
+		/// <returns>Whether the owner took the key.</returns>
+		protected bool RaiseUndoRedoKeyUnhandled(Avalonia.Input.Key key,
+			Avalonia.Input.KeyModifiers modifiers)
+		{
+			var args = new KeyEventArgs(ToWinFormsKeys(key, modifiers));
+			UndoRedoKeyUnhandled?.Invoke(this, args);
+			return args.Handled;
+		}
+
+		/// <summary>
+		/// The WinForms key data for a letter key and its modifiers, or
+		/// <see cref="Keys.None"/> for a key that is not a letter.
+		/// </summary>
+		public static Keys ToWinFormsKeys(Avalonia.Input.Key key, Avalonia.Input.KeyModifiers modifiers)
+		{
+			if (key < Avalonia.Input.Key.A || key > Avalonia.Input.Key.Z)
+				return Keys.None;
+			var keyData = Keys.A + (key - Avalonia.Input.Key.A);
+			if ((modifiers & Avalonia.Input.KeyModifiers.Control) != 0)
+				keyData |= Keys.Control;
+			if ((modifiers & Avalonia.Input.KeyModifiers.Shift) != 0)
+				keyData |= Keys.Shift;
+			if ((modifiers & Avalonia.Input.KeyModifiers.Alt) != 0)
+				keyData |= Keys.Alt;
+			return keyData;
+		}
 
 		/// <summary>Swaps the hosted Avalonia content and shows the control.</summary>
 		protected void SetHostContent(Avalonia.Controls.Control content)

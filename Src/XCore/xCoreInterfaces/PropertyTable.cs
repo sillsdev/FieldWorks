@@ -190,6 +190,18 @@ namespace XCore
 			}
 		}
 
+		/// <summary>
+		/// Remove a property from the local or global settings. BestSettings removes the local
+		/// entry when there is one, otherwise the global one. A removed property is not saved.
+		/// </summary>
+		public void RemoveProperty(string name, SettingsGroup settingsGroup)
+		{
+			CheckDisposed();
+			string key;
+			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
+			RemoveProperty(key);
+		}
+
 		#endregion Removing
 
 		#region getting and setting

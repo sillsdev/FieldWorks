@@ -11,24 +11,11 @@ using SIL.FieldWorks.Common.FwUtils;
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// <c>DTMenuHandler.OnDataTreeMove</c> (message="DataTreeMove") adds a
-	/// <c>TreeCombo</c> to <c>CurrentSlice.Control</c> and drops a popup tree on it. On the Avalonia
-	/// the command target is the HIDDEN, detached, off-screen adapter DataTree, so that combo
-	/// would never appear and the move could not complete.
-	///
-	/// DECISION: no suppression code is added because the command is NOT REACHABLE from the lexical
-	/// entry view. <c>message="DataTreeMove"</c> is declared only by the two Grammar-area commands
-	/// <c>CmdDataTree-Move-POS-AffixSlot</c> and <c>CmdDataTree-Move-POS-AffixTemplate</c>
-	/// (Configuration/Grammar/DataTreeInclude.xml), and those commands appear only in Grammar
-	/// menus --
-	/// never in the Lexicon configuration the entry view composes its right-click menus from. (The
-	/// lexicon "Move" commands route through <c>MoveUpObjectInSequence</c>/<c>MoveDownObjectInSequence</c>
-	/// and the per-field override layer, neither of which is the TreeCombo path.)
-	///
-	/// These tests LOCK that reachability conclusion so a future Lexicon-config change cannot silently
-	/// introduce the broken-on-Avalonia <c>DataTreeMove</c> command into the entry-view menus without
-	/// tripping a red test (which would then require routing it through a real chooser or suppressing it
-	/// on the Avalonia menu).
+	/// Move (message DataTreeMove) is answered for an affix slot and an affix template only:
+	/// the Avalonia view asks for the category with a chooser, and WinForms drops a tree on
+	/// the row. These tests pin that only the two Grammar commands,
+	/// <c>CmdDataTree-Move-POS-AffixSlot</c> and <c>CmdDataTree-Move-POS-AffixTemplate</c>,
+	/// send the message, so a new command that sends it fails here until both views answer it.
 	/// </summary>
 	[TestFixture]
 	public class DataTreeMoveReachabilityTests
@@ -46,19 +33,15 @@ namespace SIL.FieldWorks.XWorks
 				.ToList();
 
 			Assert.That(offenders, Is.Empty,
-				"No Lexicon command may use message=\"DataTreeMove\": that handler (DTMenuHandler.OnDataTreeMove) "
-				+ "adds a TreeCombo to CurrentSlice.Control, which cannot work against Avalonia's "
-				+ "hidden, detached adapter DataTree. If a Move command is genuinely needed here, route it "
-				+ "through a real chooser or suppress it on the Avalonia menu — do not add the TreeCombo path. "
-				+ "Offenders: " + string.Join(", ", offenders));
+				"No Lexicon command may send DataTreeMove: both detail views answer it only for an affix "
+				+ "slot or an affix template. Offenders: " + string.Join(", ", offenders));
 		}
 
 		[Test]
 		public void DataTreeMoveCommand_IsConfinedToTheGrammarAffixCommands()
 		{
-			// Sanity-anchor the conclusion: the only DataTreeMove declarations in the shipped configuration
-			// are the two Grammar affix-slot/template commands. If this set changes, the triage above must
-			// be revisited (a new consumer might now reach the TreeCombo path).
+			// The only DataTreeMove declarations in the shipped configuration are the two Grammar
+			// commands.
 			var configRoot = FwDirectoryFinder.GetCodeSubDirectory(@"Language Explorer\Configuration");
 			var ids = Directory.GetFiles(configRoot, "*.xml", SearchOption.AllDirectories)
 				.SelectMany(LoadCommands)
@@ -71,8 +54,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				"CmdDataTree-Move-POS-AffixSlot",
 				"CmdDataTree-Move-POS-AffixTemplate"
-			}), "DataTreeMove must remain confined to the Grammar affix commands; a new declaration means a "
-				+ "new consumer might reach the unsupported TreeCombo path and the C1 triage must be redone.");
+			}), "DataTreeMove is answered only for an affix slot or an affix template; a new command that "
+				+ "sends it needs an answer in both detail views.");
 		}
 
 		private static System.Collections.Generic.IEnumerable<XElement> LoadCommands(string path)

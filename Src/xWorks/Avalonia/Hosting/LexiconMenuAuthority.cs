@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="scope">Which of the message's leaves the answerer takes, by the
 		/// command's configuration; null for all of them. A leaf outside it leaves its id
-		/// with the adapter in full.</param>
+		/// unowned.</param>
 		internal void Answer(string message, Func<DetailMenuLeaf, DetailMenuItem> answerer,
 			Func<DetailMenuLeaf, bool> scope = null)
 		{

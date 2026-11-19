@@ -758,7 +758,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				CheckDisposed();
 
 				if (value == null)
-					throw new ArgumentException("CurrentSlice on DataTree cannot be set to null. Call ClearCurrentSlice(), if you really want it to be null.");
+					throw new ArgumentException("CurrentSlice on DataTree cannot be set to null. Set the underlying data member to null, if you really want it to be null.");
 				Debug.Assert(!value.IsDisposed, "Setting CurrentSlice to a disposed slice -- not a good idea!");
 
 				// don't set the current slice until we're all setup to do so (LT-7307)
@@ -3418,14 +3418,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
-		/// True when this tree serves as the HIDDEN command-routing adapter for an externally
-		/// rendered UI (the approved "command-menu-routing" baseline adapter of the Avalonia
-		/// lexical-edit migration, tasks 13.4/15.4): display logic that gates on <c>Visible</c>
-		/// treats the adapter tree as active, since the user-visible UI lives elsewhere.
-		/// </summary>
-		public bool IsExternalCommandAdapter { get; set; }
-
-		/// <summary>
 		/// Set the handler which will be invoked when the user right-clicks on the
 		/// TreeNode portion of a slice, or for some other reason we need the context menu.
 		/// </summary>
@@ -4400,57 +4392,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Subscriber.Subscribe(EventConstants.JumpToField, JumpToField, m_propertyTable.GetWindow());
 		}
 
-		/// <summary>
-		/// Drops the current slice so command handlers see no target and no-op. The deliberate
-		/// counterpart to the <see cref="CurrentSlice"/> setter, which rejects null.
-		/// </summary>
-		public void ClearCurrentSlice()
-		{
-			CheckDisposed();
-
-			m_currentSliceNew = null;
-			m_fSetCurrentSliceNew = false;
-			if (m_currentSlice != null && !m_currentSlice.IsDisposed)
-				m_currentSlice.SetCurrentState(false);
-			m_currentSlice = null;
-		}
-
-		/// <summary>
-		/// Points <see cref="CurrentSlice"/> at <paramref name="slice"/> for command targeting.
-		/// The ordinary setter is suspended between <c>ShowObject</c> and an idle callback
-		/// (LT-3915), which would silently discard the assignment, and its scroll/tab-stop work
-		/// needs a laid-out tree.
-		/// </summary>
-		public void SetCurrentSliceForCommandTarget(Slice slice)
-		{
-			CheckDisposed();
-
-			if (slice == null)
-			{
-				ClearCurrentSlice();
-				return;
-			}
-
-			m_currentSliceNew = null;
-			m_fSetCurrentSliceNew = false;
-			if (m_currentSlice == slice)
-				return;
-
-			if (m_currentSlice != null && !m_currentSlice.IsDisposed)
-				m_currentSlice.SetCurrentState(false);
-
-			m_currentSlice = slice;
-			m_currentSlice.SetCurrentState(true);
-			m_descendant = DescendantForSlice(m_currentSlice);
-		}
-
 		public IxCoreColleague[] GetMessageTargets()
 		{
 			CheckDisposed();
 
-			// A command adapter is never shown, yet still drives this tree, so excluding
-			// it for invisibility would silence the handlers defined on the tree itself.
-			if (Visible || IsExternalCommandAdapter)
+			if (Visible)
 			{
 				if (m_currentSlice != null)
 					return new IxCoreColleague[] { m_currentSlice, this };
@@ -4968,14 +4914,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// We may be in transition: if so, disable without crashing.  See LT-9698.
 			if (m_cache == null || m_root == null)
 				return display.Enabled = false;
-			var command = (Command)commandObject;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_root.ClassName)
-				return display.Enabled = false;
-			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
-				return display.Enabled = false;
-			return display.Enabled = true;
+			return display.Enabled = AppliesToRoot((Command)commandObject);
+		}
+
+		// Whether a command that acts on the root object applies to it in the current tool.
+		private bool AppliesToRoot(Command command)
+		{
+			var parameters = command.Parameters[0];
+			return ShownRecordCommandScope.Applies(m_root, XmlUtils.GetMandatoryAttributeValue(parameters, "className"),
+				XmlUtils.GetOptionalAttributeValue(parameters, "restrictToTool"),
+				m_propertyTable.GetStringProperty("currentContentControl", String.Empty));
 		}
 
 		/// <summary>
@@ -4987,16 +4935,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			CheckDisposed();
 
 			var command = (Command)argument;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_root.ClassName)
-				return false;
-			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
+			if (!AppliesToRoot(command))
 				return false;
 			string fieldName = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "fieldName");
 			if (String.IsNullOrEmpty(fieldName))
 				return false;
-			int flid = m_mdc.GetFieldId(className, fieldName, true);
+			int flid = m_mdc.GetFieldId(m_root.ClassName, fieldName, true);
 			int insertPos = Slice.InsertObjectIntoVirtualBackref(m_cache, m_mediator, m_propertyTable,
 				m_root.Hvo, m_root.ClassID, flid);
 			return insertPos >= 0;
@@ -5011,16 +4955,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			var command = (Command)commandObject;
 			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			bool fIsValid = false;
-			if (className == "RnGenericRec")
-			{
-				if (Root != null && Root is IRnGenericRec)
-				{
-					if (Root.Owner is IRnResearchNbk && (Root.Owner as IRnResearchNbk).RecordsOC.Count > 1)
-						fIsValid = true;
-				}
-			}
-			display.Enabled = fIsValid;
+			display.Enabled = className == "RnGenericRec" && RecordNesting.CanDemoteRecord(Root);
 			return true;
 		}
 		/// <summary>
@@ -5030,64 +4965,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (Root == null)
+			if (!(Root is IRnGenericRec rec) || !RecordNesting.CanDemoteRecord(rec))
 				return false;
-			IRnGenericRec rec = Root as IRnGenericRec;
-			if (rec == null)
-				return false;		// shouldn't get here
-			IRnGenericRec newOwner = null;
-			if (Root.Owner is IRnResearchNbk)
-			{
-				IRnResearchNbk notebk = Root.Owner as IRnResearchNbk;
-				List<IRnGenericRec> owners = new List<IRnGenericRec>();
-				foreach (var recT in notebk.RecordsOC)
-				{
-					if (recT != Root)
-						owners.Add(recT);
-				}
-				if (owners.Count == 1)
-				{
-					newOwner = owners[0];
-				}
-				else
-				{
-					newOwner = ChooseNewOwner(owners.ToArray(),
-						Resources.DetailControlsStrings.ksChooseOwnerOfDemotedRecord);
-				}
-			}
-			else
-			{
-				return false;
-			}
-			if (newOwner == null)
-				return true;
-			if (newOwner == rec)
-				throw new Exception("RnGenericRec cannot own itself!");
-
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoDemote,
-				Resources.DetailControlsStrings.ksRedoDemote, Cache.ActionHandlerAccessor, () =>
-				{
-					newOwner.SubRecordsOS.Insert(0, rec);
-				});
+			var newOwner = RecordNesting.ChooseOwner(RecordNesting.RecordDemoteOwners(rec),
+				candidates => DemotedRecordOwnerChooser.ChooseForRecord(m_cache, m_mediator, m_propertyTable, candidates));
+			if (newOwner != null)
+				RecordNesting.Demote(rec, newOwner);
 			return true;
-		}
-
-		internal IRnGenericRec ChooseNewOwner(IRnGenericRec[] records, string sTitle)
-		{
-
-			var helpTopic = "khtpDataNotebook-ChooseOwnerOfDemotedRecord";
-			var persistProvider = new PersistenceProvider(m_mediator, m_propertyTable);
-			var labels = ObjectLabel.CreateObjectLabels(m_cache, records,
-					"ShortName", m_cache.WritingSystemFactory.GetStrFromWs(m_cache.DefaultAnalWs));
-			using (var dlg = new ReallySimpleListChooser(persistProvider, labels,
-				String.Empty, m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
-			{
-				dlg.Text = sTitle;
-				dlg.SetHelpTopic(helpTopic);
-				if (dlg.ShowDialog() == DialogResult.OK)
-					return dlg.SelectedObject as IRnGenericRec;
-			}
-			return null;
 		}
 
 		/// <summary>
@@ -5298,17 +5182,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				CheckDisposed();
 				return false;
-			}
-		}
-
-		/// <summary>This slice stands in for objects not yet built; its Object is the
-		/// OWNER.</summary>
-		public override bool IsLazyPlaceholder
-		{
-			get
-			{
-				CheckDisposed();
-				return true;
 			}
 		}
 

@@ -799,6 +799,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Background = FwAvaloniaDensity.TransparentBrush,
 				TextWrapping = TextWrapping.Wrap // long values wrap; the row grows vertically
 			};
+			FwSurfaceStyles.MarkValueText(box);
 			// A voice/audio writing system has no sound player in this view yet, so the row
 			// is read-only and says why (a distinct message from the rich-content read-only case).
 			if (value.IsAudio)
@@ -937,6 +938,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			var rtl = box.FlowDirection == FlowDirection.RightToLeft;
 			var display = DetailRichTextChrome.CreatePerRunFontDisplay(currentRich, field.WritingSystemFonts,
 				automationId + "." + wsKey + ".Display", rtl);
+			// The display stands in for the box, so it shows the value's own size and emphasis
+			// (LT-22811).
+			if (box.IsSet(TextBox.FontSizeProperty))
+				display.FontSize = box.FontSize;
+			if (box.IsSet(TextBox.FontWeightProperty))
+				display.FontWeight = box.FontWeight;
 			_valueStops.AttachDisplay(valueStop, display);
 
 			// Exactly ONE of {display, box} occupies the row at a time (IsVisible collapses the other out
@@ -1137,6 +1144,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Text = CurrentName(field),
 				VerticalAlignment = VerticalAlignment.Center
 			};
+			FwSurfaceStyles.MarkValueText(_valueText);
 			ApplyEmptyValueWidth();
 			var content = new StackPanel
 			{
@@ -1376,6 +1384,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		private readonly List<Control> _itemBlocks = new List<Control>();
 		private readonly List<Func<bool>> _unstaged = new List<Func<bool>>();
 		private readonly List<Action> _discardUnstaged = new List<Action>();
+		private readonly List<Func<bool>> _stageUnstaged = new List<Func<bool>>();
 		private int _selectedIndex = -1;
 		private bool _disposed;
 
@@ -1440,6 +1449,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						BorderThickness = new Thickness(0),
 						Background = FwAvaloniaDensity.TransparentBrush
 					};
+					FwSurfaceStyles.MarkValueText(box);
 					// Held to the width its text measures, so the last character is not
 					// cut, and kept in step while typing.
 					FloorWidthToText(box);
@@ -1454,15 +1464,26 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					var submitted = original;
 					_unstaged.Add(() => box.Text != submitted);
 					_discardUnstaged.Add(() => box.Text = submitted);
-					Action commitText = () =>
+					// Whether the domain took the text; staging alone does not save it.
+					Func<bool> stageText = () =>
 					{
 						var typed = box.Text;
 						submitted = typed;
-						if (typed == original)
-							return;
-						if (textEditing.TrySetReferenceItemText(field, itemKey, typed))
+						return typed != original
+							&& textEditing.TrySetReferenceItemText(field, itemKey, typed);
+					};
+					Action commitText = () =>
+					{
+						if (stageText())
 							gestureCompleted?.Invoke();
 					};
+					_stageUnstaged.Add(() =>
+					{
+						if (box.Text == submitted)
+							return false;
+						stageText();
+						return true;
+					});
 					EventHandler<Avalonia.Interactivity.RoutedEventArgs> commitOnBlur =
 						(s2, e2) => CommitUnlessMenuGesture(commitText);
 					box.LostFocus += commitOnBlur;
@@ -1493,6 +1514,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 						Background = FwAvaloniaDensity.TransparentBrush
 					};
 				}
+				FwSurfaceStyles.MarkValueText(text);
 				AutomationProperties.SetAutomationId(text, ItemAutomationId(automationId, item.Key));
 				// Any button selects, so a right-click's menu acts on the item under the pointer;
 				// focus selects too. The first item is a chip row's one Tab stop; the editors of
@@ -1678,6 +1700,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					Background = FwAvaloniaDensity.TransparentBrush,
 					Watermark = FwAvaloniaStrings.AddItem
 				};
+				FwSurfaceStyles.MarkValueText(newItem);
 				// Keeps its empty width until what is typed needs more than that.
 				FloorWidthToText(newItem, FwAvaloniaDensity.NewItemSlotMinWidth);
 				AutomationProperties.SetAutomationId(newItem, automationId + ".New");
@@ -1685,15 +1708,25 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				var submittedNew = string.Empty;
 				_unstaged.Add(() => (newItem.Text ?? string.Empty) != submittedNew);
 				_discardUnstaged.Add(() => newItem.Text = submittedNew);
-				Action commitNew = () =>
+				Func<bool> stageNew = () =>
 				{
 					var typed = newItem.Text;
 					submittedNew = typed ?? string.Empty;
-					if (string.IsNullOrWhiteSpace(typed))
-						return;
-					if (textEditing.TryCreateAndAddReferenceItem(field, typed))
+					return !string.IsNullOrWhiteSpace(typed)
+						&& textEditing.TryCreateAndAddReferenceItem(field, typed);
+				};
+				Action commitNew = () =>
+				{
+					if (stageNew())
 						gestureCompleted?.Invoke();
 				};
+				_stageUnstaged.Add(() =>
+				{
+					if ((newItem.Text ?? string.Empty) == submittedNew)
+						return false;
+					stageNew();
+					return true;
+				});
 				EventHandler<Avalonia.Interactivity.RoutedEventArgs> newOnBlur =
 					(s2, e2) => CommitUnlessMenuGesture(commitNew);
 				newItem.LostFocus += newOnBlur;
@@ -1739,6 +1772,17 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				}
 				Children.Add(newItem);
 				AddSeparatorBar();
+			}
+
+			// An undo started outside this view, from the menu or toolbar, stages typed text
+			// through the context first; it would otherwise undo an earlier change instead.
+			var registry = editContext as IPendingEditFlushRegistry;
+			if (registry != null && _stageUnstaged.Count > 0)
+			{
+				var ownerKey = "reference/" + field.StableId;
+				Func<bool> flush = StageUnstagedText;
+				registry.AddPendingEditFlush(ownerKey, flush);
+				_teardown.Add(() => registry.RemovePendingEditFlush(ownerKey, flush));
 			}
 
 			var addButton = new Button
@@ -1937,7 +1981,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 
 		// TextBox applies this rule on the right RELEASE, after the request has snapshotted the
 		// selection, so it is applied on the press; a press inside a range keeps the range.
-		private static void PlaceCaretAtPointer(TextBox box, PointerPressedEventArgs e)
+		internal static void PlaceCaretAtPointer(TextBox box, PointerPressedEventArgs e)
 		{
 			var presenter = Avalonia.VisualTree.VisualExtensions.GetVisualDescendants(box)
 				.OfType<Avalonia.Controls.Presenters.TextPresenter>().FirstOrDefault();
@@ -2122,6 +2166,22 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				discard();
 		}
 
+		/// <summary>
+		/// Stages any text an editor holds on the edit session, without saving it, so Undo can
+		/// close that edit first instead of undoing an earlier change. The caller saves the
+		/// session. Does nothing once disposed.
+		/// </summary>
+		/// <returns>Whether an editor held text, whether or not the domain accepted it.</returns>
+		public bool StageUnstagedText()
+		{
+			if (_disposed)
+				return false;
+			var held = false;
+			foreach (var stage in _stageUnstaged)
+				held |= stage();
+			return held;
+		}
+
 		private void AddSeparatorBar()
 		{
 			var bar = CreateSeparatorBar();
@@ -2187,6 +2247,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				Margin = FwAvaloniaDensity.TrailingGap,
 				Background = FwAvaloniaDensity.TransparentBrush // the value text is the hover surface
 			};
+			FwSurfaceStyles.MarkValueText(text);
 			AutomationProperties.SetName(text, label ?? string.Empty);
 
 			DockPanel.SetDock(_button, Dock.Right);

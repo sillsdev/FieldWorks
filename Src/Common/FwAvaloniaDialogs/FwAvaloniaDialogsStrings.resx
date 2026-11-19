@@ -178,6 +178,9 @@
   <data name="FwAvaloniaDialogs.EntryGoResultsLabel" xml:space="preserve">
     <value>Lexical Entries</value>
   </data>
+  <data name="FwAvaloniaDialogs.EntryGoWritingSystemLabel" xml:space="preserve">
+    <value>Writing System:</value>
+  </data>
   <data name="FwAvaloniaDialogs.EntryGoMustSelectOption" xml:space="preserve">
     <value>Select an option.</value>
   </data>

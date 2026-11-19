@@ -17,6 +17,8 @@
 		<x:Double x:Key="EntryGoAuxiliaryOptionsMaxHeight">120</x:Double>
 		<x:Double x:Key="EntryGoMinWidth">440</x:Double>
 		<x:Double x:Key="EntryGoMinHeight">340</x:Double>
+		<!-- Keeps the writing-system selector from resizing as its selection changes. -->
+		<x:Double x:Key="EntryGoWritingSystemPickerMinWidth">160</x:Double>
 	</UserControl.Resources>
 	<!-- The reusable entry-search ("go") dialog body: the Avalonia replacement for the legacy
 	     EntryGoDlg/BaseGoDlg family. The matching entries fill the dialog body as a PERSISTENT,
@@ -91,6 +93,22 @@
 				         Text="{Binding SearchText, Mode=TwoWay}"
 				         Watermark="{x:Static res:FwAvaloniaDialogsStrings.EntryGoSearchWatermark}"
 				         AutomationProperties.AutomationId="EntryGo.Search"/>
+
+				<!--
+					The writing system the search box types and searches in; shown only when the
+					consumer offers a choice.
+				-->
+				<StackPanel DockPanel.Dock="Top" Orientation="Horizontal"
+				            Spacing="{StaticResource DialogLabelFieldGap}"
+				            Margin="{StaticResource DialogControlGapAbove}"
+				            IsVisible="{Binding HasWritingSystemSelector}"
+				            AutomationProperties.AutomationId="EntryGo.WritingSystemRow">
+					<TextBlock Text="{Binding WritingSystemLabel}" VerticalAlignment="Center"/>
+					<!-- The writing-system FwOptionChooser is injected here in code-behind. -->
+					<Border Name="PART_WritingSystemHost" Classes="fwFieldHost"
+					        MinWidth="{StaticResource EntryGoWritingSystemPickerMinWidth}"
+					        AutomationProperties.AutomationId="EntryGo.WritingSystemHost"/>
+				</StackPanel>
 
 				<!--
 					Dependent auxiliary picker (two-stage mode only), under the matching list.

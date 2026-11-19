@@ -925,6 +925,7 @@ namespace XCore
 			CheckDisposed();
 
 			ChoiceGroup group = GetChoiceGroupForMenu(menuId);
+			group.IsRaisedOnTarget = true;
 			((IUIMenuAdapter)m_menuBarAdapter).ShowContextMenu(group, location, temporaryColleagueParam, sequencer, adjustMenu);
 		}
 
@@ -960,7 +961,7 @@ namespace XCore
 				XmlNode node = GetContextMenuNodeFromMenuId(m);
 				nodes.Add(node);
 			}
-			ChoiceGroup group = new ChoiceGroup(m_mediator, m_propertyTable, m_menuBarAdapter, nodes, null);
+			ChoiceGroup group = new ChoiceGroup(m_mediator, m_propertyTable, m_menuBarAdapter, nodes, null) { IsRaisedOnTarget = true };
 			((IUIMenuAdapter)m_menuBarAdapter).ShowContextMenu(group, location, temporaryColleagueParam, sequencer);
 		}
 
@@ -986,7 +987,7 @@ namespace XCore
 			}
 			if (nodes.Count == 0)
 				return null;
-			return new ChoiceGroup(m_mediator, m_propertyTable, m_menuBarAdapter, nodes, null);
+			return new ChoiceGroup(m_mediator, m_propertyTable, m_menuBarAdapter, nodes, null) { IsRaisedOnTarget = true };
 		}
 
 		/// <summary>
@@ -2356,12 +2357,12 @@ namespace XCore
 				Command c = (Command)entry.Value;
 				if (e.KeyData == c.Shortcut || e.KeyData == c.Shortcut2)
 				{
-					UIItemDisplayProperties display = CommandChoice.QueryDisplayProperties(m_mediator, c, false, "foo");
+					UIItemDisplayProperties display = CommandChoice.QueryDisplayProperties(m_mediator, m_propertyTable, c, false, "foo");
 
 					if (!display.Enabled)
 						continue;   // may have multiple commands (in different areas) assigned same shortcut.
 
-					c.InvokeCommand();
+					c.InvokeCommand(CommandAuthorities.Of(m_propertyTable));
 					e.Handled = true;
 					e.SuppressKeyPress = true;  // needed to fix LT-6494.
 					return;         // Handle only the first valid shortcut.  There should be only one!

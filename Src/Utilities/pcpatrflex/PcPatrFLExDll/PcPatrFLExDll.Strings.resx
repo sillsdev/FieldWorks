@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -126,6 +126,10 @@ Please remove it or add words and try again.
   <data name="ksFileFilterPrompt" xml:space="preserve">
     <value>PC-PATR Grammar File (*.{0})|*.{0}|All Files (*.*)|*.*</value>
     <comment>{0} is hard coded to be "grm"</comment>
+  </data>
+  <data name="ksFLExCategories" xml:space="preserve">
+    <value>Automatic FLEx to PAWS-generated PC-PATR categories</value>
+    <comment>Is only in English</comment>
   </data>
   <data name="ksGlossesWithSpace" xml:space="preserve">
     <value>The following glosses contain a space.

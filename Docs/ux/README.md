@@ -447,7 +447,8 @@ above it, so the user can scan the form by section. A section or nested record
 that can be expanded shows whether it is expanded, starts expanded, and can be
 collapsed or expanded by mouse or keyboard. Collapsing something applies to that
 record only, and the record remembers it. The current row's section header is
-where that section's commands appear.
+where that section's commands appear. A section showing no rows, because it is
+empty or collapsed, shows its commands at all times.
 
 ### Labels
 
@@ -583,13 +584,14 @@ entry that replaces it.
 | ID | Decision | Status | Revisit trigger / end condition | Decided |
 | --- | --- | --- | --- | --- |
 | UX-1 | Empty or appendable sequences in detail views show a "Type to add {item}" row as an extra in-place way to add; insert commands stay in the menus and section commands. | Adopted | — | 2026-08-11, LT-22687 |
-| UX-2 | Sections that offer commands show them on the section header at all times (see *Sections and expansion*). | Adopted | — | 2026-08-11, LT-22687 |
-| UX-3 | Section commands appear as one "Field options" link per section that opens a menu (WinForms shows one link per command), and that link is a Tab stop. | Provisional | LT-22693 | 2026-08-11, LT-22687 |
+| UX-2 | Sections that offer commands show them on the section header at all times (see *Sections and expansion*). | Superseded by UX-9 | — | 2026-08-11, LT-22687 |
+| UX-3 | Section commands appear as one "Field options" link per section that opens a menu (WinForms shows one link per command), and that link is a Tab stop. | Superseded by UX-9 | LT-22693 | 2026-08-11, LT-22687 |
 | UX-4 | Edit boxes in detail views have a visible border. | Provisional | A Jira issue or user-testing report asks to remove the border | 2026-08-11, LT-22687 |
 | UX-5 | Tab stops at the first and last detail-view row instead of carrying on into the rest of the window. | Temporary | The whole window is Avalonia (LT-22688) | 2026-09-22, commit 23965cd67 |
 | UX-6 | Input problems show next to the field, in plain words, keeping the user's input; WinForms message boxes are not used for them (see *Checking input*). | Provisional | Team consensus on LT-22687 | 2026-10-23, LT-22687 |
 | UX-7 | Advanced options use one "More options" expander, replacing five WinForms patterns (see *Advanced options*). | Provisional | Team consensus on LT-22687 | 2026-10-23, LT-22687 |
 | UX-8 | Detail views show field problems at the field, as in UX-6, not in message boxes (see *Saving and undo*). | Provisional | Team consensus on LT-22687 | 2026-10-23, LT-22687 |
+| UX-9 | Section commands appear as one small button per command, right-aligned on the section header's own line, and only on the section that holds the current row (see *Sections and expansion*), as in WinForms. Each button is the command's name on a light primary tint, which deepens under the pointer; an unavailable command is grey text on the theme's neutral grey button fill. WinForms draws underlined blue links instead; the tinted button was chosen from five candidate looks. Links that don't fit the width are left out. Unlike WinForms, the links are Tab stops, reached with Shift+Tab from the section's first field, since they are the keyboard's only way to some of these commands. A section showing no fields, because it is empty or collapsed, shows its links at all times, since focus cannot enter it to bring them. A header marked `commandVisible="true"` (the Words tool's wordform header) shows its links at all times in WinForms; the new view doesn't support it yet. | Provisional | User testing asks for links on every section | 2026-11-04, LT-22693 |
 
 ## Appendix: terms and where they live in code
 
@@ -603,7 +605,7 @@ code, for developers and AI agents.
 | detail view | `DataTree` (DetailControls), `RecordEditView` | `DataTree` (FwAvalonia/Detail), `DetailComposer`, `DetailModel`, `RecordEditView.Avalonia` |
 | row / field (detail view) | `Slice` | detail row (`DetailComposer` output) |
 | section, section header | heavy `SummarySlice`, `header="true"` parts | section header row |
-| section commands | `hotlinks=` on a part, `SummaryCommandControl` | `CreateHotlinkStrip` ("Field options") |
+| section commands | `hotlinks=` on a part, `SummaryCommandControl` | `DetailHotlinkStrip`, filled from `RecordEditView.HotlinkItemsFor` |
 | field visibility | part `visibility` (`always` / `ifdata` / `never`) and layout overrides | same layouts, read by `DetailComposer` |
 | "Type to add ..." row | `GhostStringSlice` | ghost row |
 | filter bar | `FilterBar` | — |

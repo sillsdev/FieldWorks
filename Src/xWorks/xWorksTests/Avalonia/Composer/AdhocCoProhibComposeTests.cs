@@ -175,5 +175,50 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(memberRows.Min(f => f.Indent), Is.GreaterThan(groupIndent),
 				"the member's rows nest below the group's own rows");
 		}
+
+		// A nested group's other rows are the child rows of its name row's part ref, and the
+		// name part holds one slice per state of the group's Active box.
+		[TestCase(false)]
+		[TestCase(true)]
+		public void Compose_ANestedGroup_ShowsItsNameDescriptionActiveAndMembers(bool disabled)
+		{
+			IMoAdhocProhibGr group = null;
+			IMoAdhocProhibGr nested = null;
+			IMoMorphAdhocProhib rule = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				var msa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+				entry.MorphoSyntaxAnalysesOC.Add(msa);
+
+				group = Cache.ServiceLocator.GetInstance<IMoAdhocProhibGrFactory>().Create();
+				Cache.LangProject.MorphologicalDataOA.AdhocCoProhibitionsOC.Add(group);
+				nested = Cache.ServiceLocator.GetInstance<IMoAdhocProhibGrFactory>().Create();
+				group.MembersOC.Add(nested);
+				nested.Name.SetAnalysisDefaultWritingSystem("Inner group");
+				nested.Disabled = disabled;
+				rule = Cache.ServiceLocator.GetInstance<IMoMorphAdhocProhibFactory>().Create();
+				nested.MembersOC.Add(rule);
+				rule.FirstMorphemeRA = msa;
+				rule.RestOfMorphsRS.Add(msa);
+			});
+
+			var fields = DetailComposer.Compose(group, Cache, layoutName: "Edit",
+				plugins: SlicePluginRegistry.Default).Model.Fields;
+			TestContext.WriteLine(string.Join(", ",
+				fields.Select(f => $"{f.Field}/{f.Label}:{f.Kind}@{f.Indent}#{f.ObjectHvo}")));
+
+			var nestedRows = fields.Where(f => f.ObjectHvo == nested.Hvo && f.Kind != DetailFieldKind.Header).ToList();
+			var name = nestedRows.Single(f => f.Field == "Name");
+			Assert.That(name.Label, Is.EqualTo("Nested Group Name"));
+			Assert.That(name.MenuId, Is.EqualTo("mnuDataTree-Delete-Adhoc-Group"));
+			var description = nestedRows.Single(f => f.Field == "Description");
+			Assert.That(description.Label, Is.EqualTo("Nested Group Description"));
+			Assert.That(description.Indent, Is.GreaterThan(name.Indent), "the other rows nest below the name row");
+			Assert.That(nestedRows.Count(f => f.Field == "Disabled" && f.Kind == DetailFieldKind.Boolean), Is.EqualTo(1));
+			var members = fields.Single(f => f.ObjectHvo == nested.Hvo && f.Label == "Nested Group Members");
+			Assert.That(members.MenuId, Is.EqualTo("mnuDataTree-Adhoc-Group-Members"));
+			Assert.That(fields.Any(f => f.ObjectHvo == rule.Hvo), Is.True, "the nested group's own member composes");
+		}
 	}
 }

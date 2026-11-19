@@ -258,9 +258,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				{
 					// Can't Go to a subentry, so we have to go to its main entry.
 					var selEntry = (IReversalIndexEntry) dlg.SelectedObject;
-#pragma warning disable 618 // suppress obsolete warning
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", selEntry.MainEntry.Hvo);
-#pragma warning restore 618
+					Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, selEntry.MainEntry.Hvo, m_propertyTable.GetWindow()));
 				}
 			}
 			return true;

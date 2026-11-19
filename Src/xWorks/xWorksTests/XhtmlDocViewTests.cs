@@ -824,14 +824,200 @@ namespace SIL.FieldWorks.XWorks
 
 		#endregion
 
+		#region Jumping to a record
+
+		[Test]
+		public void OnJumpToRecord_InDictionary_ConfigurationChangeAfterwardsLoads()
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				var entry = CreateEntryPublishedEverywhere();
+				using (var scenario = new PublicationScenario(Cache, "TestPub", "TestPub"))
+				{
+					scenario.View.OnJumpToRecord(entry.Hvo);
+
+					// SUT
+					scenario.View.OnPropertyChanged("DictionaryPublicationLayout");
+
+					Assert.That(scenario.View.LoadedConfigurations, Is.EqualTo(new[] { scenario.ConfigurationPath }));
+				}
+			}
+		}
+
+		[Test]
+		public void OnJumpToRecord_OutsideDictionary_DefersTheNextLoad()
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				using (var scenario = new PublicationScenario(Cache, "TestPub", "TestPub"))
+				{
+					// Lexicon Edit stands in for the tools that defer: it reads
+					// Dictionary's configuration property, so the change below resolves.
+					scenario.PropertyTable.SetProperty("currentContentControl", "lexiconEdit", false);
+					scenario.View.OnJumpToRecord(entry.Hvo);
+
+					// SUT
+					scenario.View.OnPropertyChanged("DictionaryPublicationLayout");
+
+					Assert.That(scenario.View.LoadedConfigurations, Is.Empty,
+						"the load must wait until the clerk has moved");
+					Assert.That(scenario.View.Warnings, Is.Empty, "only Dictionary warns about a hidden entry");
+				}
+			}
+		}
+
+		[Test]
+		public void OnJumpToRecord_EntryNotInSelectedPublication_Warns()
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				using (var scenario = new PublicationScenario(Cache, "TestPub", "TestPub"))
+				{
+					// SUT
+					scenario.View.OnJumpToRecord(entry.Hvo);
+
+					Assert.That(scenario.View.Warnings, Is.EqualTo(new[]
+						{ DictionaryConfigurationController.ExclusionReasonCode.NotInPublication }));
+				}
+			}
+		}
+
+		[Test]
+		public void OnJumpToRecord_EntryInSelectedPublication_DoesNotWarn()
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				var entry = CreateEntryPublishedEverywhere();
+				using (var scenario = new PublicationScenario(Cache, "TestPub", "TestPub"))
+				{
+					// SUT
+					scenario.View.OnJumpToRecord(entry.Hvo);
+
+					Assert.That(scenario.View.Warnings, Is.Empty);
+				}
+			}
+		}
+
+		[Test]
+		public void OnJumpToRecord_TargetIsNotALexicalEntry_DoesNotWarn()
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				// The sense's entry is out of the publication, so a check that resolved
+				// the sense to its entry would warn.
+				var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+				var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+				entry.SensesOS.Add(sense);
+				using (var scenario = new PublicationScenario(Cache, "TestPub", "TestPub"))
+				{
+					// SUT
+					scenario.View.OnJumpToRecord(sense.Hvo);
+
+					Assert.That(scenario.View.Warnings, Is.Empty);
+				}
+			}
+		}
+
+		/// <summary>
+		/// A new entry is published only in the main publication, so this one is put back
+		/// into the rest.
+		/// </summary>
+		private ILexEntry CreateEntryPublishedEverywhere()
+		{
+			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			entry.DoNotPublishInRC.Clear();
+			return entry;
+		}
+
+		#endregion
+
+		#region Loading content once
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public void ShowConfiguration_AlreadyShowingItForThePublication_LoadsNothing(bool allEntries)
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				var publication = allEntries ? xWorksStrings.AllEntriesPublication : "TestPub";
+				using (var scenario = new PublicationScenario(Cache, "TestPub", publication))
+				{
+					scenario.View.ShowConfiguration(scenario.ConfigurationPath);
+
+					// SUT
+					scenario.View.ShowConfiguration(scenario.ConfigurationPath);
+
+					Assert.That(scenario.View.LoadedConfigurations, Is.EqualTo(new[] { scenario.ConfigurationPath }));
+				}
+			}
+		}
+
+		[Test]
+		public void OnShowAllEntries_ConfigurationShowingForAnotherPublication_LoadsItAgain()
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				using (var scenario = new PublicationScenario(Cache, "TestPub", "TestPub"))
+				{
+					scenario.View.ShowConfiguration(scenario.ConfigurationPath);
+
+					// SUT
+					scenario.View.OnShowAllEntries(null);
+
+					Assert.That(scenario.View.LoadedConfigurations,
+						Is.EqualTo(new[] { scenario.ConfigurationPath, scenario.ConfigurationPath }));
+				}
+			}
+		}
+
+		[Test]
+		public void SelectedPublicationChanged_ConfigurationShowingForAllEntries_LoadsItAgain()
+		{
+			using (new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor, "doit", "undoit"))
+			{
+				CreatePublication("TestPub");
+				using (var scenario = new PublicationScenario(Cache, "TestPub", xWorksStrings.AllEntriesPublication))
+				{
+					scenario.View.ShowConfiguration(scenario.ConfigurationPath);
+					scenario.PropertyTable.SetProperty("SelectedPublication", "TestPub", false);
+
+					// SUT
+					scenario.View.OnPropertyChanged("SelectedPublication");
+
+					Assert.That(scenario.View.LoadedConfigurations,
+						Is.EqualTo(new[] { scenario.ConfigurationPath, scenario.ConfigurationPath }));
+				}
+			}
+		}
+
+		#endregion
+
 		private class TestXhtmlDocView : XhtmlDocView
 		{
-			/// <summary>The configurations handed to UpdateContent, in call order.</summary>
+			/// <summary>The configurations the view loaded, in call order.</summary>
 			internal readonly List<string> LoadedConfigurations = new List<string>();
 
-			protected override void UpdateContent(string configurationFile, bool allOnOnePage = false)
+			/// <summary>The reasons the view warned of a hidden entry, in call order.</summary>
+			internal readonly List<DictionaryConfigurationController.ExclusionReasonCode> Warnings =
+				new List<DictionaryConfigurationController.ExclusionReasonCode>();
+
+			protected override void ShowContent(string configurationFile, bool allOnOnePage)
 			{
 				LoadedConfigurations.Add(configurationFile);
+			}
+
+			protected override void GiveSimpleWarning(DictionaryConfigurationController.ExclusionReasonCode xrc)
+			{
+				Warnings.Add(xrc);
 			}
 
 			internal void SetConfigObjectName(string name)

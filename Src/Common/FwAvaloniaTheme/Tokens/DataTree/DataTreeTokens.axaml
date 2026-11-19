@@ -168,6 +168,16 @@
 	     ExtraTight spacing step exactly. -->
 	<StaticResource x:Key="DataTree.LinkPromptGap" ResourceKey="SemiSpacingExtraTight"/>
 
+	<!-- Horizontal gap between two hotlinks on a section header's line. -->
+	<x:Double x:Key="DataTree.HotlinkGap">8</x:Double>
+
+	<!-- Padding inside one hotlink button: room for its tint around the text and for the
+	     keyboard focus ring to clear the glyphs. -->
+	<Thickness x:Key="DataTree.HotlinkPadding">8,2,8,2</Thickness>
+
+	<!-- Corner radius of a hotlink button. Matches Semi's own Small radius step exactly. -->
+	<StaticResource x:Key="DataTree.HotlinkCornerRadius" ResourceKey="SemiBorderRadiusSmall"/>
+
 	<!-- Horizontal gap between a chooser field's value text and its trailing configure-gear
 	     glyph. -->
 	<x:Double x:Key="DataTree.ChooserGearGap">6</x:Double>

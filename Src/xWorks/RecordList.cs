@@ -1232,6 +1232,17 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// The persisted sorter, sort name or filter for this list, or null when the list has
+		/// no settings key or nothing is stored under it.
+		/// </summary>
+		/// <param name="sorterOrFilter">"sorter", "sortName" or "filter".</param>
+		internal protected virtual string GetPersistedSetting(string sorterOrFilter, DictionaryConfigurationModel dictConfig = null)
+		{
+			var id = PropertyTableId(sorterOrFilter, dictConfig);
+			return id == null ? null : m_propertyTable.GetStringProperty(id, null, PropertyTable.SettingsGroup.LocalSettings);
+		}
+
 		public string PropertyName
 		{
 			get

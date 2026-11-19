@@ -40,8 +40,20 @@ namespace SIL.FieldWorks.XWorks
 	/// Form/Form.Designer.cs split) so the legacy-facing file stays small; nothing here
 	/// changes behavior when <c>UIMode</c> is Legacy.
 	/// </summary>
-	public partial class RecordEditView
+	public partial class RecordEditView : IRefreshableRoot
 	{
+		/// <summary>
+		/// Recomposes the Avalonia detail view when the window refreshes, as after View >
+		/// Refresh or the Styles dialog (LT-22811); an open edit completes first. Always false,
+		/// so the views this one contains still refresh themselves.
+		/// </summary>
+		public bool RefreshDisplay()
+		{
+			if (ShouldUseAvaloniaLexiconEdit)
+				m_avaloniaRefreshController?.RequestRefresh();
+			return false;
+		}
+
 		private UIFramework m_activeUIFramework;
 		private readonly EditControlFactory m_lexicalEditControlFactory;
 		private readonly UIFrameworkSelectionService m_frameworkSelectionService = new UIFrameworkSelectionService();
@@ -58,14 +70,8 @@ namespace SIL.FieldWorks.XWorks
 		// Inventory
 		// store untouched.
 		private ViewDefinitionOverrideStore m_viewOverrideStore;
-		// The approved baseline-adapter ids -- the ONLY routes allowed to drive hidden legacy
-		// infrastructure while Avalonia is active.
-		internal const string CommandMenuRoutingAdapterId = "command-menu-routing";
-		private static readonly string[] ApprovedBaselineAdapters = { CommandMenuRoutingAdapterId };
-		// The active-host contract for the CURRENT framework, kept in sync with every
-		// m_activeUIFramework assignment (SetUIFramework) from the approved set above.
-		// Assert sites only pass the adapter id they claim, so an unlisted id actually trips -- a
-		// contract constructed at the assert site from the very id it then asserts could never fail.
+		// The active-host contract for the current framework, kept in sync by SetUIFramework.
+		// While Avalonia is active, nothing may build or drive the WinForms DataTree.
 		private ActiveHostContract m_activeHostContract;
 
 		// Expansion state by DetailField.ExpansionKey for this session; a PropertyTable local
@@ -82,6 +88,13 @@ namespace SIL.FieldWorks.XWorks
 		private readonly HashSet<string> m_showAllWsFields = new HashSet<string>(StringComparer.Ordinal);
 		// The record m_showAllWsFields belongs to; a different record expires the reveal.
 		private int m_showAllWsRecordHvo;
+		// The record the Avalonia view shows now, and the objects its rows are bound to: what
+		// a change must touch to refresh the view. Null and empty while no record is shown.
+		private ICmObject m_shownRecord;
+		private HashSet<int> m_shownRowObjects = new HashSet<int>();
+		// The clerk's current object when the shown record was shown: a subrecord, when the
+		// tool shows a current subrecord inside its root. 0 while no record is shown.
+		private int m_shownForHvo;
 
 		private bool ShouldUseAvaloniaLexiconEdit
 		{
@@ -187,15 +200,20 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private void TearDownAvaloniaEntryForm()
 		{
+			UnregisterCommandAuthority();
 			if (m_avaloniaEntryForm != null)
 			{
 				m_avaloniaEntryForm.DetailEditCompleted -= OnAvaloniaDetailEditCompleted;
 				m_avaloniaEntryForm.DetailInteractionCompleted -= OnAvaloniaInteractionCompleted;
+				m_avaloniaEntryForm.UndoRedoKeyUnhandled -= OnAvaloniaUndoRedoKey;
 			}
 			m_detailEditContext.DetachDeactivateHook();
 			m_detailEditContext.DetachUndoGuard();
 			m_detailEditContext.InvalidEditRolledBack = null;
 			m_avaloniaRefreshController?.Dispose();
+			m_refreshQuietTimer?.Dispose();
+			m_refreshQuietTimer = null;
+			m_afterRefreshQuiet = null;
 			SettleDetailEdits();
 			m_detailEditContext.Clear();
 			m_avaloniaEntryForm?.Dispose();
@@ -203,6 +221,7 @@ namespace SIL.FieldWorks.XWorks
 			// resurrect a stale reveal.
 			m_showAllWsFields.Clear();
 			m_showAllWsRecordHvo = 0;
+			SetShownRecord(null, null);
 			// Null the host + refresh controller after disposing them. The recreation guards
 			// (EnsureAvaloniaEntryFormInitialized / EnsureAvaloniaRefreshController) key on `== null`, so a
 			// runtime flip New->Legacy->New rebuilds a fresh entry form instead of re-showing a disposed one.
@@ -259,6 +278,7 @@ namespace SIL.FieldWorks.XWorks
 			m_avaloniaEntryForm.Dock = DockStyle.Fill;
 			m_avaloniaEntryForm.DetailEditCompleted += OnAvaloniaDetailEditCompleted;
 			m_avaloniaEntryForm.DetailInteractionCompleted += OnAvaloniaInteractionCompleted;
+			m_avaloniaEntryForm.UndoRedoKeyUnhandled += OnAvaloniaUndoRedoKey;
 			if (!m_panel.Controls.Contains(m_avaloniaEntryForm))
 				m_panel.Controls.Add(m_avaloniaEntryForm);
 		}
@@ -279,7 +299,9 @@ namespace SIL.FieldWorks.XWorks
 			// the controller's runner before recomposing.
 			m_avaloniaRefreshController = new AvaloniaDetailRefreshController(
 				Cache,
-				() => Clerk?.CurrentObject,
+				// The record on display, which is the top-level record when the tool shows a
+				// current subrecord inside its root.
+				() => RefreshRecord,
 				// "Busy" means an open session OR a click in flight: Commit clears IsOpen BEFORE
 				// EndUndoTask raises PropChanged, so its own notification would recompose
 				// midclick.
@@ -288,8 +310,9 @@ namespace SIL.FieldWorks.XWorks
 				RefreshAvaloniaDetail,
 				new RefreshCoordinator(),
 				ScheduleOnUiThread,
-				// This lexical host's relevance rule; the controller itself stays host-agnostic.
-				changed => IsChangeWithinEntry(changed, Clerk?.CurrentObject));
+				// This host's relevance rule; the controller itself stays host-agnostic.
+				changed => IsChangeWithinEntry(changed, RefreshRecord, m_shownRowObjects),
+				DeferUntilQuiet);
 			// Global Undo/Redo while a fenced session is open would re-enter the UOW write lock
 			// (LockRecursionException); the guard settles the pending edit instead.
 			m_detailEditContext.AttachUndoGuard(Cache.ActionHandlerAccessor);
@@ -307,12 +330,15 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// The lexical host's refresh relevance: a change is relevant when the changed
-		/// object is, or is owned by, the entry on display. This is the predicate the host injects
-		/// into <see cref="AvaloniaDetailRefreshController"/>; static and internal so it is
-		/// unit-testable without a live view.
+		/// The host's refresh relevance: a change is relevant when the changed object is, or is
+		/// owned by, the record on display, or an object one of its rows is bound to (in
+		/// <paramref name="shownRowObjects"/>; null for none). Bound objects reach what the
+		/// record only references, such as a notebook record's Text (LT-22692). This is the
+		/// predicate the host injects into <see cref="AvaloniaDetailRefreshController"/>; static
+		/// and internal so it is unit-testable without a live view.
 		/// </summary>
-		internal static bool IsChangeWithinEntry(ICmObject changed, ICmObject current)
+		internal static bool IsChangeWithinEntry(ICmObject changed, ICmObject current,
+			ICollection<int> shownRowObjects = null)
 		{
 			if (changed == null || current == null)
 				return false;
@@ -320,10 +346,66 @@ namespace SIL.FieldWorks.XWorks
 			// any record class, not just entries, so nested edits also trigger the coalesced
 			// refresh.
 			for (var o = changed; o != null; o = o.Owner)
-				if (o.Hvo == current.Hvo)
+			{
+				if (o.Hvo == current.Hvo || (shownRowObjects?.Contains(o.Hvo) ?? false))
 					return true;
+			}
 			return false;
 		}
+
+		// How long a burst of changes made outside the detail view must go quiet before the
+		// view rebuilds once for the rest of it, in milliseconds (LT-22692).
+		private const int RefreshQuietMilliseconds = 250;
+
+		private System.Windows.Forms.Timer m_refreshQuietTimer;
+		private Action m_afterRefreshQuiet;
+
+		/// <summary>
+		/// Runs <paramref name="action"/> on the UI thread once RefreshQuietMilliseconds pass
+		/// with no further call; each call restarts the wait and replaces the action.
+		/// </summary>
+		internal void DeferUntilQuiet(Action action)
+		{
+			if (IsDisposed)
+				return;
+			if (InvokeRequired)
+			{
+				try
+				{
+					BeginInvoke((Action)(() => DeferUntilQuiet(action)));
+				}
+				catch (InvalidOperationException)
+				{
+					// The view is going away; there is nothing left to refresh.
+				}
+				return;
+			}
+			m_afterRefreshQuiet = action;
+			if (m_refreshQuietTimer == null)
+			{
+				m_refreshQuietTimer = new System.Windows.Forms.Timer
+				{
+					Interval = RefreshQuietMilliseconds
+				};
+				m_refreshQuietTimer.Tick += (sender, e) => OnRefreshQuiet();
+			}
+			m_refreshQuietTimer.Stop();
+			m_refreshQuietTimer.Start();
+		}
+
+		/// <summary>
+		/// The quiet wait has run out: runs the last deferred action, once.
+		/// </summary>
+		internal void OnRefreshQuiet()
+		{
+			m_refreshQuietTimer?.Stop();
+			var pending = m_afterRefreshQuiet;
+			m_afterRefreshQuiet = null;
+			pending?.Invoke();
+		}
+
+		/// <summary>Whether a deferred action is waiting for the quiet wait to run out.</summary>
+		internal bool IsRefreshQuietPending => m_refreshQuietTimer?.Enabled == true;
 
 		// UI-thread deferral for the controller's coalesced refresh queue: posting to the message
 		// queue lets the current call stack (commit/rollback PropChanged, the focus transition
@@ -394,11 +476,8 @@ namespace SIL.FieldWorks.XWorks
 				m_showAllWsFields.Clear();
 			m_showAllWsRecordHvo = obj?.Hvo ?? 0;
 
-			// Adapter hygiene: the hidden command-routing DataTree must never answer mediator
-			// commands for a PREVIOUS record -- reset it whenever the shown record changes; the
-			// next
-			// right-click re-syncs it (EnsureMenuCommandAdapter). Without this, Insert Sense from
-			// the main menu could silently target the entry that was last right-clicked.
+			// A WinForms DataTree left from before a switch to the New UI drops its slices when
+			// the shown record changes.
 			if (m_dataTreeInitialized && m_dataEntryForm?.Root != null && obj != null
 				&& m_dataEntryForm.Root.Hvo != obj.Hvo)
 			{
@@ -408,6 +487,7 @@ namespace SIL.FieldWorks.XWorks
 			if (obj == null)
 			{
 				m_detailEditContext.Clear();
+				SetShownRecord(null, null);
 				m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
 				return;
 			}
@@ -449,6 +529,7 @@ namespace SIL.FieldWorks.XWorks
 					// No first-slice fallback exists for a non-LexEntry root: show the unsupported state
 					// rather than crash.
 					m_detailEditContext.Clear();
+					SetShownRecord(null, null);
 					m_avaloniaEntryForm.ShowMessage(FwAvaloniaStrings.EntryTypeUnsupported);
 					return;
 				}
@@ -468,13 +549,43 @@ namespace SIL.FieldWorks.XWorks
 			// cross-window-undo mitigation would be silently lost for this host's lifetime.
 			if (!m_detailEditContext.IsDeactivateHookAttached)
 				m_detailEditContext.AttachDeactivateHook(FindForm());
+			SetShownRecord(obj, detail);
+			DetailShowCount++;
 			m_avaloniaEntryForm.ShowDetail(detail, editContext,
 				OnDetailWritingSystemFocused,
 				GetPersistedExpansionState, PersistExpansionState,
 				OnDetailMenuRequested, OnDetailLinkRequested,
 				new FwTsStringClipboard(Cache.WritingSystemFactory),
 				GetPersistedLabelColumnWidth, PersistLabelColumnWidth,
-				rootHvo: obj.Hvo);
+				rootHvo: obj.Hvo, hotlinkItems: HotlinkItemsFor);
+		}
+
+		private void SetShownRecord(ICmObject record, DetailModel detail)
+		{
+			m_shownRecord = record;
+			m_shownForHvo = record == null ? 0 : Clerk?.CurrentObject?.Hvo ?? record.Hvo;
+			m_shownRowObjects = detail == null
+				? new HashSet<int>()
+				: new HashSet<int>(detail.Fields.Select(f => f.ObjectHvo).Where(hvo => hvo != 0));
+		}
+
+		// The record a change must touch to refresh the view: the one shown, or the clerk's
+		// current record while none is, so a record the clerk selects without a show still
+		// refreshes on an outside change.
+		private ICmObject RefreshRecord => m_shownRecord ?? Clerk?.CurrentObject;
+
+		/// <summary>How many times this view has built its Avalonia detail view.</summary>
+		internal int DetailShowCount { get; private set; }
+
+		// Forgets the shown record once the clerk's current object changes, even to a sibling
+		// subrecord, so settling the edit left open is judged against the next one (LT-22692).
+		private void ForgetShownRecordIfLeaving()
+		{
+			if (m_shownRecord == null)
+				return;
+			var next = Clerk?.CurrentObject;
+			if (next == null || !next.IsValidObject || next.Hvo != m_shownForHvo)
+				SetShownRecord(null, null);
 		}
 
 		/// <summary>
@@ -576,81 +687,70 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				var idArray = ids.Where(id => !string.IsNullOrEmpty(id)).ToArray();
-				var window = m_propertyTable.GetValue<XWindow>("window");
 
-				// Only ids without a native authority need the hidden command adapter. An adapter
-				// failure must not suppress the menu: its items disable, the rest still works.
-				var authority = CreateMenuAuthority(request);
-				var ownsAll = XCoreMenuBridge.OwnsAll(authority, idArray);
-				if (!ownsAll)
-					SyncMenuCommandAdapter(request.Field);
+				// A menu that offers nothing is not shown; one that cannot be built is logged
+				// below and not shown either.
+				var items = BuildMenuItems(idArray, request);
+				if (items.Count == 0)
+					return;
 
-				// Render the SAME xCore menu natively in Avalonia -- identical items,
-				// enablement, and mediator dispatch; only rendering changes. The WinForms
-				// adapter menu remains the fallback if materialization fails.
+				// A keyboard-opened menu anchors under the row it came from; a right-click opens
+				// it at the pointer. The menu may take focus from the row's editor, which holds
+				// its commit until the menu closes.
+				request.BeginMenuGesture();
 				try
 				{
-					// On the mediator path Field Visibility / Move Field retarget to the override
-					// layer; other mediator-answered commands keep their dispatch. An owned menu
-					// never consults the interceptor, so it is not built.
-					Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor = null;
-					if (!ownsAll)
-					{
-						var registry = new OverrideCommandRegistry();
-						AddOverrideCommands(registry, request.Field);
-						interceptor = registry.TryBuild;
-					}
-					var items = XCoreMenuBridge.CreateMenuItems(window, idArray, interceptor, null, authority);
-					if (items.Count > 0)
-					{
-						// A keyboard-opened menu anchors under the row it came from; a
-						// right-click opens it at the pointer. The menu may take focus from the
-						// row's editor, which holds its commit until the menu closes.
-						request.BeginMenuGesture();
-						try
-						{
-							m_avaloniaEntryForm.ShowContextMenu(items, request.AnchorControl,
-								request.OpenAtPointer, request.EndMenuGesture);
-						}
-						catch
-						{
-							request.EndMenuGesture();
-							throw;
-						}
-						return;
-					}
+					m_avaloniaEntryForm.ShowContextMenu(items, request.AnchorControl,
+						request.OpenAtPointer, request.EndMenuGesture);
 				}
-				catch (Exception nativeMenuError)
+				catch
 				{
-					Logger.WriteError("Avalonia-native menu failed; falling back to the adapter menu.",
-						nativeMenuError);
+					request.EndMenuGesture();
+					throw;
 				}
-
-				// The adapter menu answers from the hidden tree's current slice, which an owned
-				// menu never pointed at this row.
-				if (ownsAll)
-					SyncMenuCommandAdapter(request.Field);
-				window.ShowContextMenu(idArray, AdapterMenuScreenPoint(request), null, null);
 			}
 			catch (Exception e)
 			{
-				Logger.WriteError("Detail context menu failed.", e);
+				Logger.WriteError("Detail context menu failed; nothing is shown.", e);
 			}
 		}
 
-		// The adapter fallback needs a raw screen point: cursor position for a right-click,
-		// the anchor's bottom-left otherwise. Both corners are mapped since
-		// RTL flow mirrors X in PointToScreen.
-		private static System.Drawing.Point AdapterMenuScreenPoint(DetailMenuRequest request)
+		/// <summary>
+		/// The merged menu of the given ids for a request, answered by the row's native
+		/// authorities. An id none of them owns shows its commands disabled, and a log line
+		/// names it.
+		/// </summary>
+		internal IReadOnlyList<DetailMenuItem> BuildMenuItems(string[] menuIds, DetailMenuRequest request)
 		{
-			var anchor = request.AnchorControl;
-			if (request.OpenAtPointer || anchor == null)
-				return System.Windows.Forms.Cursor.Position;
-			var left = Avalonia.VisualExtensions.PointToScreen(anchor,
-				new Avalonia.Point(0, anchor.Bounds.Height));
-			var right = Avalonia.VisualExtensions.PointToScreen(anchor,
-				new Avalonia.Point(anchor.Bounds.Width, anchor.Bounds.Height));
-			return new System.Drawing.Point(Math.Min(left.X, right.X), left.Y);
+			var authority = CreateMenuAuthority(request);
+			foreach (var id in menuIds)
+			{
+				if (!authority.Owns(id))
+					Logger.WriteEvent("No native authority owns the menu '" + id + "'; its commands show disabled.");
+			}
+			return XCoreMenuBridge.CreateMenuItems(m_propertyTable.GetValue<XWindow>("window"), menuIds, authority);
+		}
+
+		/// <summary>
+		/// The commands a section header's hotlinks offer, one leaf per command in menu order,
+		/// each with its command's current enabled state; empty when the header has no hotlinks
+		/// menu, the menu offers no command, or it cannot be built. A menu no native authority
+		/// owns shows its commands disabled.
+		/// </summary>
+		internal IReadOnlyList<DetailMenuItem> HotlinkItemsFor(DetailField field)
+		{
+			if (string.IsNullOrEmpty(field?.HotlinksId))
+				return Array.Empty<DetailMenuItem>();
+			try
+			{
+				return BuildMenuItems(new[] { field.HotlinksId },
+					DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.Hotlinks));
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Building the hotlinks of '" + field.HotlinksId + "' failed; none are shown.", e);
+				return Array.Empty<DetailMenuItem>();
+			}
 		}
 
 		// The per-(class, layout) override file lives in this project's
@@ -706,43 +806,8 @@ namespace SIL.FieldWorks.XWorks
 					+ "'; using the shipped definition.", error));
 
 		/// <summary>
-		/// Registers the per-field Field Visibility and Move Field commands that retarget to
-		/// the project override layer for the Avalonia detail view. Registers nothing
-		/// (every command keeps its normal mediator dispatch) when the clicked row carries no
-		/// (class, layout) context, e.g. the first-slice fallback rows, so ordinary dispatch
-		/// stays in force when the override layer cannot be addressed.
-		/// </summary>
-		internal void AddOverrideCommands(OverrideCommandRegistry registry, DetailField field)
-		{
-			if (field == null || string.IsNullOrEmpty(field.ClassName) || string.IsNullOrEmpty(field.LayoutName)
-				|| ViewOverrideStore == null)
-			{
-				return;
-			}
-
-			// Unknown/stale target: leave the field commands on mediator dispatch rather than
-			// guess.
-			if (!TryLocateOverrideTarget(field, out var templateId, out var location))
-				return;
-			registry.Add("CmdAlwaysVisible",
-				(c, d) => VisibilityItem(LabelOf(d), field, templateId, location, ViewVisibility.Always));
-			registry.Add("CmdIfData",
-				(c, d) => VisibilityItem(LabelOf(d), field, templateId, location, ViewVisibility.IfData));
-			registry.Add("CmdNormallyHidden",
-				(c, d) => VisibilityItem(LabelOf(d), field, templateId, location, ViewVisibility.Never));
-			registry.Add("CmdDataTree-MoveFieldUp",
-				(c, d) => MoveItem(LabelOf(d), field, location, up: true));
-			registry.Add("CmdDataTree-MoveFieldDown",
-				(c, d) => MoveItem(LabelOf(d), field, location, up: false));
-		}
-
-		private static string LabelOf(UIItemDisplayProperties display)
-			=> XCoreMenuBridge.StripAccelerator(display.Text);
-
-		/// <summary>
-		/// The native authorities for the request's row, asked in order: the four that own
-		/// their menu ids outright, then the Lexicon authority that owns by predicate. A label
-		/// menu made only of owned ids needs nothing from the hidden command adapter.
+		/// The native authorities for the request's row, asked in order: the five that own
+		/// their menu ids outright, then the Lexicon authority that owns by predicate.
 		/// </summary>
 		internal IDetailMenuAuthority CreateMenuAuthority(DetailMenuRequest request)
 		{
@@ -752,18 +817,20 @@ namespace SIL.FieldWorks.XWorks
 			return new CompositeMenuAuthority(
 				CreateReorderVectorAuthority(request),
 				new EnvironmentInsertMenuAuthority(request, this),
-				CreateMultiStringMenuAuthority(request.Field, objectMenu),
+				new StructuredTextMenuAuthority(request, StructuredTextItem),
+				CreateWritingSystemsMenuAuthority(request.Field, objectMenu),
 				objectMenu,
 				CreateLexiconMenuAuthority(request.Field));
 		}
 
-		/// <summary>The native authority for a multi-writing-system row's label menu.</summary>
-		internal IDetailMenuAuthority CreateMultiStringMenuAuthority(DetailField field)
-			=> CreateMultiStringMenuAuthority(field, CreateObjectMenuAuthority(field));
+		/// <summary>The native authority for the label menu of a row that chooses its
+		/// writing systems.</summary>
+		internal IDetailMenuAuthority CreateWritingSystemsMenuAuthority(DetailField field)
+			=> CreateWritingSystemsMenuAuthority(field, CreateObjectMenuAuthority(field));
 
-		private IDetailMenuAuthority CreateMultiStringMenuAuthority(DetailField field,
+		private IDetailMenuAuthority CreateWritingSystemsMenuAuthority(DetailField field,
 			IDetailMenuAuthority sharedLeaves)
-			=> new MultiStringMenuAuthority(field, sharedLeaves,
+			=> new WritingSystemsMenuAuthority(field, sharedLeaves,
 				menu: WritingSystemMenuOf,
 				show: ShowWritingSystems,
 				showAll: ShowAllWritingSystemsItem,
@@ -773,7 +840,7 @@ namespace SIL.FieldWorks.XWorks
 		internal IDetailMenuAuthority CreateObjectMenuAuthority(DetailField field)
 			=> new ObjectMenuAuthority(field, LocateOverrideTarget,
 				fieldVisibility: (label, target, visibility) =>
-					VisibilityItem(label, field, target.TemplateId, target.Location, visibility),
+					VisibilityItem(label, field, target.Location, visibility),
 				moveField: (label, target, up) => MoveItem(label, field, target.Location, up),
 				helpTopic: KnownHelpTopic,
 				showHelp: ShowDetailHelp);
@@ -784,8 +851,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			try
 			{
-				return TryLocateOverrideTarget(field, out var templateId, out var location)
-					? new OverrideTarget(templateId, location)
+				return TryLocateOverrideTarget(field, out _, out var location)
+					? new OverrideTarget(location)
 					: null;
 			}
 			catch (Exception e)
@@ -850,13 +917,13 @@ namespace SIL.FieldWorks.XWorks
 			catch (Exception e)
 			{
 				Logger.WriteError("Resolving the field's override target failed; its Field Visibility "
-					+ "and Move Field commands are not retargeted to the override layer.", e);
+					+ "and Move Field commands are disabled.", e);
 				return false;
 			}
 			if (location == null)
 			{
 				Logger.WriteEvent(string.Format("Detail row '{0}' has no node in its compiled model; its "
-					+ "Field Visibility and Move Field commands are not retargeted to the override layer.",
+					+ "Field Visibility and Move Field commands are disabled.",
 					templateId));
 				return false;
 			}
@@ -885,11 +952,11 @@ namespace SIL.FieldWorks.XWorks
 		// SetVisibility override mutation (idempotent -- re-choosing the current value is a
 		// harmless write).
 		private DetailMenuItem VisibilityItem(string label, DetailField field,
-			string templateId, ViewNodeLocation location, ViewVisibility target)
+			ViewNodeLocation location, ViewVisibility target)
 		{
 			var isChecked = location.Visibility == target;
 			return new DetailMenuItem(label, isEnabled: true, isChecked: isChecked, children: null,
-				execute: () => ApplyFieldVisibility(field, templateId, target));
+				execute: () => ApplyFieldVisibility(field, location, target));
 		}
 
 		// A Move Field item: disabled at the first sibling (up) / last sibling (down) / when alone.
@@ -913,9 +980,19 @@ namespace SIL.FieldWorks.XWorks
 					RefreshAvaloniaDetail();
 				});
 
-		// The row's Writing Systems menu, from the shared rule and the row's own layout facts.
+		// The row's Writing Systems menu, checked from its stored selection.
 		private IReadOnlyList<WritingSystemMenuOption> WritingSystemMenuOf(DetailField field)
-			=> FieldWritingSystemOptions.Menu(Cache, WritingSystemSpecOf(field), field.VisibleWritingSystems);
+			=> WritingSystemChoicesOf(field).Menu(field.VisibleWritingSystems);
+
+		/// <summary>
+		/// The writing systems the row offers and shows, from the shared rule its kind of row
+		/// follows: the Reversal Entries rule, or the multi-string rule over the row's own
+		/// layout facts. The menu and the Configure dialog both read these.
+		/// </summary>
+		internal WritingSystemChoices WritingSystemChoicesOf(DetailField field)
+			=> ReversalIndexEntryPlugin.Built(field)
+				? ReversalEntryWritingSystems.Choices(Cache)
+				: FieldWritingSystemOptions.Choices(Cache, WritingSystemSpecOf(field));
 
 		private static WritingSystemFieldSpec WritingSystemSpecOf(DetailField field)
 			=> WritingSystemFieldSpec.FromLayout(field.ObjectHvo, field.WritingSystem,
@@ -966,10 +1043,10 @@ namespace SIL.FieldWorks.XWorks
 				{
 					try
 					{
-						var spec = WritingSystemSpecOf(field);
-						var shown = FieldWritingSystemOptions.Shown(Cache, spec, field.VisibleWritingSystems);
+						var choices = WritingSystemChoicesOf(field);
+						var shown = choices.Shown(field.VisibleWritingSystems);
 						using (var dlg = new ConfigureWritingSystemsDlg(
-							FieldWritingSystemOptions.Options(Cache, spec), shown,
+							choices.Options, shown,
 							m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 						{
 							dlg.Text = ConfigureWritingSystemsDlg.TitleFor(field.Label);
@@ -990,12 +1067,14 @@ namespace SIL.FieldWorks.XWorks
 					}
 				});
 
-		// Writes a SetVisibility op for the field's template id into the project override and recomposes.
-		private void ApplyFieldVisibility(DetailField field, string templateId, ViewVisibility target)
+		// Writes a SetVisibility op for each of the location's visibility targets into the
+		// project override and recomposes.
+		private void ApplyFieldVisibility(DetailField field, ViewNodeLocation location,
+			ViewVisibility target)
 		{
-			var op = new ViewOverrideOperation(ViewOverrideOperationKind.SetVisibility, templateId,
-				visibility: target);
-			MutateOverrideAndRefresh(field, op);
+			var ops = location.VisibilityTargets.Select(id => new ViewOverrideOperation(
+				ViewOverrideOperationKind.SetVisibility, id, visibility: target)).ToArray();
+			MutateOverrideAndRefresh(field, ops);
 		}
 
 		// Writes a ReorderChildren op on the field's PARENT into the project override, then
@@ -1014,15 +1093,15 @@ namespace SIL.FieldWorks.XWorks
 		// Loads-or-creates the (class, layout) override, folds the op in, saves it, and
 		// recomposes the Avalonia detail view. Only the override file is written -- not the
 		// shipped XML or the part-ref inventory.
-		private void MutateOverrideAndRefresh(DetailField field, ViewOverrideOperation op)
+		private void MutateOverrideAndRefresh(DetailField field, params ViewOverrideOperation[] ops)
 		{
-			if (TryMutateOverride(field, op))
+			if (TryMutateOverride(field, ops))
 				RefreshAvaloniaDetail();
 		}
 
-		// Folds the op into the (class, layout) override and saves it, WITHOUT recomposing.
+		// Folds the ops into the (class, layout) override and saves it once, WITHOUT recomposing.
 		// Returns whether the save succeeded, so a failed save can leave view state untouched.
-		private bool TryMutateOverride(DetailField field, ViewOverrideOperation op)
+		private bool TryMutateOverride(DetailField field, params ViewOverrideOperation[] ops)
 		{
 			try
 			{
@@ -1030,9 +1109,10 @@ namespace SIL.FieldWorks.XWorks
 				if (store == null)
 					return false;
 
-				var existing = store.TryGet(field.ClassName, field.LayoutName)
+				var merged = store.TryGet(field.ClassName, field.LayoutName)
 					?? new ViewDefinitionOverride(field.ClassName, field.LayoutName, "detail", null, null);
-				var merged = ViewDefinitionOverrideEditor.MergeOperation(existing, op);
+				foreach (var op in ops)
+					merged = ViewDefinitionOverrideEditor.MergeOperation(merged, op);
 				store.Save(merged);
 				return true;
 			}
@@ -1085,172 +1165,6 @@ namespace SIL.FieldWorks.XWorks
 			if (!string.IsNullOrEmpty(request.Link.TargetGuid))
 				Guid.TryParse(request.Link.TargetGuid, out target);
 			return new FwLinkArgs(request.Link.Tool, target);
-		}
-
-		// Approved baseline adapter "command-menu-routing": the hidden legacy DataTree +
-		// DTMenuHandler provide the colleague chain and CurrentSlice context the legacy command
-		// handlers require. Created lazily on first right-click; never attached/visible while the
-		// Avalonia is active.
-		private void EnsureMenuCommandAdapter(int targetHvo, string fieldName)
-		{
-			// The active-host contract is enforced, not just documented: driving the hidden
-			// legacy DataTree is legal only through an adapter id the host's contract lists. The
-			// contract was built from ApprovedBaselineAdapters when the view activated; this
-			// site only claims its own id (the fallback covers a menu raised before activation).
-			(m_activeHostContract ?? ActiveHostContract.ForAvalonia(ApprovedBaselineAdapters))
-				.AssertLegacyDataTreeDriveAllowed(CommandMenuRoutingAdapterId);
-
-			if (!m_dataTreeInitialized)
-			{
-				EnsureDataTreeInitialized();
-				DetachDataTreeFromPanel(); // adapter only: Avalonia stays active
-			}
-			// Display logic gating on Visible (e.g. OnDisplayDataTreeInsert) treats the hidden
-			// adapter tree as active.
-			m_dataEntryForm.IsExternalCommandAdapter = true;
-
-			var current = Clerk?.CurrentObject;
-			if (current == null)
-			{
-				// No current record: drop any target left by a previous interaction, same
-				// fail-loud rule as the no-slice-found path below.
-				m_dataEntryForm.ClearCurrentSlice();
-				return;
-			}
-			m_dataEntryForm.ShowObject(current, m_layoutName, m_layoutChoiceField, current, true);
-
-			if (targetHvo == 0)
-			{
-				// The row carries no object, so no slice can be its target.
-				m_dataEntryForm.ClearCurrentSlice();
-				return;
-			}
-
-			// Targeting hardening: the legacy command handlers act on m_dataEntryForm.CurrentSlice,
-			// so the adapter must point CurrentSlice at the slice bound to the clicked row's object. A first
-			// pass over the already-realized slices handles the common case (small sequences build their
-			// slices instantly). When the target lives inside an UNREALIZED DummyObjectSlice (a sequence with
-			// >= DataTree.kInstantSliceMax items builds lazy placeholders whose Object is the OWNER, not the
-			// target), no real slice carries the target hvo yet -- realize the lazy slices and
-			// retry rather
-			// than silently leaving the wrong (or stale) CurrentSlice pointed, which would make the command
-			// mutate the wrong object or, for Merge's class guard, silently fail.
-			if (TrySetCurrentSliceForRow(targetHvo, fieldName))
-				return;
-
-			if (RealizeLazySlicesAndRetry(targetHvo, fieldName))
-				return;
-
-			// Fail loud, not silent: if we still cannot produce a slice for the target we must NOT leave
-			// CurrentSlice pointed at whatever the previous interaction selected (it would mis-target the
-			// command). Clear it so command handlers see "no current slice" and no-op, and log so the
-			// degradation is diagnosable from the field rather than only in a debugger.
-			m_dataEntryForm.ClearCurrentSlice();
-			Logger.WriteEvent(string.Format(
-				"Detail menu command adapter found no DataTree slice for target hvo {0} field '{1}'; "
-				+ "CurrentSlice was cleared so the command no-ops rather than mis-targeting another object.",
-				targetHvo, fieldName ?? string.Empty));
-		}
-
-		/// <summary>
-		/// Picks the slice a menu request targets. Sibling rows can share one object (a MoForm's
-		/// Form, Morph Type, ...) while handlers key on <c>CurrentSlice.Flid</c>, so prefer a
-		/// match on object AND field; fall back to object alone (headers, ghosts, custom rows).
-		/// Returns -1 when nothing matches.
-		/// </summary>
-		internal static int ChooseTargetSliceIndex(IReadOnlyList<(int Hvo, string FieldName)> candidates,
-			int targetHvo, string fieldName)
-		{
-			if (candidates == null)
-				return -1;
-
-			if (!string.IsNullOrEmpty(fieldName))
-			{
-				for (var i = 0; i < candidates.Count; i++)
-				{
-					if (candidates[i].Hvo == targetHvo
-						&& string.Equals(candidates[i].FieldName, fieldName, StringComparison.Ordinal))
-					{
-						return i;
-					}
-				}
-			}
-
-			for (var i = 0; i < candidates.Count; i++)
-			{
-				if (candidates[i].Hvo == targetHvo)
-					return i;
-			}
-			return -1;
-		}
-
-		// Targets the best realized slice for the row; false when nothing matches (the
-		// target may still sit inside a lazy placeholder).
-		private bool TrySetCurrentSliceForRow(int targetHvo, string fieldName)
-		{
-			// Not filtered on Slice.IsRealSlice: for a view slice that is
-			// RootSite.AllowLayout, false forever in a tree that never lays out. Lazy
-			// placeholders report their OWNER, so exclude them by type instead.
-			var candidates = new List<Slice>();
-			foreach (var sliceObj in m_dataEntryForm.Slices)
-			{
-				if (sliceObj is Slice slice && slice.Object != null && !slice.IsLazyPlaceholder)
-					candidates.Add(slice);
-			}
-
-			// Field names are only ever compared for hvo matches, so skip the metadata
-			// lookup for every other slice (and entirely when no field name was requested).
-			var index = ChooseTargetSliceIndex(
-				candidates.Select(s => (
-					s.Object.Hvo,
-					s.Object.Hvo == targetHvo && !string.IsNullOrEmpty(fieldName)
-						? SliceFieldName(s)
-						: null)).ToList(),
-				targetHvo, fieldName);
-			if (index < 0)
-				return false;
-
-			// ShowObject suspends ordinary CurrentSlice assignment until idle; the
-			// command-target setter applies immediately.
-			m_dataEntryForm.SetCurrentSliceForCommandTarget(candidates[index]);
-			return true;
-		}
-
-		// The model field name a slice edits, or null (header/object rows, unknown flids).
-		private string SliceFieldName(Slice slice)
-		{
-			var flid = slice.Flid;
-			// A ViewPropertySlice can carry its field only in FieldId, with no "field"
-			// attribute on its configuration node.
-			if (flid == 0 && slice is ViewPropertySlice viewPropertySlice)
-				flid = viewPropertySlice.FieldId;
-			// Virtual and decorator-only flids are absent from the MDC and never field-match.
-			var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
-			return flid != 0 && mdc.FieldExists(flid) ? mdc.GetFieldName(flid) : null;
-		}
-
-		/// <summary>
-		/// Expands every lazy placeholder in place, then retries the match: a placeholder reports
-		/// its OWNER as its Object, so the target cannot match until expansion. Walks by index
-		/// because the collection mutates as placeholders expand.
-		/// </summary>
-		private bool RealizeLazySlicesAndRetry(int targetHvo, string fieldName)
-		{
-			try
-			{
-				for (var i = 0; i < m_dataEntryForm.Slices.Count; i++)
-				{
-					if (m_dataEntryForm.Slices[i] is Slice slice && slice.IsLazyPlaceholder)
-						m_dataEntryForm.FieldAt(i); // expands the placeholder at i in place
-				}
-			}
-			catch (Exception e)
-			{
-				Logger.WriteError("Realizing lazy DataTree slices for detail command targeting failed.", e);
-				return false;
-			}
-
-			return TrySetCurrentSliceForRow(targetHvo, fieldName);
 		}
 
 		internal bool? GetPersistedExpansionState(string expansionKey)
@@ -1325,6 +1239,19 @@ namespace SIL.FieldWorks.XWorks
 			m_avaloniaRefreshController?.ReleaseHeldRefresh();
 		}
 
+		// The window's KeyDown runs FieldWorks' shortcuts, checking each command is enabled.
+		// Keys typed into Avalonia never reach it, so these are handed to it (LT-22820).
+		private void OnAvaloniaUndoRedoKey(object sender, KeyEventArgs e)
+		{
+			var window = m_propertyTable?.GetValue<XWindow>("window");
+			if (window == null)
+				return;
+			e.Handled = true;
+			var keyData = e.KeyData;
+			// Posted, so an undo that re-shows this view does not rebuild it mid key event.
+			ScheduleOnUiThread(() => window.HandleKeyDown(new KeyEventArgs(keyData)));
+		}
+
 		private void OnAvaloniaDetailEditCompleted(object sender, EventArgs e)
 		{
 			// ONE re-show covers the completed edit AND any refresh held during it: drop the held
@@ -1357,7 +1284,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_activeHostContract == null || m_activeHostContract.ActiveUIFramework != kind)
 			{
 				m_activeHostContract = ShouldUseAvaloniaLexiconEdit
-					? ActiveHostContract.ForAvalonia(ApprovedBaselineAdapters)
+					? ActiveHostContract.ForAvalonia()
 					: ActiveHostContract.ForLegacy();
 			}
 		}
@@ -1383,6 +1310,7 @@ namespace SIL.FieldWorks.XWorks
 			// EnsureAvaloniaRefreshController is idempotent (its m_avaloniaRefreshController != null guard),
 			// so the later ShowAvaloniaEntry call is a no-op rather than a duplicate registration.
 			EnsureAvaloniaRefreshController();
+			RegisterCommandAuthority();
 
 			DetachDataTreeFromPanel();
 			m_avaloniaEntryForm.Show();

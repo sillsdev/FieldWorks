@@ -184,6 +184,21 @@ namespace XCore
 		}
 
 		/// <summary>
+		/// RemoveProperty with a settings group removes only that group's entry; BestSettings
+		/// removes the local entry while there is one, then the global one.
+		/// </summary>
+		[Test]
+		public void RemoveProperty_WithSettingsGroup_RemovesOnlyThatGroupsEntry()
+		{
+			m_propertyTable.RemoveProperty("BooleanPropertyA", PropertyTable.SettingsGroup.LocalSettings);
+			Assert.That(m_propertyTable.PropertyExists("BooleanPropertyA", PropertyTable.SettingsGroup.LocalSettings), Is.False);
+			Assert.That(m_propertyTable.PropertyExists("BooleanPropertyA", PropertyTable.SettingsGroup.GlobalSettings), Is.True);
+
+			m_propertyTable.RemoveProperty("BooleanPropertyA", PropertyTable.SettingsGroup.BestSettings);
+			Assert.That(m_propertyTable.PropertyExists("BooleanPropertyA"), Is.False);
+		}
+
+		/// <summary>
 		/// Test the various versions of PropertyExists.
 		/// </summary>
 		[Test]

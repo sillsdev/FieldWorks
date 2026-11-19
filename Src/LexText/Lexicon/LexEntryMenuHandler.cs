@@ -113,28 +113,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// it defaults to false, so it should be]
 		/// </summary>
 		protected  bool InFriendlyAreaShow_DictionaryPubPreview
-		{
-			get
-			{
-				string desiredArea = "lexicon";
-
-				// see if it's the right area
-				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
-				if (areaChoice != null && areaChoice == desiredArea)
-				{
-					// now see if it's one of the right tools
-					string[] allowedTools = {"simpleLexiconEdit", "lexiconTestEdit",
-							"lexiconEdit", "lexiconEdit", "lexiconFullEdit"};
-					string toolChoice = m_propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
-					foreach (string tool in allowedTools)
-					{
-						if (toolChoice != null && toolChoice == tool)
-							return true;
-					}
-				}
-				return false; //we are not in a valid area
-			}
-		}
+			=> DictionaryPreviewAvailability.IsOffered(m_propertyTable.GetStringProperty("areaChoice", null),
+				m_propertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null));
 
 		/// <summary>
 		/// handle the message to see if the menu item should be enabled

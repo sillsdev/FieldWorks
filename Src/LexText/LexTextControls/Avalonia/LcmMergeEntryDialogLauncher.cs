@@ -117,7 +117,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		internal static EntryGoDialogInput BuildInput(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 			ILexEntry currentEntry)
 		{
-			var search = BuildSearch(cache, mediator, propertyTable, currentEntry);
+			var searchWs = new EntryGoLauncherShared.SearchWritingSystem();
+			var search = BuildSearch(cache, mediator, propertyTable, currentEntry, searchWs);
 			return new EntryGoDialogInput
 			{
 				Title = FwAvaloniaDialogsStrings.MergeTitle,
@@ -127,8 +128,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				InitialQuery = currentEntry.HomographForm,
 				HelpTopic = "khtpMergeEntry",
 				Search = search,
-				// The search box types the vernacular text being searched (see BuildVernacularSearchFieldSpec).
-				SearchField = EntryGoLauncherShared.BuildVernacularSearchFieldSpec(cache),
+				SearchField = EntryGoLauncherShared.BuildSearchFieldSpec(cache, searchWs),
 				// The matching list's default columns (headword + glosses in their ws typography).
 				ResultColumns = EntryGoLauncherShared.BuildDefaultResultColumns(cache)
 			};
@@ -142,10 +142,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// merge an entry with itself). Internal so it is unit-testable against a real cache.
 		/// </summary>
 		internal static Func<string, IReadOnlyList<EntryGoSearchResult>> BuildSearch(LcmCache cache,
-			Mediator mediator, PropertyTable propertyTable, ILexEntry currentEntry)
+			Mediator mediator, PropertyTable propertyTable, ILexEntry currentEntry,
+			EntryGoLauncherShared.SearchWritingSystem searchWs = null)
 		{
 			return EntryGoLauncherShared.BuildEntrySearch(cache, mediator, propertyTable,
-				currentEntry.Hvo, "AvaloniaMergeEntrySearchEngine", filter: null);
+				currentEntry.Hvo, "AvaloniaMergeEntrySearchEngine", filter: null,
+				searchWs);
 		}
 
 		protected override EntryGoDialogViewModel CreateViewModel(EntryGoDialogInput state)
@@ -183,11 +185,24 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// </summary>
 		private bool DefaultConfirm(ILexEntry current, ILexEntry survivor)
 		{
-			var message = string.Format(CultureInfo.CurrentCulture, FwAvaloniaDialogsStrings.MergeConfirm,
-				EntryGoLauncherShared.HeadwordText(current), EntryGoLauncherShared.HeadwordText(survivor));
-			var result = FwMessageBox.Show(_owner, message, FwAvaloniaDialogsStrings.MergeTitle,
-				FwMessageBoxButtons.YesNo, FwMessageBoxIcon.Warning);
+			var result = FwMessageBox.Show(_owner, ConfirmMessage(current, survivor),
+				FwAvaloniaDialogsStrings.MergeTitle, FwMessageBoxButtons.YesNo, FwMessageBoxIcon.Warning);
 			return result == FwMessageBoxResult.Yes;
+		}
+
+		/// <summary>
+		/// The merge-confirmation text naming <paramref name="current"/> and
+		/// <paramref name="survivor"/>. An entry with no form in any current writing system is
+		/// named by LCM's headword, so the sentence never has a blank name.
+		/// </summary>
+		internal static string ConfirmMessage(ILexEntry current, ILexEntry survivor)
+			=> string.Format(CultureInfo.CurrentCulture, FwAvaloniaDialogsStrings.MergeConfirm,
+				ConfirmName(current), ConfirmName(survivor));
+
+		private static string ConfirmName(ILexEntry entry)
+		{
+			var name = EntryGoLauncherShared.HeadwordText(entry);
+			return string.IsNullOrEmpty(name) ? entry.HeadWord?.Text ?? string.Empty : name;
 		}
 
 		/// <summary>

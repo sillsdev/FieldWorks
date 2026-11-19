@@ -20,6 +20,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.Reporting;
 using SIL.Utils;
 using XCore;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -179,8 +180,8 @@ namespace SIL.FieldWorks.XWorks
 		internal Func<ICmPicture, string> PictureFileChosen { get; set; }
 
 		/// <summary>
-		/// The message-keyed authority for the Lexicon menus, owning by predicate and
-		/// answering for <paramref name="field"/>; with no row every answer is hidden.
+		/// The message-keyed authority for the Lexicon and Notebook menus, owning by predicate
+		/// and answering for <paramref name="field"/>; with no row every answer is hidden.
 		/// </summary>
 		internal LexiconMenuAuthority CreateLexiconMenuAuthority(DetailField field)
 		{
@@ -207,20 +208,26 @@ namespace SIL.FieldWorks.XWorks
 			authority.Answer(PromoteSenseMessage, leaf => SenseNestingItem(leaf, field, demote: false));
 			authority.Answer(SplitMessage, leaf => SplitItem(leaf, field));
 			authority.Answer(InsertPictureMessage, leaf => InsertPictureItem(leaf, field));
+			authority.Answer(InsertItemInVectorMessage, ClerkInsertItem);
+			authority.Answer(MoveRecordUpMessage, leaf => MoveItem(leaf, field, up: true));
+			authority.Answer(MoveRecordDownMessage, leaf => MoveItem(leaf, field, up: false));
+			authority.Answer(PromoteSubrecordMessage, leaf => RecordNestingItem(leaf, field, demote: false));
+			authority.Answer(DemoteSubrecordMessage, leaf => RecordNestingItem(leaf, field, demote: true));
+			authority.Answer(DuplicateMessage, leaf => DuplicateItem(leaf, field));
+			authority.Answer(MoveToCategoryMessage, leaf => MoveToCategoryItem(leaf, field));
 			return authority;
 		}
 
 		/// <summary>
 		/// The Insert leaves answered natively: a class created in an owning field, or a
-		/// variant added through the entry's variant back references. Inserts into
-		/// SubPossibilities stay with the adapter.
+		/// variant added through the entry's variant back references.
 		/// </summary>
 		internal bool InsertLeafInScope(DetailMenuLeaf leaf)
 		{
 			var command = leaf.Command;
 			var fieldName = command.GetParameter("field", null);
 			var className = command.GetParameter("className", null);
-			if (string.IsNullOrEmpty(fieldName) || string.IsNullOrEmpty(className) || fieldName == "SubPossibilities")
+			if (string.IsNullOrEmpty(fieldName) || string.IsNullOrEmpty(className))
 				return false;
 			if (!((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor).ClassExists(className))
 				return false;
@@ -283,6 +290,17 @@ namespace SIL.FieldWorks.XWorks
 				Logger.WriteEvent("Insert Variant did nothing: neither the row's object nor the shown record is an entry.");
 				return null;
 			}
+			return AddVariant(entry);
+		}
+
+		/// <summary>
+		/// Adds a variant to <paramref name="entry"/> through <see cref="VariantToInsert"/>,
+		/// with pending edits already settled; the re-show focuses the variant's Variant Form
+		/// editor.
+		/// </summary>
+		/// <returns>The variant's entry ref, or null when nothing was added.</returns>
+		private ILexEntryRef AddVariant(ILexEntry entry)
+		{
 			var entryRef = (VariantToInsert ?? InsertVariantWithDialog)(entry);
 			if (entryRef == null || !entryRef.IsValidObject)
 				return null;
@@ -346,10 +364,13 @@ namespace SIL.FieldWorks.XWorks
 			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
 		}
 
-		// The command's target from the row's object, by its field, className, ownerClass and
-		// slice parameters; null when none resolves.
-		private static DetailInsertTarget ResolveInsertTarget(ICmObject rowObject, Command command)
-			=> DetailObjectInsertion.ResolveTarget(rowObject, command.GetParameter("field"), command.GetParameter("className"),
+		/// <summary>
+		/// The command's target from the row's object in the shown record's view, by its field,
+		/// className, ownerClass and slice parameters; null when none resolves.
+		/// </summary>
+		internal DetailInsertTarget ResolveInsertTarget(ICmObject rowObject, Command command)
+			=> DetailObjectInsertion.ResolveTarget(ResolveShownRecord(Clerk?.CurrentObject), rowObject,
+				command.GetParameter("field"), command.GetParameter("className"),
 				command.GetParameter("ownerClass", null), command.GetParameter("slice", null) == "owner");
 
 		/// <summary>
@@ -735,6 +756,10 @@ namespace SIL.FieldWorks.XWorks
 				: DetailSequenceMove.MoveDown(target, xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem);
 			if (!moved)
 				return false;
+			// A document view in this window regenerates to show the new order. It does so
+			// behind a progress dialog, so the re-show that takes the keyboard comes after.
+			Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshCurrentView,
+				new ReturnObject(null), m_propertyTable.GetWindow()));
 			m_avaloniaEntryForm?.FocusObjectOnNextShow(target.Hvo);
 			OnAvaloniaDetailEditCompleted(this, EventArgs.Empty);
 			return true;

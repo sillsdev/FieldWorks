@@ -152,6 +152,11 @@ namespace SIL.FieldWorks.XWorks
 		#region Event Handling
 		public event EventHandler SorterChangedByClerk;
 		public event FilterChangeHandler FilterChangedByClerk;
+		/// <summary>
+		/// Raised with the target hvo just before this clerk acts on a published JumpToRecord.
+		/// A jump that reaches the clerk any other way does not raise it.
+		/// </summary>
+		internal event Action<int> PublishedJumpStarting;
 		#endregion Event Handling
 
 		#region IDisposable & Co. implementation
@@ -342,7 +347,7 @@ namespace SIL.FieldWorks.XWorks
 			bool fSetFilterMenu = false;
 			if (recordFilterListProviderNode != null)
 			{
-				m_filterProvider = RecordFilterListProvider.Create(m_mediator, m_propertyTable, recordFilterListProviderNode);
+				m_filterProvider = RecordFilterListProvider.Create(m_propertyTable, recordFilterListProviderNode);
 				if (m_filterProvider != null && m_list.Filter != null)
 				{
 					// find any matching persisted menubar filter
@@ -352,8 +357,10 @@ namespace SIL.FieldWorks.XWorks
 						if (m_list.Filter.Contains(menuBarFilterOption))
 						{
 							m_activeMenuBarFilter = menuBarFilterOption;
-							m_filterProvider.OnAdjustFilterSelection(m_activeMenuBarFilter);
-							m_propertyTable.SetDefault(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id, PropertyTable.SettingsGroup.LocalSettings);
+							m_filterProvider.AdjustFilterSelection(m_activeMenuBarFilter);
+							// The restore above adjusted the menu before this filter was
+							// known; replace that value rather than default it.
+							m_propertyTable.SetProperty(CurrentFilterPropertyTableId, m_activeMenuBarFilter.id, PropertyTable.SettingsGroup.LocalSettings, false);
 							fSetFilterMenu = true;
 							break;
 						}
@@ -362,7 +369,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (!fSetFilterMenu)
 			{
-				OnAdjustFilterSelection(null);
+				AdjustFilterSelection();
 			}
 
 			// we never want to persist this value, since it is dependent upon the filter property.
@@ -437,7 +444,7 @@ namespace SIL.FieldWorks.XWorks
 			bool updateAndNotify, DictionaryConfigurationModel dictConfig = null)
 		{
 			RecordFilter filter = null;
-			string persistFilter = m_propertyTable.GetStringProperty(GetFilterPropertyTableId(dictConfig), null, PropertyTable.SettingsGroup.LocalSettings);
+			string persistFilter = m_list.GetPersistedSetting("filter", dictConfig);
 			if (m_list.Filter != null)
 			{
 				// if the persisted object string of the existing filter matches the one in the property table
@@ -457,13 +464,16 @@ namespace SIL.FieldWorks.XWorks
 						filter.Cache = cache;
 					}
 				}
-				catch
+				catch (Exception e)
 				{
-					filter = null; // If anything goes wrong, ignore the persisted value.
+					Logger.WriteEvent("Persisted filter not restored, using the default: " + e.Message);
+					filter = null;
 				}
 			}
 			if (filter == null || !filter.IsValid)
 			{
+				if (filter != null)
+					Logger.WriteEvent("Persisted filter is not valid, using the default: " + filter);
 				m_filterNode = ToolConfiguration.GetDefaultFilter(clerkConfiguration);
 				filter = m_filterNode != null ? RecordFilter.Create(cache, m_filterNode) : null;
 			}
@@ -492,9 +502,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <c>false</c>if the one installed matches the one we had stored to persist.</returns>
 		protected virtual bool TryRestoreSorter(XmlNode clerkConfiguration, LcmCache cache, DictionaryConfigurationModel dictConfig = null)
 		{
-			SortName = m_propertyTable.GetStringProperty(GetSortNamePropertyTableId(dictConfig), null, PropertyTable.SettingsGroup.LocalSettings);
+			SortName = m_list.GetPersistedSetting("sortName", dictConfig);
 
-			string persistSorter = m_propertyTable.GetStringProperty(GetSorterPropertyTableId(dictConfig), null, PropertyTable.SettingsGroup.LocalSettings);
+			string persistSorter = m_list.GetPersistedSetting("sorter", dictConfig);
 			if (m_list.Sorter != null)
 			{
 				// if the persisted object string of the existing sorter matches the one in the property table
@@ -510,9 +520,10 @@ namespace SIL.FieldWorks.XWorks
 				{
 					sorter = DynamicLoader.RestoreObject(persistSorter) as RecordSorter;
 				}
-				catch
+				catch (Exception e)
 				{
-					sorter = null; // If anything goes wrong, ignore the persisted value.
+					Logger.WriteEvent("Persisted sorter not restored, using the default: " + e.Message);
+					sorter = null;
 				}
 			}
 			if (sorter == null)
@@ -1024,6 +1035,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Subclasses can override this to route the jump elsewhere first (the concordance
 		/// clerk lets its ConcordanceControl try the jump before falling back to this base
 		/// implementation).
+		/// This base implementation raises <see cref="PublishedJumpStarting"/> before it jumps.
 		/// Note: Mediator broadcasts of "JumpToRecord" still arrive via OnJumpToRecord
 		/// until those senders are also converted to Pub/Sub.
 		/// </summary>
@@ -1031,6 +1043,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!IsActiveClerk)
 				return;
+			PublishedJumpStarting?.Invoke((int)argument);
 			JumpToRecord(argument);
 		}
 
@@ -2660,8 +2673,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 #pragma warning disable 618 // suppress obsolete warning
-			if (newObj != null)
-				m_mediator.BroadcastMessage("UpdateItemCheckedState", newObj);
 			m_mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
 #pragma warning restore 618
 			return result;
@@ -2810,11 +2821,12 @@ namespace SIL.FieldWorks.XWorks
 				m_list.OnChangeFilter(args);
 				// Remember the active filter for this list.
 				string persistFilter = DynamicLoader.PersistObject(Filter, "filter");
-				m_propertyTable.SetProperty(GetFilterPropertyTableId(), persistFilter, PropertyTable.SettingsGroup.LocalSettings, false);
+				var filterId = GetFilterPropertyTableId();
+				if (filterId != null)
+					m_propertyTable.SetProperty(filterId, persistFilter, PropertyTable.SettingsGroup.LocalSettings, false);
 				// adjust menu bar items according to current state of Filter, where needed.
-#pragma warning disable 618 // suppress obsolete warning
-				m_mediator.BroadcastMessage("AdjustFilterSelection", Filter);
-#pragma warning restore 618
+				AdjustFilterSelection();
+				m_filterProvider?.AdjustFilterSelection(Filter);
 				UpdateFilterStatusBarPanel();
 				if (m_list.Filter != null)
 					Logger.WriteEvent("Filter changed: "+m_list.Filter);
@@ -2829,9 +2841,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Make Filters menuBar item selection adjustments as necessary.
 		/// </summary>
-		/// <param name="argument"></param>
-		/// <returns></returns>
-		public bool OnAdjustFilterSelection(object argument)
+		private void AdjustFilterSelection()
 		{
 			CheckDisposed();
 
@@ -2851,8 +2861,6 @@ namespace SIL.FieldWorks.XWorks
 				// Resetting the table property value to NoFilters checks this item.
 				m_propertyTable.SetProperty(CurrentFilterPropertyTableId, (new NoFilters()).Name, PropertyTable.SettingsGroup.LocalSettings, false);
 			}
-			// allow others to process this.
-			return false;
 		}
 
 		/// <summary>
@@ -3024,12 +3032,16 @@ namespace SIL.FieldWorks.XWorks
 			m_isDefaultSort = isDefaultSort;
 
 			SortName = sortName;
-			m_propertyTable.SetProperty(GetSortNamePropertyTableId(), SortName, PropertyTable.SettingsGroup.LocalSettings, false);
+			var sortNameId = GetSortNamePropertyTableId();
+			if (sortNameId != null)
+				m_propertyTable.SetProperty(sortNameId, SortName, PropertyTable.SettingsGroup.LocalSettings, false);
 
 			m_list.ChangeSorter(sorter);
 			// Remember how we're sorted.
 			string persistSorter = DynamicLoader.PersistObject(Sorter, "sorter");
-			m_propertyTable.SetProperty(GetSorterPropertyTableId(), persistSorter, PropertyTable.SettingsGroup.LocalSettings, false);
+			var sorterId = GetSorterPropertyTableId();
+			if (sorterId != null)
+				m_propertyTable.SetProperty(sorterId, persistSorter, PropertyTable.SettingsGroup.LocalSettings, false);
 
 			UpdateSortStatusBarPanel();
 		}

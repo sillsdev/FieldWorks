@@ -70,6 +70,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected ICmObject m_moveObj;
 
+		// The Move command that opened the category list, for its undo text.
+		private Command m_moveCommand;
+
 		/// <summary>
 		/// Object just created.
 		/// </summary>
@@ -371,10 +374,6 @@ namespace SIL.FieldWorks.XWorks
 			string className = command.GetParameter("className");
 			string ownerClassName = command.GetParameter("ownerClass", "");
 			Slice current = m_dataEntryForm.CurrentSlice;
-			// On the hidden command adapter a null CurrentSlice is the deliberate no-target
-			// state; substituting another slice would insert relative to the wrong object.
-			if (current == null && m_dataEntryForm.IsExternalCommandAdapter)
-				return false;
 			if (current != null)
 			{
 				current.Validate();
@@ -515,6 +514,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Slice currentSlice = m_dataEntryForm.CurrentSlice;
 			m_moveObj = currentSlice.Object;
+			m_moveCommand = cmd as Command;
 			if (m_moveObj is IMoInflAffixSlot slot)
 			{
 				ShowPartsOfSpeech(slot.Owner.Hvo);
@@ -566,79 +566,12 @@ namespace SIL.FieldWorks.XWorks
 				repo.TryGetObject((e.Node as HvoTreeNode).Hvo, out selectedPOS);
 			if (selectedPOS != null)
 			{
-				if (m_moveObj is IMoInflAffixSlot slot)
-				{
-					MoveSlot(slot, selectedPOS);
+				CategoryItemMove.Move(m_moveObj, selectedPOS, m_moveCommand?.UndoText ?? xWorksStrings.UndoMoveItem,
+					m_moveCommand?.RedoText ?? xWorksStrings.RedoMoveItem);
+				if (m_moveObj is IMoInflAffixSlot)
 					Publisher.Publish(new PublisherParameterObject(EventConstants.MasterRefresh, null, m_propertyTable.GetWindow()));
-				}
-				if (m_moveObj is IMoInflAffixTemplate template)
-				{
-					MoveTemplate(template, selectedPOS);
-				}
 			}
 		}
-
-		private void MoveSlot(IMoInflAffixSlot slot, IPartOfSpeech selectedPOS)
-		{
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Move Slot",
-									"Redo Move Slot", Cache.ActionHandlerAccessor, () =>
-									{
-										selectedPOS.AffixSlotsOC.Add(slot);
-										foreach (IMoInflAffMsa msa in slot.Affixes)
-										{
-											msa.PartOfSpeechRA = selectedPOS;
-										}
-									});
-		}
-		private void MoveTemplate(IMoInflAffixTemplate template, IPartOfSpeech selectedPOS)
-		{
-			if (template.Owner == selectedPOS)
-			{
-				// Don't move the template to selectedPOS if it is already there.
-				return;
-			}
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Move Template",
-									"Redo Move Template", Cache.ActionHandlerAccessor, () =>
-									{
-										// Get the template POS before the template is moved.
-										IPartOfSpeech templatePOS = template.Owner as IPartOfSpeech;
-										// Move the template.
-										selectedPOS.AffixTemplatesOS.Add(template);
-										if (templatePOS.Owner == selectedPOS)
-										{
-											// Move template slots up, too.
-											IList<IMoInflAffixSlot> slots = template.PrefixSlotsRS.ToList();
-											slots.AddRange(template.SuffixSlotsRS.ToList());
-											foreach (IMoInflAffixSlot slot in slots)
-											{
-												IPartOfSpeech slotPOS = slot.Owner as IPartOfSpeech;
-												IPartOfSpeech slotPOSOwner = slotPOS.Owner as IPartOfSpeech;
-												// Move a slot if it is at the same level as the template
-												// and moving it couldn't cause a name conflict.
-												string slotName = slot.Name.BestAnalysisVernacularAlternative.Text;
-												if (slotPOS == templatePOS && GetPOSSlot(slotPOSOwner, slotName) == null)
-													MoveSlot(slot, selectedPOS);
-											}
-										}
-									});
-		}
-
-		public static IMoInflAffixSlot GetPOSSlot(IPartOfSpeech partOfSpeech, string name)
-		{
-			while (partOfSpeech != null)
-			{
-				foreach (IMoInflAffixSlot slot in partOfSpeech.AllAffixSlots)
-				{
-					// NB: BestAnalysisVernacularAlternative always returns something.
-					if (slot.Name.BestAnalysisVernacularAlternative.Text == name)
-						return slot;
-				}
-				partOfSpeech = partOfSpeech.Owner as IPartOfSpeech;
-			}
-			return null;
-		}
-
-
 
 		private bool SliceConfiguredForField(XmlNode node, string field)
 		{
@@ -686,51 +619,19 @@ namespace SIL.FieldWorks.XWorks
 			string fieldName;
 			string cmdClassName;
 			ExtractInsertCommandInfo(command, out fieldName, out cmdClassName);
-			string rootObjClassName = string.Empty;
 			var rootObj = currentSlice.ContainingDataTree.Root;
 			if (rootObj != null && !rootObj.IsValidObject)
 				return false;
-			try
+			if (!DetailObjectInsertion.OffersSubItem(rootObj, fieldName, cmdClassName))
+				return false;
+			// A sub-item also needs its section among the slices.
+			if (fieldName == DetailObjectInsertion.SubItemsField
+				&& !currentSlice.ContainingDataTree.HasSubPossibilitiesSlice)
 			{
-				if (rootObj != null)
-					rootObjClassName = rootObj.ClassName;
+				return false;
 			}
-			catch
-			{
-			}
-			// For a SubPossibilities insertion, the class associated with this field
-			// in the command node must match the class of the parentObject so that
-			// we filter out commands to insert an item into the wrong CmPossibility class.
-			// (If we need to do anything else exceptional for CmPossibilities try subclassing
-			// DTMenuHandler to handle these things. That requires a menuHandler node in the parameters
-			// for each of the tools based on a CmPossibility list.)
-			if (fieldName == "SubPossibilities")
-			{
-				// we can insert only if we are are inserting into the same class.
-				if (cmdClassName != rootObjClassName)
-					return false;
-				// we can insert only if the ContainingDataTree has a SubPossibilities slice
-				if(!currentSlice.ContainingDataTree.HasSubPossibilitiesSlice)
-					return false;
-			}
-			// "Insert Subsense" should be enabled only for Sense related slices, not for entry
-			// related slices.  This isn't perfect, but behaves the same as "Insert Picture".
-			if (command.Id == "CmdInsertSubsense" && fieldName == "Senses")
-			{
-				if (currentSlice.Object != null && currentSlice.Object.IsValidObject)
-					return currentSlice.Object.ClassID == LexSenseTags.kClassId;
-			}
-			// First, see if the command can insert something that belongs to
-			// the current slice containing tree root object.
-			bool fCanInsert;
-			fCanInsert = CanInsertFieldIntoObj(Cache, fieldName, rootObj, out index);
-			// Otherwise, see if the command can insert something that belongs
-			// to the current slice object.
-			if (!fCanInsert && currentSlice.Object != rootObj)
-			{
-				fCanInsert = CanInsertFieldIntoObj(Cache, fieldName, currentSlice.Object, out index);
-			}
-			return fCanInsert;
+			return Cache != null
+				&& DetailObjectInsertion.CanInsert(rootObj, currentSlice.Object, command.Id, fieldName, out index);
 		}
 
 		/// <summary>
@@ -758,20 +659,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			XCore.Command command = commandObject as XCore.Command;
 			Slice slice = m_dataEntryForm.CurrentSlice;
-			// On the hidden command adapter a null CurrentSlice is the deliberate no-target
-			// state; substituting the first slice would enable the insert against another object.
-			if (slice == null && m_dataEntryForm.Slices.Count > 0
-				&& !m_dataEntryForm.IsExternalCommandAdapter)
-			{
+			if (slice == null && m_dataEntryForm.Slices.Count > 0)
 				slice = m_dataEntryForm.FieldAt(0);
-			}
 
 			int index = -1;
-			// 15.4: the hidden command-routing adapter tree counts as active -- the user-visible
-			// UI (Avalonia) is elsewhere, and the insert itself never needs visibility.
 			if (command != null && slice != null && !slice.IsDisposed &&
-				(m_dataEntryForm.Visible || m_dataEntryForm.IsExternalCommandAdapter) &&
-				this.CanInsert(command, slice, out index))
+				m_dataEntryForm.Visible && this.CanInsert(command, slice, out index))
 			{
 				display.Enabled = true;
 				string toolTipInsert = display.Text.Replace("_", string.Empty);	// strip any menu keyboard accelerator marker;
@@ -796,13 +689,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			XCore.Command command = commandObject as XCore.Command;
 			Slice slice = m_dataEntryForm.CurrentSlice;
-			// Same no-target rule as OnDisplayDataTreeInsert: on the hidden command adapter,
-			// never substitute the first slice for a deliberately cleared CurrentSlice.
-			if (slice == null && m_dataEntryForm.Slices.Count > 0
-				&& !m_dataEntryForm.IsExternalCommandAdapter)
-			{
+			if (slice == null && m_dataEntryForm.Slices.Count > 0)
 				slice = m_dataEntryForm.FieldAt(0);
-			}
 
 			int index = -1;
 			if (command != null && slice != null && !slice.IsDisposed && this.CanInsert(command, slice, out index))
@@ -1048,9 +936,22 @@ namespace SIL.FieldWorks.XWorks
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");
-			if (slice != null)
-				DetailSequenceMove.MoveUp(slice.Object, xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem);
+			if (slice != null && DetailSequenceMove.MoveUp(slice.Object,
+				xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem))
+			{
+				RefreshDocumentView();
+			}
 			return true;	//we handled this.
+		}
+
+		/// <summary>
+		/// Asks a document view in this window to regenerate its content. Nothing happens
+		/// where no such view is listening.
+		/// </summary>
+		protected void RefreshDocumentView()
+		{
+			Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshCurrentView,
+				new ReturnObject(null), m_propertyTable.GetWindow()));
 		}
 
 		/// <summary>
@@ -1086,8 +987,11 @@ namespace SIL.FieldWorks.XWorks
 			Slice slice = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(slice != null, "No slice was current");
 			Debug.Assert(!slice.IsDisposed, "The current slice is already disposed??");
-			if (slice != null)
-				DetailSequenceMove.MoveDown(slice.Object, xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem);
+			if (slice != null && DetailSequenceMove.MoveDown(slice.Object,
+				xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem))
+			{
+				RefreshDocumentView();
+			}
 			return true;	//we handled this.
 		}
 
@@ -1122,7 +1026,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnDisplayConvertEntryIntoVariant(object commandObject, ref UIItemDisplayProperties display)
 		{
-			display.Enabled = DisplayConvertLexEntry(commandObject);
+			display.Enabled = ConvertibleEntry(commandObject) != null;
 			return true;
 		}
 
@@ -1133,7 +1037,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnConvertEntryIntoVariant(object argument)
 		{
-			return AddNewLexEntryRef(argument, LexEntryRefTags.kflidVariantEntryTypes);
+			var entry = ConvertibleEntry(argument);
+			if (entry == null)
+				return false;
+			var command = (Command)argument;
+			EntryConversion.ConvertIntoVariant(entry, command.UndoText, command.RedoText);
+			return true;
 		}
 
 		/// <summary>
@@ -1144,20 +1053,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnDisplayConvertEntryIntoComplexForm(object commandObject, ref UIItemDisplayProperties display)
 		{
-			bool fDisplay = DisplayConvertLexEntry(commandObject);
-			if (fDisplay)
-			{
-				if (!m_dataEntryForm.Root.IsValidObject)
-					return true;
-				foreach (var ler in (m_dataEntryForm.Root as ILexEntry).EntryRefsOS)
-				{
-					if (ler.ComplexEntryTypesRS.Count == 0)
-						continue;
-					fDisplay = false;
-					break;
-				}
-			}
-			display.Enabled = fDisplay;
+			display.Enabled = EntryConversion.CanConvertIntoComplexForm(ConvertibleEntry(commandObject));
 			return true;
 		}
 
@@ -1168,69 +1064,27 @@ namespace SIL.FieldWorks.XWorks
 		/// <returns></returns>
 		public bool OnConvertEntryIntoComplexForm(object argument)
 		{
-			return AddNewLexEntryRef(argument, LexEntryRefTags.kflidComplexEntryTypes);
+			var entry = ConvertibleEntry(argument);
+			if (entry == null)
+				return false;
+			var command = (Command)argument;
+			EntryConversion.ConvertIntoComplexForm(entry, command.UndoText, command.RedoText);
+			return true;
 		}
 
-		private bool DisplayConvertLexEntry(object commandObject)
+		// The shown entry when the conversion command applies to it; null otherwise, and while
+		// no data is set up yet (LT-9712).
+		private ILexEntry ConvertibleEntry(object commandObject)
 		{
-			// We may not have any data set up yet.  See LT-9712.
-			if (Cache == null || m_dataEntryForm == null || m_dataEntryForm.Root == null)
-				return false;
-			Command command = (Command)commandObject;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_dataEntryForm.Root.ClassName)
-				return false;
-			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
-				return false;
-			return m_dataEntryForm.Root is ILexEntry;
-		}
-
-		private bool AddNewLexEntryRef(object argument, int flidTypes)
-		{
-			Command command = (Command)argument;
-			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			if (className != m_dataEntryForm.Root.ClassName)
-				return false;
-			string restrictToTool = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "restrictToTool");
-			if (restrictToTool != null && restrictToTool != m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
-				return false;
-
-			var ent = m_dataEntryForm.Root as ILexEntry;
-			if (ent != null)
-			{
-				UndoableUnitOfWorkHelper.Do(command.UndoText, command.RedoText, ent,
-					() =>
-						{
-							var ler = Cache.ServiceLocator.GetInstance<ILexEntryRefFactory>().Create();
-							int insertPos;
-							if (flidTypes == LexEntryRefTags.kflidVariantEntryTypes)
-							{
-								insertPos = ent.EntryRefsOS.Count;
-								ent.EntryRefsOS.Add(ler);
-								const string unspecVariantEntryTypeGuid = "3942addb-99fd-43e9-ab7d-99025ceb0d4e";
-								var type = ent.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS
-									.First(lrt => lrt.Guid.ToString() == unspecVariantEntryTypeGuid) as ILexEntryType;
-								ler.VariantEntryTypesRS.Add(type);
-								ler.RefType = LexEntryRefTags.krtVariant;
-								ler.HideMinorEntry = 0;
-							}
-							else
-							{
-								insertPos = 0;
-								ent.EntryRefsOS.Insert(insertPos, ler);
-								const string unspecComplexFormEntryTypeGuid = "fec038ed-6a8c-4fa5-bc96-a4f515a98c50";
-								var type = ent.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
-									.First(lrt => lrt.Guid.ToString() == unspecComplexFormEntryTypeGuid) as ILexEntryType;
-								ler.ComplexEntryTypesRS.Add(type);
-								ler.RefType = LexEntryRefTags.krtComplexForm;
-								ler.HideMinorEntry = 0; // LT-10928
-								ent.ChangeRootToStem();
-							}
-						});
-				return true;
-			}
-			return false;
+			if (Cache == null || m_dataEntryForm == null)
+				return null;
+			var parameters = ((Command)commandObject).Parameters[0];
+			var root = m_dataEntryForm.Root;
+			return ShownRecordCommandScope.Applies(root, XmlUtils.GetMandatoryAttributeValue(parameters, "className"),
+				XmlUtils.GetOptionalAttributeValue(parameters, "restrictToTool"),
+				m_propertyTable.GetStringProperty("currentContentControl", String.Empty))
+				? root as ILexEntry
+				: null;
 		}
 
 		public bool OnDisplayAddComponentToPrimary(object commandObject, ref UIItemDisplayProperties display)

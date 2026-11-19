@@ -29,6 +29,9 @@ namespace SIL.FieldWorks.Common.DetailRules
 		/// <summary>The entry's virtual field of its variants' entry refs.</summary>
 		public const string VariantBackRefField = "VariantFormEntryBackRefs";
 
+		/// <summary>The field that holds the sub-items of a list item.</summary>
+		public const string SubItemsField = "SubPossibilities";
+
 		/// <summary>
 		/// Whether a new object can go into <paramref name="fieldName"/> of
 		/// <paramref name="owner"/>: a vector, a virtual reference vector, or an empty atomic
@@ -80,6 +83,40 @@ namespace SIL.FieldWorks.Common.DetailRules
 			if (CanInsertInto(root, fieldName, out index))
 				return true;
 			return rowObject != root && CanInsertInto(rowObject, fieldName, out index);
+		}
+
+		/// <summary>The id of the Insert menu's Insert Subsense command.</summary>
+		public const string InsertSubsenseCommandId = "CmdInsertSubsense";
+
+		/// <summary>
+		/// The display rule of the Insert command <paramref name="commandId"/>: as
+		/// <see cref="CanInsert(ICmObject, ICmObject, string, out int)"/>, except that Insert
+		/// Subsense on a row with an object is enabled only when that object is itself a sense.
+		/// </summary>
+		/// <param name="index">The end of the vector that answered; -1 otherwise.</param>
+		public static bool CanInsert(ICmObject root, ICmObject rowObject, string commandId, string fieldName,
+			out int index)
+		{
+			if (commandId == InsertSubsenseCommandId && fieldName == "Senses" && rowObject != null
+				&& rowObject.IsValidObject)
+			{
+				index = -1;
+				return rowObject.ClassID == LexSenseTags.kClassId;
+			}
+			return CanInsert(root, rowObject, fieldName, out index);
+		}
+
+		/// <summary>
+		/// Whether the shown record takes what a command inserts: a command that inserts a
+		/// sub-item applies only to a shown record of exactly its class, so each list offers
+		/// its own kind of sub-item. Any other command applies.
+		/// </summary>
+		/// <param name="root">The shown record.</param>
+		public static bool OffersSubItem(ICmObject root, string fieldName, string className)
+		{
+			if (fieldName != SubItemsField)
+				return true;
+			return root != null && root.IsValidObject && root.ClassName == className;
 		}
 
 		/// <summary>
@@ -291,6 +328,21 @@ namespace SIL.FieldWorks.Common.DetailRules
 				return new DetailInsertTarget(owner, flid, concreteClass, position);
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// The target of a row's Insert command in the view of <paramref name="root"/>: as
+		/// <see cref="ResolveTarget(ICmObject, string, string, string, bool)"/>, except that
+		/// none resolves when <see cref="OffersSubItem"/> refuses the command, and a row of
+		/// the shown record itself never inserts at its owner, which the view does not show.
+		/// </summary>
+		/// <param name="root">The shown record.</param>
+		public static DetailInsertTarget ResolveTarget(ICmObject root, ICmObject rowObject, string fieldName,
+			string className, string ownerClassName, bool insertAtOwner)
+		{
+			if (!OffersSubItem(root, fieldName, className))
+				return null;
+			return ResolveTarget(rowObject, fieldName, className, ownerClassName, insertAtOwner && rowObject != root);
 		}
 
 		// The object and its owners, nearest first.

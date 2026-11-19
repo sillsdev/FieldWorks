@@ -33,8 +33,7 @@ namespace LexEdDllTests
 			CheckDisposed();
 
 			DummyReversalIndexEntrySliceView ctrl = new DummyReversalIndexEntrySliceView(
-				Object.Hvo, () => StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
-					Cache.LanguageProject.AnalysisWritingSystems));
+				Object.Hvo, VisibleWritingSystemIds);
 			ctrl.Cache = Cache;
 			DummyControl = ctrl;
 

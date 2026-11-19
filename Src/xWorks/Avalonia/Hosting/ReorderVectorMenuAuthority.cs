@@ -11,8 +11,8 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>
 	/// The native authority for the reorder-vector menu (Move Left, Move Right, Alphabetical
 	/// Order) of a row whose items have an order. Every answer comes from the row's
-	/// <see cref="DetailField"/> and the request's current item, so the menu needs neither the
-	/// hidden DataTree adapter nor a WinForms selection.
+	/// <see cref="DetailField"/> and the request's current item, so the menu needs no
+	/// WinForms selection.
 	/// </summary>
 	internal sealed class ReorderVectorMenuAuthority : IDetailMenuAuthority
 	{

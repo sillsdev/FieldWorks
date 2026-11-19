@@ -11,43 +11,36 @@ namespace XCore
 	/// <summary>
 	/// concrete implementations of this provide a list of RecordFilters to offer to the user.
 	/// </summary>
-	public abstract class RecordFilterListProvider : IxCoreColleague
+	public abstract class RecordFilterListProvider
 	{
-		protected XmlNode m_configuration;
-		protected Mediator m_mediator;
 		protected PropertyTable m_propertyTable;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// a factory method for RecordFilterListProvider
 		/// </summary>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable">The property table</param>
 		/// <param name="configuration">The configuration.</param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static public RecordFilterListProvider Create(Mediator mediator, PropertyTable propertyTable, XmlNode configuration)
+		static public RecordFilterListProvider Create(PropertyTable propertyTable, XmlNode configuration)
 		{
 			RecordFilterListProvider p = (RecordFilterListProvider)DynamicLoader.CreateObject(configuration);
 			if (p != null)
-				p.Init(mediator, propertyTable, configuration);
+				p.Init(propertyTable);
 			return p;
 		}
 
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Initialize the filter list. this is called because we are an IxCoreColleague
+		/// Initialize the filter list. Called by Create.
 		/// </summary>
-		/// <param name="mediator">The mediator.</param>
 		/// <param name="propertyTable">The PropertyTable</param>
-		/// <param name="configuration">The configuration.</param>
 		/// ------------------------------------------------------------------------------------
-		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configuration)
+		public virtual void Init(PropertyTable propertyTable)
 		{
-			m_mediator = mediator;
 			m_propertyTable = propertyTable;
-			m_configuration = configuration;
 		}
 
 		/// <summary>
@@ -57,28 +50,6 @@ namespace XCore
 		{
 		}
 
-
-		/// <summary>
-		/// return an array of all of the objects which should
-		/// 1) be queried when looking for someone to deliver a message to
-		/// 2) be potential recipients of a broadcast
-		/// this is called because we are an IxCoreColleague
-		/// </summary>
-		/// <returns></returns>
-		public IxCoreColleague[] GetMessageTargets()
-		{
-			return new IxCoreColleague[]{this};
-		}
-
-		/// <summary>
-		/// Never any reason not to call this instance.
-		/// </summary>
-		public bool ShouldNotCall
-		{
-			get { return false; }
-		}
-
-		public virtual int Priority { get { return (int)ColleaguePriority.Medium; } }
 
 		/// <summary>
 		/// the list of filters.
@@ -92,13 +63,11 @@ namespace XCore
 		public abstract object GetFilter(string id);
 
 		/// <summary>
-		/// May want to update / reload the list based on user selection.
+		/// Updates the offered filters to match the owning clerk's current filter.
 		/// </summary>
-		/// <param name="argument"></param>
-		/// <returns>true if handled.</returns>
-		public virtual bool OnAdjustFilterSelection(object argument)
+		/// <param name="currentFilter">the clerk's current filter; may be null</param>
+		public virtual void AdjustFilterSelection(object currentFilter)
 		{
-			return false;
 		}
 	}
 }

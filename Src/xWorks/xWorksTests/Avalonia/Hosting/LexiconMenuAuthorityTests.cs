@@ -19,7 +19,7 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using XCore;
-using LegacyDataTree = SIL.FieldWorks.Common.Framework.DetailControls.DataTree;
+using static SIL.FieldWorks.XWorks.DetailMenuTestSupport;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	[TestFixture]
 	[Apartment(System.Threading.ApartmentState.STA)]
-	public class LexiconMenuAuthorityTests : XWorksAppTestBase
+	public partial class LexiconMenuAuthorityTests : XWorksAppTestBase
 	{
 		// The ids owned today: each leaf sends an answered message, an Insert only in
 		// scope. Ownership is by message, so other areas' and unbound ids count too.
@@ -63,11 +63,13 @@ namespace SIL.FieldWorks.XWorks
 			"mnuDataTree-Sense",
 			// Lexicon: an id no part reaches (its pronunciation part does not exist).
 			"mnuDataTree-CmMedia",
-			// Grammar: posEdit rows (two item rows, five section rows: Affix Templates, Affix
-			// Slots, Inflection Classes, Subclasses, Stem Allomorph Labels), then other tools.
+			// Grammar: posEdit rows (four item rows, six section rows: Affix Templates, Affix
+			// Slots, Inflection Classes, Subclasses, Stem Allomorph Labels, Subcategories), then
+			// other tools.
 			"mnuDataTree-POS-InflectionClass", "mnuDataTree-POS-StemName",
+			"mnuDataTree-POS-AffixSlot", "mnuDataTree-POS-AffixTemplate",
 			"mnuDataTree-POS-AffixTemplates", "mnuDataTree-POS-AffixSlots", "mnuDataTree-POS-InflectionClasses",
-			"mnuDataTree-POS-InflectionClass-Subclasses", "mnuDataTree-POS-StemNames",
+			"mnuDataTree-POS-InflectionClass-Subclasses", "mnuDataTree-POS-StemNames", "mnuDataTree-POS-SubPossibilities",
 			"mnuDataTree-ClosedFeature-Value", "mnuDataTree-ClosedFeature-Values", "mnuDataTree-MoStemName-Region",
 			"mnuDataTree-MoStemName-Regions", "mnuDataTree-Phoneme-Code", "mnuDataTree-Phoneme-Codes",
 			"mnuDataTree-Delete-Adhoc-Allomorph", "mnuDataTree-Delete-Adhoc-Group",
@@ -75,7 +77,15 @@ namespace SIL.FieldWorks.XWorks
 			// Texts: the Info tab's jumps to the interlinear text and its notebook record; no
 			// Avalonia detail view.
 			"mnuDataTree-Text", "mnuTextInfo-Notebook",
+			// Notebook rows: the Subrecords section's menus and a subrecord's.
+			"mnuDataTree-SubRecords", "mnuDataTree-SubRecords-Hotlinks", "mnuDataTree-Subrecord-Hotlinks",
+			"mnuDataTree-SubRecordSummary",
+			// A list item's Subitems row: Exception "Features" composes it for a hierarchical
+			// list.
+			"mnuDataTree-SubPossibilities",
 			// Lists and Reversal: no Avalonia detail view.
+			"mnuDataTree-SubSemanticDomain", "mnuDataTree-SubComplexEntryType", "mnuDataTree-SubVariantEntryType",
+			"mnuDataTree-SubAnthroCategory", "mnuDataTree-SubLocation",
 			"mnuDataTree-DeletePossibility", "mnuDataTree-DeleteQuestion",
 			"mnuDataTree-InsertQuestion", "mnuDataTree-InsertReversalSubentry", "mnuDataTree-InsertReversalSubentry-Hotlinks"
 		};
@@ -102,6 +112,16 @@ namespace SIL.FieldWorks.XWorks
 		};
 
 		private const string LexemeFormContextMenuId = "mnuDataTree-LexemeFormContext";
+
+		private static readonly string[] PinnedPictureMenu =
+		{
+			"Picture Properties",
+			"---",
+			"(Move Picture Up)",
+			"Move Picture Down",
+			"---",
+			"Delete Picture"
+		};
 
 		// The messages of mnuDataTree-Object's six leaves, the test subject for the predicate.
 		private static readonly string[] ObjectMenuMessages =
@@ -133,10 +153,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			// The hidden DataTree the equivalence baseline drives loads the layout Inventory,
-			// which is keyed by the project path.
-			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name,
-				Cache.ProjectId.Name + ".junk");
 		}
 
 		[SetUp]
@@ -147,14 +163,12 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable = m_window.PropTable;
 			m_propertyTable.RemoveLocalAndGlobalSettings();
 			m_window.LoadUI(m_configFilePath);
-			TestLocalizationManagerBootstrap.EnsureInitialized();
 			TestLocalizationManagerBootstrap.EnsureHelpTopicProvider(m_propertyTable);
-			LayoutCache.InitializePartInventories(Cache.ProjectId.Name, m_application, Cache.ProjectId.Path);
 			m_createdObjects = new List<ICmObject>();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, CreateTestEntry);
 			m_propertyTable.SetProperty("UIMode", "New", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
-			LoadRecordEditView("lexiconEdit");
+			LoadRecordEditView(m_propertyTable, "lexiconEdit");
 			DrainMediatorAndIdleQueues();
 			m_view = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
 			Assert.That(m_view, Is.Not.Null, "expected the lexicon edit RecordEditView to load");
@@ -186,7 +200,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Contract: the owned-id list is exact, and every owned id builds in full through the
-		// bridge, so an unanswered leaf fails here instead of reverting a menu to the adapter.
+		// bridge, so an unanswered leaf fails here instead of failing the menu when it is raised.
 		[Test]
 		public void OwnsExactlyThePinnedIds_AndAnswersEveryLeafOfEachOne()
 		{
@@ -205,7 +219,7 @@ namespace SIL.FieldWorks.XWorks
 					Assert.That(() => authority.Build(id, leaf), Throws.Nothing,
 						"menu '{0}': the authority does not answer leaf '{1}'", id, leaf.CommandId);
 				}
-				Assert.That(() => XCoreMenuBridge.CreateMenuItems(window, new[] { id }, null, null, authority),
+				Assert.That(() => XCoreMenuBridge.CreateMenuItems(window, new[] { id }, authority),
 					Throws.Nothing, "menu '{0}' builds in full through the bridge", id);
 			}
 		}
@@ -217,16 +231,33 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var message in ObjectMenuMessages.Take(ObjectMenuMessages.Length - 1))
 				authority.Answer(message, Echo);
 			Assert.That(authority.Owns(RecordEditView.ObjectMenuId), Is.False,
-				"one unanswered message leaves the id with the adapter");
+				"one unanswered message leaves the id unowned");
 
 			authority.Answer(ObjectMenuMessages.Last(), Echo);
 
 			Assert.That(authority.Owns(RecordEditView.ObjectMenuId), Is.True,
 				"the id is owned the moment its last message has an answerer");
 			var items = XCoreMenuBridge.CreateMenuItems(Window, new[] { RecordEditView.ObjectMenuId },
-				null, null, authority);
+				authority);
 			Assert.That(items.Select(i => i.Label), Does.Contain("Help..."),
 				"the owned menu builds from the answerers alone");
+		}
+
+		// An answer's scope decides leaf by leaf: a refused leaf leaves its id unowned and is
+		// not built.
+		[Test]
+		public void ALeafItsAnswersScopeRefuses_LeavesItsIdUnowned_AndIsNotBuilt()
+		{
+			const string menuId = "mnuDataTree-POS-SubPossibilities";
+			var accepting = NewAuthority();
+			accepting.Answer(RecordEditView.InsertMessage, Echo, leaf => true);
+			var refusing = NewAuthority();
+			refusing.Answer(RecordEditView.InsertMessage, Echo, leaf => false);
+
+			Assert.That(accepting.Owns(menuId), Is.True, "control: the menu's one leaf is in scope");
+			Assert.That(refusing.Owns(menuId), Is.False);
+			Assert.That(() => refusing.Build(menuId, Leaf(menuId, "CmdDataTree-Insert-POS-SubPossibilities")),
+				Throws.InvalidOperationException, "a leaf outside the scope is not answered");
 		}
 
 		[Test]
@@ -268,64 +299,39 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(() => authority.Build(RecordEditView.ObjectMenuId, help),
 				Throws.InvalidOperationException, "an owned id must be answered in full, never partially");
 			Assert.That(() => authority.BuildList(RecordEditView.MultiStringSliceMenuId,
-				MultiStringMenuAuthority.WritingSystemListId), Throws.InvalidOperationException);
+				WritingSystemsMenuAuthority.WritingSystemListId), Throws.InvalidOperationException);
 		}
 
-		// Contract: on every Lexicon Edit row binding an owned id, by any menu kind, the
-		// owned menu renders what the adapter path rendered.
+		// Contract: on every Lexicon Edit row binding an owned id, by any menu kind, the owned
+		// menu renders its pinned items.
 		[Test]
-		public void OwnedMenu_RendersWhatTheAdapterPathRendered_OnEveryLexiconRowThatBindsOne()
+		public void OwnedMenu_RendersItsPinnedItems_OnEveryLexiconRowThatBindsOne()
 		{
 			var rows = OwnedMenuRows();
 			Assert.That(rows.Select(r => r.MenuId).Distinct(), Is.EquivalentTo(
 				LexiconLabelMenuIds.Concat(LexiconInStringMenuIds).Concat(LexiconHotlinksIds)),
 				"precondition: the entry composes a row for every owned id");
 
-			var mismatches = new List<string>();
+			var rendered = new List<string>();
 			foreach (var (row, menuId, kind) in rows)
 			{
-				EnsureAdapter(row.ObjectHvo, row.Field);
-				Assert.That(AdapterTree.CurrentSlice?.Object?.Hvo, Is.EqualTo(row.ObjectHvo),
-					"precondition: the adapter targets the row's object for " + row.Label);
-				var ids = new[] { menuId };
-				var before = Describe(XCoreMenuBridge.CreateMenuItems(Window, ids, null, null, null));
-				var after = Describe(XCoreMenuBridge.CreateMenuItems(Window, ids, null, null,
-					m_view.CreateMenuAuthority(MenuRequest(row, kind))));
-				Assert.That(after, Does.Contain("enabled=True checked=False executes=True"),
+				var items = XCoreMenuBridge.CreateMenuItems(Window, new[] { menuId },
+					m_view.CreateMenuAuthority(MenuRequest(row, kind)));
+				Assert.That(Describe(items), Does.Contain("enabled=True checked=False executes=True"),
 					row.Label + ": " + menuId + " offers a command that runs");
-				if (menuId == "mnuDataTree-ExtendedNote-Hotlinks")
-				{
-					// An accepted divergence: the adapter path disables the insert under a
-					// note, since neither the entry nor the note has ExtendedNote; natively
-					// the sense that owns the note takes it.
-					Assert.That(before, Is.EqualTo("Insert Extended Note [enabled=False checked=False executes=False]"));
-					Assert.That(after, Is.EqualTo("Insert Extended Note [enabled=True checked=False executes=True]"));
-					continue;
-				}
-				if (RowIsTheSequencesOwner(row, menuId))
-				{
-					// A section row and an empty sequence's prompt row carry the item id with the
-					// OWNER as their object; the adapter path offers the owner's Delete and Move
-					// there, natively absent. The rest is the same.
-					Assert.That(before, Does.Contain("Delete ").Or.Contain("Move "),
-						row.Label + ": the adapter path offers the owner's Delete or Move");
-					Assert.That(ItemLines(after), Is.EqualTo(ItemLines(before).Where(l => !l.StartsWith("Delete ") && !l.StartsWith("Move "))),
-						row.Label + " (" + menuId + ")");
-					continue;
-				}
-				if (!string.Equals(before, after, StringComparison.Ordinal))
-				{
-					mismatches.Add(string.Format("{0} ({1}):{2}--- adapter path{2}{3}{2}--- authority{2}{4}",
-						row.Label, menuId, Environment.NewLine, before, after));
-				}
+				rendered.Add(string.Format("== {0} on {1} ({2})", menuId, row.Label, row.Field));
+				rendered.AddRange(Outline(items));
 			}
-			Assert.That(mismatches, Is.Empty, string.Join(Environment.NewLine, mismatches));
+
+			TestContext.WriteLine(string.Join(Environment.NewLine, rendered));
+			Assert.That(rendered, Is.EqualTo(PinnedLexiconMenus),
+				"an owned menu changed; if the change is intended, update the pin from this test's output");
 		}
 
 		// The fixture's entry has one sense, where Demote, Promote and Move Sense to a New Entry
 		// are all disabled; here a second sense and a subsense enable them.
 		[Test]
-		public void SenseMenu_RendersWhatTheAdapterPathRendered_WhereDemotePromoteAndSplitApply()
+		public void SenseMenu_EnablesDemotePromoteAndSplit_WhereTheyApply()
 		{
 			ILexSense second = null;
 			ILexSense subsense = null;
@@ -337,31 +343,34 @@ namespace SIL.FieldWorks.XWorks
 			});
 			DrainMediatorAndIdleQueues();
 			var ids = new[] { "mnuDataTree-Sense" };
-			var rendered = new Dictionary<ILexSense, string>();
+			var rendered = new Dictionary<ILexSense, List<string>>();
 
 			foreach (var sense in new[] { m_entry.SensesOS[0], second, subsense })
 			{
 				var row = Rows().First(f => f.ObjectHvo == sense.Hvo && f.MenuId == "mnuDataTree-Sense");
-				EnsureAdapter(row.ObjectHvo, row.Field);
-				Assert.That(AdapterTree.CurrentSlice?.Object?.Hvo, Is.EqualTo(sense.Hvo),
-					"precondition: the adapter targets the sense of " + row.Label);
-				var before = Describe(XCoreMenuBridge.CreateMenuItems(Window, ids, null, null, null));
-				var after = Describe(XCoreMenuBridge.CreateMenuItems(Window, ids, null, null,
+				rendered[sense] = Outline(XCoreMenuBridge.CreateMenuItems(Window, ids,
 					m_view.CreateMenuAuthority(MenuRequest(row, DetailMenuKind.SliceMenu))));
-				Assert.That(after, Is.EqualTo(before), row.Label);
-				rendered[sense] = after;
 			}
 
-			Assert.That(rendered[second], Does.Contain("Demote [enabled=True"));
-			Assert.That(rendered[second], Does.Contain("Move Sense to a New Entry [enabled=True"));
-			Assert.That(rendered[subsense], Does.Contain("Promote [enabled=True"));
+			// A disabled item is in parentheses.
+			Assert.That(rendered[m_entry.SensesOS[0]], Is.SupersetOf(new[]
+			{
+				"(Move Sense Up)", "Move Sense Down", "Demote", "(Promote)", "Merge Sense into...", "Move Sense to a New Entry"
+			}), "the first of two senses");
+			Assert.That(rendered[second], Is.SupersetOf(new[]
+			{
+				"Move Sense Up", "(Move Sense Down)", "Demote", "(Promote)", "Merge Sense into...", "Move Sense to a New Entry"
+			}), "the second of two senses");
+			Assert.That(rendered[subsense], Is.SupersetOf(new[]
+			{
+				"(Move Sense Up)", "(Move Sense Down)", "(Demote)", "Promote", "Move Sense to a New Entry"
+			}), "an only subsense");
 		}
 
-		// Contract: an owned menu never asks the mediator and never builds the adapter.
+		// Contract: an owned menu never asks the mediator.
 		[Test]
-		public void OwnedMenus_AreBuiltWithoutTheAdapterOrTheMediator()
+		public void OwnedMenus_AreBuiltWithoutTheMediator()
 		{
-			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree yet");
 			var rows = OwnedMenuRows();
 			Assert.That(rows, Has.Count.EqualTo(42),
 				"precondition: twenty-seven ids; -Translation, -VariantForms and -DeleteReplaceLexReference on two rows each, the item ids and hotlinks on every item's rows");
@@ -380,7 +389,6 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(asked, Is.False, row.Label + ": the mediator was asked");
 				Assert.That(items.Any(i => i.Execute != null), Is.True, row.Label + ": " + menuId + " offers a command");
 			}
-			Assert.That(HiddenTreeExists, Is.False, "an owned menu never builds the hidden tree");
 		}
 
 		[Test]
@@ -433,8 +441,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// A jump is enabled only on a row the rule resolves a target for; with no row the
-		// shown entry stands in. The adapter path showed a targetless jump enabled and
-		// inert; natively it is disabled.
+		// shown entry stands in. WinForms shows a targetless jump enabled and inert; here it
+		// is disabled.
 		[Test]
 		public void JumpLeaf_IsEnabledOnlyWhenTheRowOffersATarget()
 		{
@@ -506,10 +514,10 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_view.InsertItem(subsense, noObject), Is.Null, "no object");
 		}
 
-		// Only the inserts that need the whole tree stay with the adapter, so their ids do
-		// too: SubPossibilities.
+		// Every shipped Insert is in scope: a class created in an owning field, a list item's
+		// sub-item included, or a variant added through the back references.
 		[Test]
-		public void InsertLeaves_OutsideTheScope_LeaveTheirIdsWithTheAdapter()
+		public void InsertLeaves_IntoAnOwningFieldOrTheVariantBackReferences_AreInScope()
 		{
 			var authority = m_view.CreateLexiconMenuAuthority(TranslationRow());
 
@@ -520,11 +528,10 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-VariantForms", "CmdDataTree-Insert-VariantForm")),
 				Is.True, "a virtual back reference: the dialog adds the variant");
 			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-POS-SubPossibilities", "CmdDataTree-Insert-POS-SubPossibilities")),
-				Is.False, "SubPossibilities needs the whole tree");
-			Assert.That(authority.Owns("mnuDataTree-POS-SubPossibilities"), Is.False);
-			Assert.That(() => authority.Build("mnuDataTree-POS-SubPossibilities",
-				Leaf("mnuDataTree-POS-SubPossibilities", "CmdDataTree-Insert-POS-SubPossibilities")),
-				Throws.InvalidOperationException, "a leaf outside the scope is not answered");
+				Is.True, "a subcategory goes into the category's owning SubPossibilities");
+			Assert.That(m_view.InsertLeafInScope(Leaf("mnuDataTree-SubPossibilities", "CmdDataTree-Insert-Possibility")),
+				Is.True, "a list item's sub-item");
+			Assert.That(authority.Owns("mnuDataTree-POS-SubPossibilities"), Is.True);
 		}
 
 		// The allomorph inserts follow the entry: an affix process only on an affix entry, an
@@ -638,9 +645,9 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// Picture Properties is offered only for a picture. No Avalonia row shows one yet
-		// (LT-22772), so the menu is proved on a built row against the adapter.
+		// (LT-22772), so the menu is proved on a built row.
 		[Test]
-		public void PictureMenu_IsOfferedForAPicture_AndRendersWhatTheAdapterPathRendered()
+		public void PictureMenu_IsOfferedForAPicture_AndRendersItsPinnedItems()
 		{
 			var leaf = Leaf("mnuDataTree-Picture", "CmdDataTree-Properties-Picture");
 			var row = PictureRow();
@@ -650,18 +657,11 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_view.PicturePropertiesItem(leaf, TranslationRow()), Is.Null, "no picture");
 			Assert.That(m_view.PicturePropertiesItem(leaf, null), Is.Null, "no row");
 
-			EnsureAdapter(m_picture.Hvo, "Caption");
-			Assert.That(AdapterTree.CurrentSlice?.Object?.Hvo, Is.EqualTo(m_picture.Hvo), "precondition: the adapter renders the picture");
-			var ids = new[] { "mnuDataTree-Picture" };
-			var before = Describe(XCoreMenuBridge.CreateMenuItems(Window, ids, null, null, null));
-			var after = Describe(XCoreMenuBridge.CreateMenuItems(Window, ids, null, null,
+			var menu = Outline(XCoreMenuBridge.CreateMenuItems(Window, new[] { "mnuDataTree-Picture" },
 				m_view.CreateMenuAuthority(MenuRequest(row, DetailMenuKind.SliceMenu))));
 
-			Assert.That(after, Is.EqualTo(before));
-			Assert.That(after, Does.Contain("Picture Properties [enabled=True checked=False executes=True]"));
-			Assert.That(after, Does.Contain("Move Picture Up [enabled=False"));
-			Assert.That(after, Does.Contain("Move Picture Down [enabled=True"));
-			Assert.That(after, Does.Contain("Delete Picture [enabled=True"));
+			TestContext.WriteLine(string.Join(Environment.NewLine, menu));
+			Assert.That(menu, Is.EqualTo(PinnedPictureMenu));
 		}
 
 		// Tripwire: fails once sense pictures compose, so the synthetic picture rows give way to
@@ -675,7 +675,7 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(pictureRows, Is.Empty,
 				"Sense pictures now compose (LT-22772). Prove mnuDataTree-Picture on the real rows: add it to "
-				+ "LexiconLabelMenuIds so the equivalence and no-mediator contracts cover it, replace PictureRow() "
+				+ "LexiconLabelMenuIds so the pinned-menu and no-mediator contracts cover it, replace PictureRow() "
 				+ "and the built picture row in LexiconMenuExecutionTests with the composed one, drop the comments "
 				+ "tagged LT-22772 in both files, then delete this test.");
 		}
@@ -803,10 +803,6 @@ namespace SIL.FieldWorks.XWorks
 
 		private DetailField RelationRow(ILexReference relation) => Rows().Single(f => f.ObjectHvo == relation.Hvo);
 
-		private bool HiddenTreeExists => (bool)GetField(m_view, "m_dataTreeInitialized");
-
-		private LegacyDataTree AdapterTree => (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
-
 		private LexiconMenuAuthority NewAuthority()
 		{
 			var window = Window;
@@ -832,16 +828,6 @@ namespace SIL.FieldWorks.XWorks
 			=> new DetailField("Picture/caption@" + m_picture.Hvo, "Caption", "Caption", null, DetailFieldKind.Text,
 				EditorClassification.Known, null, null, HostRouting.Inherit, null, null, null,
 				menuId: "mnuDataTree-Picture", objectHvo: m_picture.Hvo);
-
-		// Rows carrying an item id with the sequence's owner as object: the Pronunciations
-		// section row (the entry) and both rows over a note's examples (the note).
-		private bool RowIsTheSequencesOwner(DetailField row, string menuId)
-			=> (menuId == "mnuDataTree-Pronunciation" && row.ObjectHvo == m_entry.Hvo)
-				|| menuId == "mnuDataTree-ExtendedNote-Examples";
-
-		// The item lines of a described menu, separators dropped.
-		private static List<string> ItemLines(string described)
-			=> described.Split(new[] { Environment.NewLine }, StringSplitOptions.None).Where(l => l != "---").ToList();
 
 		// Every (row, owned id, menu kind) the entry's rows bind: the label menus first, then
 		// the in-string menus, then the hotlinks.
@@ -876,11 +862,11 @@ namespace SIL.FieldWorks.XWorks
 			out bool mediatorAsked)
 		{
 			var window = Window;
-			var spy = new DisplaySpyColleague();
+			var spy = new MenuDisplaySpyColleague();
 			window.Mediator.AddColleague(spy);
 			try
 			{
-				var items = XCoreMenuBridge.CreateMenuItems(window, ids, null, null, authority);
+				var items = XCoreMenuBridge.CreateMenuItems(window, ids, authority);
 				mediatorAsked = spy.Asked;
 				return items;
 			}
@@ -888,127 +874,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				window.Mediator.RemoveColleague(spy);
 			}
-		}
-
-		// Answers no display query, only records that one arrived.
-		private sealed class DisplaySpyColleague : IxCoreColleague
-		{
-			public bool Asked { get; private set; }
-			public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters) { }
-			public IxCoreColleague[] GetMessageTargets() => new IxCoreColleague[] { this };
-			public bool ShouldNotCall => false;
-			public int Priority => (int)ColleaguePriority.High;
-			public bool OnDisplayDataTreeDelete(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplayShowFieldAlwaysVisible(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplayJumpToTool(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplaySwapLexemeWithAllomorph(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplayConvertLexemeForm(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplayDataTreeInsert(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplayLaunchGuiControl(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplayMoveUpObjectInSequence(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplayMoveDownObjectInSequence(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplayInsertMediaFile(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplayPictureProperties(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplayDataTreeMerge(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplayDataTreeDeleteReference(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplayDataTreeAddReference(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplayDataTreeEdit(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplaySwapAllomorphWithLexeme(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-			public bool OnDisplayConvertAllomorph(object commandObject, ref UIItemDisplayProperties display)
-			{
-				Asked = true;
-				return false;
-			}
-		}
-
-		private static string Describe(IReadOnlyList<DetailMenuItem> items, string indent = "")
-		{
-			var lines = new List<string>();
-			foreach (var item in items)
-			{
-				if (item.IsSeparator)
-				{
-					lines.Add(indent + "---");
-					continue;
-				}
-				lines.Add(string.Format("{0}{1} [enabled={2} checked={3} executes={4}]", indent, item.Label,
-					item.IsEnabled, item.IsChecked, item.Execute != null));
-				if (item.Children.Count > 0)
-					lines.Add(Describe(item.Children, indent + "  "));
-			}
-			return string.Join(Environment.NewLine, lines);
-		}
-
-		private void EnsureAdapter(int targetHvo, string fieldName)
-		{
-			var method = typeof(RecordEditView).GetMethod("EnsureMenuCommandAdapter",
-				BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(method, Is.Not.Null, "EnsureMenuCommandAdapter must exist (adapter targeting seam)");
-			method.Invoke(m_view, new object[] { targetHvo, fieldName });
 		}
 
 		// A complex form and variant: two allomorphs, a spelling variant, two etymologies,
@@ -1100,27 +965,6 @@ namespace SIL.FieldWorks.XWorks
 			foreach (var target in targets)
 				relation.TargetsRS.Add(target);
 			return relation;
-		}
-
-		private void LoadRecordEditView(string toolValue)
-		{
-			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			Assert.That(windowConfiguration, Is.Not.Null);
-			var controlNode = windowConfiguration.SelectSingleNode(
-				string.Format("//tool[@value='{0}']/control//control[dynamicloaderinfo/@class='SIL.FieldWorks.XWorks.RecordEditView']", toolValue));
-			Assert.That(controlNode, Is.Not.Null, "Expected the RecordEditView configuration node for tool '{0}'.", toolValue);
-
-			m_propertyTable.SetProperty("currentContentControlParameters", controlNode, true);
-			m_propertyTable.SetPropertyPersistence("currentContentControlParameters", false);
-			m_propertyTable.SetProperty("currentContentControl", toolValue, true);
-			m_propertyTable.SetPropertyPersistence("currentContentControl", false);
-		}
-
-		private static object GetField(object target, string fieldName)
-		{
-			var field = target.GetType().GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(field, Is.Not.Null, "Missing private field: " + fieldName);
-			return field.GetValue(target);
 		}
 	}
 }

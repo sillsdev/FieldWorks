@@ -159,6 +159,21 @@ namespace SIL.FieldWorks.XWorks
 			if (root == null)
 				return null;
 
+			return ComposeModel(obj, cache, root, layoutName, showHiddenFields, plugins, overrides,
+				showAllWritingSystemsFields, writingSystemFocused, hiddenSliceIds);
+		}
+
+		/// <summary>
+		/// Composes the detail view of <paramref name="obj"/> from an already compiled
+		/// <paramref name="root"/> layout. The remaining arguments mean what they do for the
+		/// <c>Compose</c> overload that takes an <see cref="ICmObject"/>.
+		/// </summary>
+		internal static ComposedDetail ComposeModel(ICmObject obj, LcmCache cache,
+			ViewDefinitionModel root, string layoutName, bool showHiddenFields = false,
+			SlicePluginRegistry plugins = null, ViewDefinitionOverrideResolver overrides = null,
+			ISet<string> showAllWritingSystemsFields = null,
+			Action<string> writingSystemFocused = null, ISet<string> hiddenSliceIds = null)
+		{
 			// Plugin rows close over the detail view's own edit context, which
 			// only exists once the walk gathers every setter -- a deferred accessor
 			// bridges the gap (plugin factories run at render time, not compose).
@@ -173,7 +188,8 @@ namespace SIL.FieldWorks.XWorks
 
 			var context = new ComposedDetailEditContext(cache, obj, state.Handlers);
 			composedContext = context;
-			var model = new DetailModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics)
+			var model = new DetailModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics,
+				state.ValueFontSize)
 			{
 				UiElementFontFamily = UiElementFontName(cache)
 			};
@@ -204,7 +220,6 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 			}
 		}
-
 		/// <summary>
 		/// Walks a possibility list's tree in document order (parent before children) into
 		/// chooser options, hierarchy carried as <see cref="DetailChoiceOption.Depth"/> --
@@ -241,7 +256,7 @@ namespace SIL.FieldWorks.XWorks
 				{ ("LangProject", "TimeOfDay"), "timeOfDayEdit" },
 				{ ("LangProject", "TranslationTags"), "translationTypeEdit" },
 				{ ("LexDb", "ComplexEntryTypes"), "complexEntryTypeEdit" },
-				{ ("LexDb", "DialectLabels"), "dialectsListEdit" },
+				{ ("LexDb", "DialectLabels"), "dialectLabelListEdit" },
 				{ ("LexDb", "DomainTypes"), "domainTypeEdit" },
 				{ ("LexDb", "ExtendedNoteTypes"), "extNoteTypeEdit" },
 				{ ("LexDb", "Languages"), "languagesListEdit" },
@@ -402,7 +417,16 @@ namespace SIL.FieldWorks.XWorks
 				_sda = cache.DomainDataByFlid;
 				_mdc = (IFwMetaDataCacheManaged)cache.DomainDataByFlid.MetaDataCache;
 				_summaryLines = new DetailSummaryLines(cache);
+				_normalFontSizes = NormalStyleFontSizes.ForProject(cache);
 			}
+
+			private readonly NormalStyleFontSizes _normalFontSizes;
+
+			/// <summary>
+			/// The size of data that is not tied to one writing system: the Normal style's size
+			/// in the default analysis writing system.
+			/// </summary>
+			public double ValueFontSize => _normalFontSizes.For(_cache.DefaultAnalWs);
 
 			// Track which compiled model the walk is currently inside so each emitted
 			// field is stamped with its (class, layout). EnterModel/ExitModel bracket each compiled model's
@@ -1375,8 +1399,10 @@ namespace SIL.FieldWorks.XWorks
 				IReadOnlyList<CoreWritingSystemDefinition> systems, ViewNode node, out bool anyData, out bool anyAudio)
 			{
 				var dataSeen = false;
-				// The lexeme form's legacy bold/120% <properties> emphasis.
-				var fontSize = node.FontScalePercent > 0 ? 12.0 * node.FontScalePercent / 100.0 : 0;
+				// Each alternative shows at the Normal style's size for its writing system,
+				// scaled by the part's fontsize percentage (the lexeme form's 120%).
+				Func<CoreWritingSystemDefinition, double> fontSize =
+					ws => _normalFontSizes.For(ws.Handle, node.FontScalePercent);
 				// The per-ws value rows build through the shared factory
 				// (LexiconEditErrorFallback uses the same one), this path only supplies the text.
 				IReadOnlyList<DetailWsValue> values;
@@ -1418,7 +1444,7 @@ namespace SIL.FieldWorks.XWorks
 							// of a plain text box.
 							rebuilt.Add(new DetailWsValue(ws.Abbreviation,
 								values[i]?.Value ?? string.Empty,
-								ws.DefaultFontName, fontSize,
+								ws.DefaultFontName, fontSize(ws),
 								ws.RightToLeftScript, ws.Id, node.BoldEmphasis, isAudio: true));
 						}
 						else
@@ -3059,14 +3085,14 @@ namespace SIL.FieldWorks.XWorks
 			private void WalkReferenceVectorField(ViewNode node, ICmObject obj, int depth, int flid)
 			{
 				var count = _sda.get_VecSize(obj.Hvo, flid);
+				if (HideWhenEmpty(node) && VisibilityCount(node, obj, count) == 0)
+					return;
 
 				// A vector whose targets live in a possibility list becomes an editable
 				// ReferenceVector row (legacy slice, trailing type-ahead add slot), even
 				// when empty, so the field always offers the add affordance.
 				if (obj.ReferenceTargetOwner(flid) is ICmPossibilityList list)
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddReferenceVector(node, obj, depth, flid, list, count);
 					return;
 				}
@@ -3078,8 +3104,6 @@ namespace SIL.FieldWorks.XWorks
 				// (lexicons search, possibility lists enumerate).
 				if (IsEntryOrSenseReferenceVector(node, flid))
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddEntryReferenceVector(node, obj, depth, flid, count);
 					return;
 				}
@@ -3094,8 +3118,6 @@ namespace SIL.FieldWorks.XWorks
 				var backRefKind = ResolveEditableBackRefKind(node, flid, obj);
 				if (backRefKind != BackRefVectorKind.None)
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddBackRefReferenceVector(node, obj, depth, flid, count, backRefKind);
 					return;
 				}
@@ -3111,8 +3133,6 @@ namespace SIL.FieldWorks.XWorks
 				var createsFromText = EditorKindMap.CreatesReferenceItemsFromText(node.RawEditor);
 				if (createsFromText || (genericCandidates != null && genericCandidates.Count > 0))
 				{
-					if (count == 0 && HideWhenEmpty(node))
-						return;
 					AddGenericReferenceVector(node, obj, depth, flid, count,
 						genericCandidates ?? Array.Empty<ICmObject>());
 					return;
@@ -3120,7 +3140,7 @@ namespace SIL.FieldWorks.XWorks
 
 				if (count == 0)
 				{
-					AddRowUnlessHiddenWhenEmpty(node, obj, depth);
+					AddReadOnlyRow(node, obj, depth, string.Empty);
 					return;
 				}
 
@@ -3187,7 +3207,8 @@ namespace SIL.FieldWorks.XWorks
 				var field = new DetailField(stableId, Localize(node.Label) ?? node.Field, node.Field,
 					node.WritingSystem, DetailFieldKind.StructuredText, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing, null, null, null,
-					isEditable: true, indent: depth, menuId: node.MenuId, contextMenuId: node.ContextMenuId,
+					isEditable: true, indent: depth, menuId: node.MenuId,
+					contextMenuId: node.ContextMenuId ?? StructuredTextMenuId,
 					hotlinksId: node.HotlinksId, objectHvo: obj.Hvo, paragraphs: paragraphs);
 				field.AvailableParagraphStyles = ParagraphStyleNames();
 				// The StText paragraph rows also expose the run-level character-style + ws pickers and
@@ -3283,7 +3304,13 @@ namespace SIL.FieldWorks.XWorks
 					isEditable: true, indent: depth,
 					menuId: node.MenuId, contextMenuId: node.ContextMenuId, hotlinksId: node.HotlinksId,
 					objectHvo: obj.Hvo,
-					controlFactory: factory));
+					controlFactory: factory)
+				{
+					// A plugin row with a Writing Systems menu answers it from its plugin's
+					// rule and the stored selection.
+					CustomEditorClass = node.CustomEditorClass,
+					VisibleWritingSystems = node.VisibleWritingSystems
+				});
 			}
 
 			// An ifdata custom row hides when its own field is an empty vector. Any other
@@ -3338,10 +3365,16 @@ namespace SIL.FieldWorks.XWorks
 					return;
 
 				var stableId = StableId(node, obj) + DetailField.GhostStableIdSuffix;
+				// Typed text goes into the ghost's writing system, so it shows at that size.
+				var ghostFontSize = ghost == null ? 0 : _normalFontSizes.For(ghost.WsHandle);
 				AddField(new DetailField(stableId, label, node.Field,
 					node.WritingSystem, DetailFieldKind.Text, node.EditorClassification,
 					node.AutomationId, node.LocalizationKey, node.Routing,
-					new List<DetailWsValue> { new DetailWsValue(ghost?.WsAbbrev ?? "", string.Empty, wsTag: ghost?.WsTag) },
+					new List<DetailWsValue>
+					{
+						new DetailWsValue(ghost?.WsAbbrev ?? "", string.Empty, fontSize: ghostFontSize,
+							wsTag: ghost?.WsTag)
+					},
 					null, null, isEditable: ghost != null, indent: depth,
 					menuId: node.MenuId, hotlinksId: node.HotlinksId, objectHvo: obj.Hvo,
 					ghostPrompt: prompt));
@@ -3354,6 +3387,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				public string WsAbbrev;
 				public string WsTag; // unique IETF tag (ws.Id), the edit-routing identity
+				public int WsHandle;
 				public Func<string, string, bool> Setter;
 			}
 
@@ -3423,6 +3457,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					WsAbbrev = ws.Abbreviation,
 					WsTag = ws.Id,
+					WsHandle = ws.Handle,
 					Setter = (wsKey, value) =>
 					{
 						// The closure outlives the edit session: a Cancel rolls MakeNewObject
@@ -3719,6 +3754,33 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
+			/// <summary>
+			/// The item count that decides whether an "ifdata" vector row has data: that of
+			/// the node's <see cref="ViewNode.VisibilityField"/> when it names a vector field of
+			/// <paramref name="obj"/>, otherwise <paramref name="displayedCount"/> (LT-22661).
+			/// </summary>
+			private int VisibilityCount(ViewNode node, ICmObject obj, int displayedCount)
+			{
+				var visibilityFlid = GetFlid(obj, node.VisibilityField);
+				if (visibilityFlid == 0 || !IsVectorField(visibilityFlid))
+					return displayedCount;
+				return _sda.get_VecSize(obj.Hvo, visibilityFlid);
+			}
+
+			private bool IsVectorField(int flid)
+			{
+				switch ((CellarPropertyType)_mdc.GetFieldType(flid))
+				{
+					case CellarPropertyType.OwningCollection:
+					case CellarPropertyType.OwningSequence:
+					case CellarPropertyType.ReferenceCollection:
+					case CellarPropertyType.ReferenceSequence:
+						return true;
+					default:
+						return false;
+				}
+			}
+
 			private string ResolveShortName(int hvo)
 			{
 				return _cache.ServiceLocator.ObjectRepository.TryGetObject(hvo, out var target)
@@ -3740,6 +3802,10 @@ namespace SIL.FieldWorks.XWorks
 		/// the entry or sense whose detail shows the relation.
 		/// </summary>
 		internal const string LexicalRelationIdMarker = "/lexref:";
+
+		/// <summary>The text menu of a structured-text row whose part names none: Cut, Copy,
+		/// Paste, Find in Dictionary and Add to Dictionary.</summary>
+		internal const string StructuredTextMenuId = "mnuStTextChoices";
 
 		/// <summary>The entry or sense a lexical-relation row belongs to, from its id.</summary>
 		/// <returns>False for any other row's id.</returns>

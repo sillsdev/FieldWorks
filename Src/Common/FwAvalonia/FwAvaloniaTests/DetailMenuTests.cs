@@ -594,56 +594,6 @@ namespace FwAvaloniaTests
 			Assert.That(requests[0].Field.HotlinksId, Is.EqualTo("mnuDataTree-Sense-Hotlinks"));
 		}
 
-		// Discoverability parity (legacy SummaryCommandControl): a hotlink-bearing section header
-		// shows
-		// an ALWAYS-VISIBLE inline command-link strip beneath it, not just the hover-gated "..."
-		// kebab.
-		[AvaloniaTest]
-		public void HotlinksStrip_AppearsForHotlinkHeader_IsAlwaysVisible_AndKeepsTheKebab()
-		{
-			var (_, view, _) = Show(Field("Senses", DetailFieldKind.Header,
-				hotlinksId: "mnuDataTree-Sense-Hotlinks", collapsible: true));
-
-			var strip = FindOrNull<Button>(view, "Senses.Hotlinks");
-			Assert.That(strip, Is.Not.Null, "a header with a HotlinksId renders the inline command strip");
-			// Always visible -- NOT hover-gated like the kebab (Opacity 0 / not hit-testable at
-			// rest).
-			Assert.That(strip.IsVisible, Is.True, "the strip stays in the tree");
-			Assert.That(strip.Opacity, Is.EqualTo(1d), "the strip is fully visible at rest, not hover-gated");
-			Assert.That(strip.IsHitTestVisible, Is.True, "the strip is clickable at rest");
-			Assert.That(AutomationProperties.GetName(strip), Is.EqualTo(FwAvaloniaStrings.FieldOptionsMenu),
-				"a screen reader announces the always-visible commands affordance");
-
-			// The hover kebab is kept alongside the always-visible strip.
-			var kebab = FindOrNull<Button>(view, "Senses.FieldMenu");
-			Assert.That(kebab, Is.Not.Null, "the kebab is retained next to the inline strip");
-			Assert.That(kebab.Opacity, Is.EqualTo(0d), "the kebab stays hover-gated (the strip is the always-visible twin)");
-		}
-
-		[AvaloniaTest]
-		public void HotlinksStrip_Activating_RaisesTheSameHotlinksRequest_AsTheKebab()
-		{
-			var (_, view, requests) = Show(Field("Senses", DetailFieldKind.Header,
-				hotlinksId: "mnuDataTree-Sense-Hotlinks", collapsible: true));
-
-			// Activating the strip arrives as Button.Click (mouse OR keyboard), the same path the kebab uses.
-			ClickKebab(Find<Button>(view, "Senses.Hotlinks"));
-
-			Assert.That(requests, Has.Count.EqualTo(1));
-			Assert.That(requests[0].Kind, Is.EqualTo(DetailMenuKind.Hotlinks),
-				"the strip dispatches the SAME hotlinks request the kebab raises");
-			Assert.That(requests[0].Field.HotlinksId, Is.EqualTo("mnuDataTree-Sense-Hotlinks"));
-		}
-
-		[AvaloniaTest]
-		public void HotlinksStrip_IsAbsent_ForHeaderWithoutHotlinks()
-		{
-			var (_, view, _) = Show(Field("Notes", DetailFieldKind.Header, menuId: "mnuDataTree-Object"));
-
-			Assert.That(FindOrNull<Button>(view, "Notes.Hotlinks"), Is.Null,
-				"a header carrying only a slice menu (no hotlinks) gets no inline command strip");
-		}
-
 		// Exactly one menu: a bridged value box must NOT keep the TextBox theme flyout
 		// (Cut/Copy/Paste) that otherwise opens alongside the bridged menu; unbound boxes keep
 		// the local Copy flyout.

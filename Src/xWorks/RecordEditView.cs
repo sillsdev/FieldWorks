@@ -385,6 +385,7 @@ namespace SIL.FieldWorks.XWorks
 			Debug.Assert(m_dataEntryForm != null);
 
 			var rni = (RecordNavigationInfo) parameter;
+			ForgetShownRecordIfLeaving();
 			// Auto-save (14.4) must run BEFORE the clerk's save-on-change-record:
 			// RecordClerk.SaveOnChangeRecord force-EndUndoTasks any open undo task wholesale
 			// (LT-16673), which would commit invalid staged state past the validation gate.
@@ -402,15 +403,18 @@ namespace SIL.FieldWorks.XWorks
 					// Active-host contract: do not touch the legacy DataTree while Avalonia is active.
 					// The record may be gone (deleted elsewhere); cancel rather than orphan the session.
 					m_detailEditContext.Clear();
+					SetShownRecord(null, null);
 					EnsureAvaloniaEntryFormActive();
 					m_avaloniaEntryForm.Clear();
-					// Adapter hygiene: drop slices over a possibly deleted record,
-					// or menu-enablement polls touch a deleted object.
+					// A WinForms DataTree left from before a switch to the New UI must not
+					// keep slices over a possibly deleted record.
 					if (m_dataTreeInitialized && m_dataEntryForm != null)
 						m_dataEntryForm.Reset();
 				}
 				else
 				{
+					// Switching from New with no record leaves the tree uninitialized.
+					EnsureDataTreeInitialized();
 					EnsureDataTreeVisible();
 					m_dataEntryForm.Hide();
 					m_dataEntryForm.Reset();	// in case user deleted the object it was based upon.
@@ -490,10 +494,14 @@ namespace SIL.FieldWorks.XWorks
 			if (m_dataTreeInitialized)
 				return;
 
+			// The WinForms DataTree is built only while the WinForms view is active; the New UI
+			// never builds or drives one.
+			m_activeHostContract.AssertLegacyDataTreeDriveAllowed();
+
 			m_dataEntryForm.PersistenceProvder = new PersistenceProvider(m_mediator, m_propertyTable, DataTreePersistContext);
 
-			// In Avalonia mode Init skips the stylesheet (the legacy tree is inactive); the lazy
-			// command-routing adapter still needs it before ShowObject builds slices.
+			// A view that started in the New UI skipped the stylesheet in Init; the tree needs
+			// it before ShowObject builds slices.
 			if (m_dataEntryForm.StyleSheet == null)
 				m_dataEntryForm.StyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
 
@@ -519,10 +527,6 @@ namespace SIL.FieldWorks.XWorks
 		private void EnsureDataTreeVisible()
 		{
 			SyncActiveHostContract();
-
-			// A New-to-Legacy flip reuses the adapter tree; the visible legacy tree must
-			// not keep the adapter's widened message targeting.
-			m_dataEntryForm.IsExternalCommandAdapter = false;
 
 			AttachDataTreeToPanel();
 			m_avaloniaEntryForm?.Hide();
@@ -669,13 +673,15 @@ namespace SIL.FieldWorks.XWorks
 			if(!m_fullyInitialized)
 				return;
 
-			// Legacy mode: the DataTree + menu handler are the normal targets. Avalonia mode: they
-			// participate ONLY once the lazy "command-menu-routing" baseline adapter exists (13.4),
-			// so the legacy command handlers can resolve and execute the context-menu commands.
-			if (m_dataTreeInitialized && m_dataEntryForm != null)
+			// The DataTree and its menu handler answer commands only while the WinForms view is
+			// active. A tree left from before a switch to the New UI answers nothing.
+			if (ShouldUseAvaloniaLexiconEdit || !m_dataTreeInitialized)
+				return;
+
+			if (m_dataEntryForm != null)
 				collector.Add(m_dataEntryForm);
 
-			if (m_dataTreeInitialized && m_menuHandler != null)
+			if (m_menuHandler != null)
 				collector.Add(m_menuHandler);
 		}
 

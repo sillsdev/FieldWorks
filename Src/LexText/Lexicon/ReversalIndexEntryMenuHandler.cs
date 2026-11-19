@@ -13,6 +13,7 @@ using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
@@ -77,6 +78,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 									}
 							}
 						});
+				RefreshDocumentView();
 				// We may need to notify everyone that a virtual property changed.
 				//NotifyVirtualChanged(cache, slice);
 			}
@@ -137,9 +139,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						clerk.RemoveItemsFor(currentEntry.Hvo);
 					// Note: PropChanged should happen on the old owner and the new while completing the unit of work.
 					// Have to jump to a main entry, as RecordClerk doesn't know anything about subentries.
-#pragma warning disable 618 // suppress obsolete warning
-					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", newOwner.MainEntry.Hvo);
-#pragma warning restore 618
+					Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord,
+						newOwner.MainEntry.Hvo, m_propertyTable.GetWindow()));
+					// After the jump, so the preview generates the page the clerk is now on.
+					RefreshDocumentView();
 				}
 			}
 			return true;

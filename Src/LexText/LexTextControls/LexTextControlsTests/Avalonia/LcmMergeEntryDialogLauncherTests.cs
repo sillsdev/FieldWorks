@@ -204,5 +204,24 @@ namespace LexTextControlsTests
 			Assert.That(formatted, Does.Contain("cantar").And.Contain("casa"),
 				"the confirm text names both the current entry and the chosen survivor");
 		}
+
+		[Test]
+		public void ConfirmMessage_NamesBothEntriesByHeadword()
+		{
+			Assert.That(LcmMergeEntryDialogLauncher.ConfirmMessage(_casa, _perro), Is.EqualTo(
+				string.Format(CultureInfo.CurrentCulture, FwAvaloniaDialogsStrings.MergeConfirm, "casa", "perro")));
+		}
+
+		[Test]
+		public void ConfirmMessage_EntryWithNoForm_KeepsLcmsHeadwordPlaceholder()
+		{
+			// A blank name would leave a gap in the sentence; LCM's own headword names the entry.
+			_casa.LexemeFormOA.Form.set_String(Cache.DefaultVernWs, TsStringUtils.EmptyString(Cache.DefaultVernWs));
+			var placeholder = _casa.HeadWord.Text;
+			Assert.That(placeholder, Is.Not.Empty, "precondition: LCM names a formless entry");
+
+			Assert.That(LcmMergeEntryDialogLauncher.ConfirmMessage(_casa, _perro), Is.EqualTo(
+				string.Format(CultureInfo.CurrentCulture, FwAvaloniaDialogsStrings.MergeConfirm, placeholder, "perro")));
+		}
 	}
 }

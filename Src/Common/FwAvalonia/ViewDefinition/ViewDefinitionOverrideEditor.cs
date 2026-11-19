@@ -68,14 +68,11 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			// Root-level scan first (parent is null).
 			var rootIndex = IndexOf(model.Roots, templateStableId);
 			if (rootIndex >= 0)
-			{
-				return new ViewNodeLocation(model.Roots[rootIndex].Visibility, null,
-					model.Roots.Select(n => n.StableId).ToList(), rootIndex);
-			}
+				return At(model.Roots, null, model.Roots, rootIndex);
 
 			foreach (var root in model.Roots)
 			{
-				var found = LocateUnder(root, templateStableId);
+				var found = LocateUnder(model.Roots, root, templateStableId);
 				if (found != null)
 					return found;
 			}
@@ -83,23 +80,51 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 			return null;
 		}
 
-		private static ViewNodeLocation LocateUnder(ViewNode parent, string templateStableId)
+		private static ViewNodeLocation LocateUnder(IReadOnlyList<ViewNode> roots, ViewNode parent,
+			string templateStableId)
 		{
 			var index = IndexOf(parent.Children, templateStableId);
 			if (index >= 0)
-			{
-				return new ViewNodeLocation(parent.Children[index].Visibility, parent.StableId,
-					parent.Children.Select(n => n.StableId).ToList(), index);
-			}
+				return At(roots, parent.StableId, parent.Children, index);
 
 			foreach (var child in parent.Children)
 			{
-				var found = LocateUnder(child, templateStableId);
+				var found = LocateUnder(roots, child, templateStableId);
 				if (found != null)
 					return found;
 			}
 
 			return null;
+		}
+
+		private static ViewNodeLocation At(IReadOnlyList<ViewNode> roots, string parentStableId,
+			IReadOnlyList<ViewNode> siblings, int index)
+		{
+			var node = siblings[index];
+			return new ViewNodeLocation(node.Visibility, parentStableId,
+				siblings.Select(n => n.StableId).ToList(), index, VisibilityTargetsOf(roots, node));
+		}
+
+		// The node alone, or every node that holds the same part ref's visibility.
+		private static IReadOnlyList<string> VisibilityTargetsOf(IReadOnlyList<ViewNode> roots,
+			ViewNode node)
+		{
+			if (string.IsNullOrEmpty(node.PartRefId))
+				return new[] { node.StableId };
+			var ids = new List<string>();
+			CollectPartRefNodes(roots, node.PartRefId, ids);
+			return ids;
+		}
+
+		private static void CollectPartRefNodes(IReadOnlyList<ViewNode> nodes, string partRefId,
+			List<string> ids)
+		{
+			foreach (var node in nodes)
+			{
+				if (string.Equals(node.PartRefId, partRefId, StringComparison.Ordinal))
+					ids.Add(node.StableId);
+				CollectPartRefNodes(node.Children, partRefId, ids);
+			}
 		}
 
 		private static int IndexOf(IReadOnlyList<ViewNode> nodes, string id)
@@ -178,14 +203,28 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 	/// </summary>
 	public sealed class ViewNodeLocation
 	{
+		/// <param name="visibilityTargets">The template StableIds a visibility change writes;
+		/// null means the node alone.</param>
 		public ViewNodeLocation(ViewVisibility visibility, string parentStableId,
-			IReadOnlyList<string> siblingOrder, int index)
+			IReadOnlyList<string> siblingOrder, int index,
+			IReadOnlyList<string> visibilityTargets = null)
 		{
 			Visibility = visibility;
 			ParentStableId = parentStableId;
 			SiblingOrder = siblingOrder ?? Array.Empty<string>();
 			Index = index;
+			VisibilityTargets = visibilityTargets
+				?? (index >= 0 && index < SiblingOrder.Count
+					? new[] { SiblingOrder[index] }
+					: Array.Empty<string>());
 		}
+
+		/// <summary>
+		/// The template StableIds a Field Visibility change writes, this node's among them.
+		/// A part ref whose content sits in a conditional has one node per branch; all of
+		/// them hold its visibility, so the change reaches every branch.
+		/// </summary>
+		public IReadOnlyList<string> VisibilityTargets { get; }
 
 		/// <summary>The node's current visibility (after any override already applied to the model).</summary>
 		public ViewVisibility Visibility { get; }

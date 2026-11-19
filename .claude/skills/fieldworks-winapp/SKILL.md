@@ -118,10 +118,10 @@ verifies that launch will succeed.
 - `references/research.md`: source-backed rationale for this structure.
 - `scripts/Preflight-WinFormsMcp.ps1`: pre-session check (node/npx, package, build, `.mcp.json`).
 - `scripts/Set-FieldWorksLegacyMode.ps1`: forces `UIMode=Legacy` — run before EVERY launch.
-- `scripts/Resolve-FieldWorksDevRegistry.ps1`: aligns the dev registry (`RootCodeDir`/`RootDataDir`) to
-  this worktree before launch; auto-realigns when the other worktree is idle, else prints `RESULT=ASK_USER`.
-  A build running from inside a source tree resolves code and data from that tree and
-  ignores these values; they govern a build launched from outside one.
+- `scripts/Resolve-FieldWorksDevRegistry.ps1`: read-only preview of code/data/ICU overrides
+  pointing into a source tree. Dev builds use their own `DistFiles`; installed releases can
+  be redirected by those shared overrides. `Build/Repair-DeveloperRegistry.ps1 -WhatIf`
+  previews an explicit repair; applying it preserves paths outside source trees.
 - `references/headless-rendering.md`: why FieldWorks needs a display-bound desktop; what works/doesn't for
   invisible capture (winforms-mcp HEADLESS does NOT render FieldWorks; a Virtual Display Driver was tried
   and abandoned — see the doc for why; use visible capture, or RDP for true invisibility). Starts with the

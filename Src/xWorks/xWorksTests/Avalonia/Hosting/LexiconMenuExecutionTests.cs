@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	[TestFixture]
 	[Apartment(System.Threading.ApartmentState.STA)]
-	public class LexiconMenuExecutionTests : XWorksAppTestBase
+	public partial class LexiconMenuExecutionTests : XWorksAppTestBase
 	{
 		private const string LexemeFormMenuId = "mnuDataTree-LexemeForm";
 		private const string VariantFormMenuId = "mnuDataTree-VariantForm";
@@ -353,6 +353,56 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_entry.SensesOS[2], Is.SameAs(m_sense2), "the new sense sits between the two");
 			Assert.That(m_entry.SensesOS[1].MorphoSyntaxAnalysisRA, Is.SameAs(m_sense1.MorphoSyntaxAnalysisRA),
 				"the new sense takes the grammatical info of the one before it");
+		}
+
+		// The links the view draws come from the host's hotlink items, one per command, in
+		// menu order (LT-22693).
+		[Test]
+		public void HotlinkItemsFor_ASenseHeader_OffersEachCommand_AndRunsIt()
+		{
+			var items = m_view.HotlinkItemsFor(HeaderRowOf(m_sense1));
+
+			Assert.That(items.Select(i => i.Label), Is.EqualTo(new[] { "Insert Example", "Insert Sense" }));
+			Assert.That(items.All(i => i.IsEnabled && i.Execute != null), Is.True, "both run on a sense");
+
+			items.Single(i => i.Label == "Insert Sense").Execute();
+			DrainMediatorAndIdleQueues();
+
+			Assert.That(m_entry.SensesOS, Has.Count.EqualTo(3), "the link's own item inserts the sense");
+			Assert.That(m_entry.SensesOS[0], Is.SameAs(m_sense1));
+			Assert.That(m_entry.SensesOS[2], Is.SameAs(m_sense2), "the new sense sits right after the first");
+		}
+
+		[Test]
+		public void HotlinkItemsFor_StripsTheAccelerator_FromTheLabel()
+		{
+			Assert.That(m_view.HotlinkItemsFor(HeaderRowOf(m_etymology1)).Select(i => i.Label),
+				Is.EqualTo(new[] { "Insert Etymology" }), "the menu text is 'Insert _Etymology'");
+		}
+
+		// No native authority owns the Words wordform's hotlinks; that tool has no Avalonia
+		// detail view yet.
+		[Test]
+		public void HotlinkItemsFor_AMenuNoAuthorityOwns_ShowsItsCommandsDisabled()
+		{
+			var row = new DetailField("WfiWordform/main", "Wordform", "Form", null, DetailFieldKind.Header,
+				EditorClassification.GroupingNone, null, null, HostRouting.Inherit, null, null, null,
+				hotlinksId: "mnuDataTree-MainWordform-Hotlinks", objectHvo: m_entry.Hvo);
+			Assert.That(XCoreMenuBridge.OwnsAll(
+				m_view.CreateMenuAuthority(DetailMenuRequest.FromAnchor(null, row, DetailMenuKind.Hotlinks)),
+				new[] { row.HotlinksId }), Is.False, "precondition: no native authority owns this menu");
+
+			var items = m_view.HotlinkItemsFor(row);
+
+			Assert.That(items.Select(i => i.Label), Is.EqualTo(new[] { "Assign Analysis..." }));
+			Assert.That(items[0].IsEnabled || items[0].Execute != null, Is.False,
+				"a section link no authority owns cannot run");
+		}
+
+		[Test]
+		public void HotlinkItemsFor_ARowWithoutHotlinks_OffersNothing()
+		{
+			Assert.That(m_view.HotlinkItemsFor(TranslationRow()), Is.Empty);
 		}
 
 		[Test]
@@ -1018,13 +1068,7 @@ namespace SIL.FieldWorks.XWorks
 			var window = m_propertyTable.GetValue<XWindow>("window");
 			var request = DetailMenuRequest.FromAnchor(null, row, kind);
 			var authority = m_view.CreateMenuAuthority(request);
-			// As in the host, a menu no authority fully owns targets the adapter at the row.
-			if (!XCoreMenuBridge.OwnsAll(authority, ids))
-			{
-				typeof(RecordEditView).GetMethod("SyncMenuCommandAdapter", BindingFlags.Instance | BindingFlags.NonPublic)
-					.Invoke(m_view, new object[] { row });
-			}
-			var items = XCoreMenuBridge.CreateMenuItems(window, ids, null, null, authority);
+			var items = XCoreMenuBridge.CreateMenuItems(window, ids, authority);
 			var item = items.FirstOrDefault(i => i.Label == label);
 			Assert.That(item, Is.Not.Null, "the menu offers '{0}'", label);
 			Assert.That(item.Execute, Is.Not.Null, "'{0}' is enabled", label);

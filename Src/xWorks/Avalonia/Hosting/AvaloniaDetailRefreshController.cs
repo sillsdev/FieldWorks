@@ -35,7 +35,11 @@ namespace SIL.FieldWorks.XWorks
 		private readonly IDetailRefreshCoordinator _coordinator;
 		private readonly Action<Action> _schedule;
 		private readonly Func<ICmObject, bool> _isRelevant;
+		private readonly Action<Action> _deferUntilQuiet;
 		private bool _refreshQueued;
+		private bool _burstOpen;
+		private bool _trailingChange;
+		private int _trailingRecordHvo;
 		private bool _disposed;
 
 		/// <param name="cache">The shared LCModel cache whose notification bus is observed.</param>
@@ -46,9 +50,16 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="schedule">Optional UI-thread deferral for coalesced delivery.</param>
 		/// <param name="isRelevant">
 		/// Host-supplied relevance for a changed object that is NOT the displayed record itself
-		/// (the controller already treats the displayed record as relevant). The lexical host
-		/// supplies the ILexEntry owner-walk (see RecordEditView.EnsureAvaloniaRefreshController);
-		/// when null, only changes to the displayed record itself trigger a refresh.
+		/// (the controller already treats the displayed record as relevant), such as an object it
+		/// owns or one of its rows is bound to; when null, only changes to the displayed record
+		/// itself trigger a refresh.
+		/// </param>
+		/// <param name="deferUntilQuiet">
+		/// Optional: runs the given action once no further call has arrived for a short while;
+		/// each call restarts that wait and replaces the action. With it, the first change from
+		/// outside the view refreshes at once, and the rest of a burst, such as typing in
+		/// another view, refreshes once when it goes quiet (LT-22692). Without it, every change
+		/// refreshes.
 		/// </param>
 		public AvaloniaDetailRefreshController(
 			LcmCache cache,
@@ -57,7 +68,8 @@ namespace SIL.FieldWorks.XWorks
 			Action refresh,
 			IDetailRefreshCoordinator coordinator,
 			Action<Action> schedule = null,
-			Func<ICmObject, bool> isRelevant = null)
+			Func<ICmObject, bool> isRelevant = null,
+			Action<Action> deferUntilQuiet = null)
 		{
 			_cache = cache ?? throw new ArgumentNullException(nameof(cache));
 			_currentRecord = currentRecord ?? throw new ArgumentNullException(nameof(currentRecord));
@@ -66,6 +78,7 @@ namespace SIL.FieldWorks.XWorks
 			_coordinator = coordinator ?? throw new ArgumentNullException(nameof(coordinator));
 			_schedule = schedule;
 			_isRelevant = isRelevant;
+			_deferUntilQuiet = deferUntilQuiet;
 			cache.DomainDataByFlid.AddNotification(this);
 		}
 
@@ -96,6 +109,40 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			if (_coordinator.RequestRefresh())
+				DeliverOutsideChange();
+		}
+
+		// The first change of a burst refreshes at once; later ones wait for the burst to go
+		// quiet and refresh once, so typing in another view does not rebuild per keystroke.
+		private void DeliverOutsideChange()
+		{
+			if (_deferUntilQuiet == null)
+			{
+				ScheduleRefresh();
+				return;
+			}
+			if (_burstOpen)
+			{
+				_trailingChange = true;
+				_trailingRecordHvo = _currentRecord()?.Hvo ?? 0;
+			}
+			else
+			{
+				_burstOpen = true;
+				ScheduleRefresh();
+			}
+			_deferUntilQuiet(EndBurst);
+		}
+
+		// Only a change to the record shown now rebuilds: showing a different record already
+		// read current state.
+		private void EndBurst()
+		{
+			_burstOpen = false;
+			if (_disposed || !_trailingChange)
+				return;
+			_trailingChange = false;
+			if ((_currentRecord()?.Hvo ?? 0) == _trailingRecordHvo)
 				ScheduleRefresh();
 		}
 
@@ -162,6 +209,9 @@ namespace SIL.FieldWorks.XWorks
 						_coordinator.RequestRefresh();
 						return;
 					}
+					// This rebuild reads current state, so it covers any change still waiting
+					// for its burst to go quiet.
+					_trailingChange = false;
 					_refresh();
 				}
 				finally
@@ -190,10 +240,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// A change to the displayed record is always relevant; anything else is
-		// the host's call. The lexical host walks OwnerOfClass<ILexEntry>
-		// (injected), so other hosts reuse the controller with their own
-		// rule.
+		// A change to the displayed record is always relevant; anything else is the host's
+		// call, so each host reuses the controller with its own rule.
 		private bool IsRelevant(int hvo)
 		{
 			var current = _currentRecord();

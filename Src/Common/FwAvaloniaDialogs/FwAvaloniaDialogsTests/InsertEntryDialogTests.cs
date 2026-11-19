@@ -4,8 +4,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Headless;
+using Avalonia.Input;
 using Avalonia.Headless.NUnit;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
@@ -546,6 +549,21 @@ namespace FwAvaloniaDialogsTests
 			vm.OkCommand.Execute(null);
 			Assert.That(vm.Result.MorphTypeKey, Is.EqualTo("guid-suffix"),
 				"the dropdown-chosen morph type is snapshotted on OK");
+		}
+
+		[AvaloniaTest]
+		public void MorphType_ArrowOnTheClosedDropdown_FlowsToTheResult()
+		{
+			var (_, vm) = Show(BasicInput());
+			var toggle = vm.MorphTypePicker.GetVisualDescendants().OfType<ToggleButton>()
+				.Single(b => AutomationProperties.GetAutomationId(b) == "InsertEntry.MorphType.Dropdown");
+
+			toggle.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Down });
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(vm.MorphTypePicker.DropdownText, Is.EqualTo("prefix"));
+			Assert.That(vm.MorphTypeKey, Is.EqualTo("guid-prefix"),
+				"the dialog uses the morph type the dropdown shows");
 		}
 
 		// ----- the owned controls are mounted -----

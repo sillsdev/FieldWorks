@@ -13,97 +13,37 @@ namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
 	/// Converts xCore context menus into the neutral <see cref="DetailMenuItem"/> model the
-	/// Avalonia detail view renders as a native MenuFlyout. A menu id without a native
-	/// authority runs through the SAME xCore machinery the WinForms adapter uses
-	/// (GetDisplayProperties -> mediator Display* round-trip; OnClick -> mediator command
-	/// dispatch), only the rendering changes. An owned id never becomes a ChoiceGroup: the
-	/// bridge walks its menu XML and the authority answers every leaf.
-	/// Because this consumes the shared engine, it serves every DTMenuHandler-hosting tool
-	/// (Grammar, Notebook, Lists, Words), not just the Lexicon.
+	/// Avalonia detail view renders as a native MenuFlyout. The bridge walks each menu id's
+	/// configuration: a native authority answers every leaf of an id it owns, and an id no
+	/// authority owns shows its commands disabled. Nothing is asked of the mediator.
 	/// </summary>
 	public static class XCoreMenuBridge
 	{
 		/// <summary>
-		/// Materializes the merged context menu for the given menu ids (the same merge
-		/// XWindow.ShowContextMenu performs) as a renderable item tree. Empty when nothing
-		/// resolves -- callers fall back to the legacy adapter menu.
+		/// Materializes the merged context menu for the given menu ids, in order, as a
+		/// renderable item tree. Every leaf of an id <paramref name="authority"/> owns,
+		/// submenus included, is answered by the authority, and a list-populated submenu takes
+		/// its items from the authority too. An id it does not own shows its configured
+		/// commands disabled. Empty when no id is given.
 		/// </summary>
-		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds)
-			=> CreateMenuItems(window, menuIds, null);
-
-		/// <summary>
-		/// As <see cref="CreateMenuItems(XWindow, string[])"/>, but lets the host RETARGET specific leaf
-		/// commands for the Avalonia detail view (advanced-entry-view). For each command leaf, the
-		/// <paramref name="interceptor"/> is offered the leaf <see cref="ChoiceBase"/> and its
-		/// already-computed display properties (so the host reads the localized label and state
-		/// without a second Display* round trip); if it returns a non-null
-		/// <see cref="DetailMenuItem"/>, that item (its label/checked/enabled/execute) is used INSTEAD of
-		/// the default xCore-dispatched item. Returning null leaves the command on its normal mediator
-		/// path. This is how the per-field Field Visibility / Move Field commands route to the project
-		/// override layer while Help and every other item keep working unchanged. The interceptor only
-		/// sees leaf commands (submenus pass through). Every leaf, default or retargeted, is
-		/// normalized so a disabled item carries no execute action.
-		/// </summary>
+		/// <exception cref="ConfigurationException">An id is not defined, or an item is of a
+		/// kind ChoiceBase.Make would refuse.</exception>
 		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds,
-			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor)
-			=> CreateMenuItems(window, menuIds, interceptor, null);
-
-		/// <summary>
-		/// As <see cref="CreateMenuItems(XWindow, string[])"/> with an interceptor, plus a
-		/// temporary colleague registered on the mediator before the menu populates, so
-		/// per-target commands (an item's Show-in-tool jumps) find their handler. The mediator
-		/// keeps one temporary colleague at a time; the host disposes it once the menu closes.
-		/// </summary>
-		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds,
-			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor,
-			IxCoreColleague temporaryColleague)
-			=> CreateMenuItems(window, menuIds, interceptor, temporaryColleague, null);
-
-		/// <summary>
-		/// As the interceptor overload, plus a native <paramref name="authority"/>. A menu id it
-		/// owns is built from its configuration alone, with no ChoiceGroup and no mediator
-		/// display query: every leaf under it, submenus included, is answered by the authority,
-		/// and a list-populated submenu takes its items from the authority too. Other ids keep
-		/// the mediator path.
-		/// </summary>
-		public static IReadOnlyList<DetailMenuItem> CreateMenuItems(XWindow window, string[] menuIds,
-			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor,
-			IxCoreColleague temporaryColleague, IDetailMenuAuthority authority)
+			IDetailMenuAuthority authority)
 		{
 			var items = new List<DetailMenuItem>();
 			if (window == null || menuIds == null)
 				return items;
 
-			// One group or definition per id keeps each id's ownership known; the source menus
-			// contribute their items in order.
-			var menus = new List<(ChoiceGroup Group, DetailMenuDefinition Owned)>();
+			// The source menus contribute their items in order.
 			foreach (var id in menuIds)
 			{
 				if (string.IsNullOrEmpty(id))
 					continue;
-				if (authority != null && authority.Owns(id))
-				{
-					menus.Add((null, ResolveMenu(window, id)));
-					continue;
-				}
-				var group = window.GetContextMenuChoiceGroup(new[] { id });
-				if (group != null)
-					menus.Add((group, null));
-			}
-			if (menus.Count == 0)
-				return items;
-
-			if (temporaryColleague != null)
-				window.Mediator.AddTemporaryColleague(temporaryColleague);
-			foreach (var (group, owned) in menus)
-			{
-				if (owned != null)
-				{
-					items.AddRange(ConvertOwned(owned.Entries, authority, owned.MenuId));
-					continue;
-				}
-				group.PopulateNow();
-				items.AddRange(Convert(group, interceptor));
+				var menu = ResolveMenu(window, id);
+				items.AddRange(authority != null && authority.Owns(id)
+					? ConvertOwned(menu.Entries, authority, id)
+					: ConvertUnowned(menu.Entries));
 			}
 
 			TrimSeparators(items);
@@ -112,8 +52,8 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Whether <paramref name="authority"/> owns every one of <paramref name="menuIds"/>,
-		/// so a menu built from them needs nothing from the mediator. Null or empty ids count
-		/// as owned; a null authority owns nothing.
+		/// so a menu built from them is answered in full. Null or empty ids count as owned; a
+		/// null authority owns nothing.
 		/// </summary>
 		public static bool OwnsAll(IDetailMenuAuthority authority, IEnumerable<string> menuIds)
 		{
@@ -133,7 +73,7 @@ namespace SIL.FieldWorks.XWorks
 		/// and no mediator query. Labels are localized as xCore localizes them. An item
 		/// ChoiceGroup would carry but no authority can answer (a property toggle, an
 		/// undefined command) is kept as such rather than refused, so the menu it belongs to
-		/// stays on the mediator path.
+		/// is never owned.
 		/// </summary>
 		/// <exception cref="ConfigurationException">The id is not defined, or an item is of a
 		/// kind ChoiceBase.Make would refuse.</exception>
@@ -263,71 +203,39 @@ namespace SIL.FieldWorks.XWorks
 			return items;
 		}
 
-		// The mediator path. Edge separators stay: they divide merged groups.
-		private static List<DetailMenuItem> Convert(ChoiceGroup group,
-			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor)
+		// A menu no authority owns: its configured commands and toggles, disabled. A submenu
+		// keeps its label; a list-populated one is omitted, since nothing supplies its items.
+		private static List<DetailMenuItem> ConvertUnowned(IReadOnlyList<DetailMenuEntry> entries)
 		{
 			var items = new List<DetailMenuItem>();
-			foreach (var member in group)
+			foreach (var entry in entries)
 			{
-				// SeparatorChoice subclasses ChoiceBase: test it first.
-				if (member is SeparatorChoice)
+				if (entry.IsSeparator)
 				{
 					items.Add(DetailMenuItem.Separator());
 				}
-				else if (member is ChoiceGroup submenu)
+				else if (entry.Leaf != null)
 				{
-					submenu.PopulateNow();
-					var children = ConvertChildren(submenu, interceptor);
+					items.Add(DetailMenuItem.Disabled(StripAccelerator(entry.Leaf.Label)));
+				}
+				else if (entry.Unanswerable != null)
+				{
+					if (entry.Label.Length > 0)
+						items.Add(DetailMenuItem.Disabled(StripAccelerator(entry.Label)));
+				}
+				else if (entry.Children != null)
+				{
+					var children = ConvertUnowned(entry.Children);
+					TrimSeparators(children);
 					if (children.Count == 0)
 						continue;
-
-					// An inline choice list is a population rule, not a level of menu, and
-					// reports itself invisible: splice its items rather than nesting them.
-					if (submenu.IsInlineChoiceList)
-					{
+					if (entry.IsInline)
 						items.AddRange(children);
-						continue;
-					}
-
-					var display = submenu.GetDisplayProperties();
-					if (!display.Visible)
-						continue;
-					items.Add(new DetailMenuItem(StripAccelerator(display.Text), display.Enabled,
-						display.Checked, children));
-				}
-				else if (member is ChoiceBase choice)
-				{
-					var display = choice.GetDisplayProperties();
-					if (!display.Visible)
-						continue;
-
-					// advanced-entry-view: offer the leaf to the host; a non-null result retargets this
-					// command to the override layer (Field Visibility / Move Field) instead of the
-					// hidden-DataTree mediator dispatch.
-					var retargeted = interceptor?.Invoke(choice, display);
-					if (retargeted != null)
-					{
-						items.Add(WithoutExecuteWhenDisabled(retargeted));
-						continue;
-					}
-
-					var captured = choice;
-					items.Add(new DetailMenuItem(StripAccelerator(display.Text), display.Enabled,
-						display.Checked, null,
-						display.Enabled ? (Action)(() => captured.OnClick(null, EventArgs.Empty)) : null));
+					else
+						items.Add(new DetailMenuItem(StripAccelerator(entry.Label), isEnabled: true, isChecked: false, children));
 				}
 			}
 			return items;
-		}
-
-		// A submenu's children. Hiding items can leave a separator first or last; those go.
-		private static List<DetailMenuItem> ConvertChildren(ChoiceGroup submenu,
-			Func<ChoiceBase, UIItemDisplayProperties, DetailMenuItem> interceptor)
-		{
-			var children = Convert(submenu, interceptor);
-			TrimSeparators(children);
-			return children;
 		}
 
 		// The authority's list items as the renderer needs them: disabled items lose their

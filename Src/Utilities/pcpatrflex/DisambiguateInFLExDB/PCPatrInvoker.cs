@@ -25,15 +25,17 @@ namespace SIL.DisambiguateInFLExDB
 		public string LogFile { get; set; }
 		public string BatchFile { get; set; }
 		public string RootGlossState { get; set; }
+		public ShowFailures ShowFailures { get; set; }
 		public Boolean InvocationSucceeded { get; set; }
 		public string MaxAmbiguities { get; set; }
 		public string TimeLimit { get; set; }
 
-		public PCPatrInvoker(string grammarFile, string anaFile, string rootglossState)
+		public PCPatrInvoker(string grammarFile, string anaFile, string rootglossState, ShowFailures showFailures)
 		{
 			GrammarFile = grammarFile;
 			AnaFile = anaFile;
 			RootGlossState = rootglossState;
+			ShowFailures = showFailures;
 			LogFile = Path.Combine(Path.GetTempPath(), logFileName);
 			MaxAmbiguities = "100";
 			TimeLimit = "0";
@@ -81,7 +83,7 @@ namespace SIL.DisambiguateInFLExDB
 				process.PriorityClass = ProcessPriorityClass.High;
 				process.WaitForExit();
 				string error = process.StandardError.ReadToEnd();
-				if (error.Contains("ERROR "))
+				if (error.Contains("ERROR ") || error.Contains("WARNING"))
 				{
 					InvocationSucceeded = false;
 				}
@@ -108,7 +110,7 @@ namespace SIL.DisambiguateInFLExDB
 			sbTake.Append("\n");
 			sbTake.Append("set timing on\n");
 			sbTake.Append("set gloss on\n");
-			sbTake.Append("set features all\n");
+			HandleSetFeaturesAndShowFailures(sbTake);
 			HandleRootGloss(sbTake);
 			sbTake.Append("set tree xml\n");
 			sbTake.Append("set ambiguities ");
@@ -139,6 +141,25 @@ namespace SIL.DisambiguateInFLExDB
 			result = GetRootGlossStateValue();
 			sbTake.Append(result + "\n");
 		}
+		// is public for testing
+		public void HandleSetFeaturesAndShowFailures(StringBuilder sbTake)
+		{
+			sbTake.Append("set features ");
+			switch (ShowFailures)
+			{
+				case ShowFailures.Off:
+					sbTake.Append("all\n");
+					break;
+				case ShowFailures.On:
+					sbTake.Append("all\n");
+					sbTake.Append("set failures on\n");
+					break;
+				case ShowFailures.PSROnly:
+					sbTake.Append("off\n");
+					sbTake.Append("set unification off\n");
+					break;
+			}
+		}
 
 		public string GetRootGlossStateValue()
 		{
@@ -162,5 +183,11 @@ namespace SIL.DisambiguateInFLExDB
 
 			return result;
 		}
+	}
+	public enum ShowFailures
+	{
+		Off,
+		PSROnly,
+		On
 	}
 }

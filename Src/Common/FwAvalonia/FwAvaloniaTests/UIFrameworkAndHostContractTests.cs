@@ -85,18 +85,5 @@ namespace FwAvaloniaTests
 			Assert.That(contract.PermitsLegacyDataTreeDrive("other"), Is.False);
 			Assert.That(contract.PermitsLegacyDataTreeDrive(), Is.False);
 		}
-
-		// "command-menu-routing" is the approved adapter under which RecordEditView
-		// initializes the HIDDEN DataTree + DTMenuHandler as the command-target
-		// chain for context menus -- never shown, never active.
-		[Test]
-		public void Avalonia_CommandMenuRouting_IsAnApprovableAdapter_ForContextMenuCommands()
-		{
-			var contract = ActiveHostContract.ForAvalonia("command-menu-routing");
-			Assert.That(contract.PermitsLegacyDataTreeDrive("command-menu-routing"), Is.True);
-			Assert.DoesNotThrow(() => contract.AssertLegacyDataTreeDriveAllowed("command-menu-routing"));
-			Assert.That(contract.PermitsLegacyDataTreeDrive(), Is.False,
-				"undeclared legacy drives stay forbidden while Avalonia is active");
-		}
 	}
 }

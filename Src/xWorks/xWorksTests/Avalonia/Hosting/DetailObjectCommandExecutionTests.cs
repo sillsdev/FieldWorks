@@ -23,35 +23,19 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using XCore;
-// Both namespaces above define DataTree; the adapter tests mean the legacy WinForms one.
+// Both namespaces above define DataTree; the help-topic test means the WinForms one.
 using LegacyDataTree = SIL.FieldWorks.Common.Framework.DetailControls.DataTree;
 using PhonEnvRecognizer = SIL.LCModel.Core.Phonology.PhonEnvRecognizer;
 
 namespace SIL.FieldWorks.XWorks
 {
 	/// <summary>
-	/// END-TO-END execution + refresh proof for the core
-	/// OBJECT commands the Avalonia detail view reuses from the legacy xCore machinery. This fixture
-	/// proves on the REAL product host that these commands actually mutate the model and that the
-	/// composed detail view reflects the mutation.
-	///
-	/// Seam: a real <see cref="RecordEditView"/> is loaded through <see cref="MockFwXWindow"/> in the
-	/// New UI mode (the same bootstrap <c>RecordEditViewActiveHostContractTests</c> uses), so the
-	/// Avalonia is the active host and the hidden legacy DataTree exists only as the approved
-	/// "command-menu-routing" baseline adapter. Each test drives a command through the PRODUCTION path:
-	/// 1. <c>EnsureMenuCommandAdapter(targetHvo)</c> -- builds/syncs the hidden adapter tree and
-	/// points
-	///      its CurrentSlice at the slice bound to the clicked row's object (exactly what
-	///      <c>OnDetailMenuRequested</c> calls first).
-	/// 2. <see cref="XCoreMenuBridge.CreateMenuItems(XWindow, string[])"/> -- the same
-	/// native-menu
-	/// materialization <c>OnDetailMenuRequested</c> performs; the resulting <see
-	/// cref="DetailMenuItem"/>
-	///      carries an Execute action that dispatches the command through the mediator
-	/// (<c>ChoiceBase.OnClick</c> -> hidden DataTree/DTMenuHandler colleagues -> UOW mutation).
-	/// Invoking that Execute is the user clicking the item. We then assert (a) the model mutated and
-	/// (b) re-composing the entry (the same <see cref="DetailComposer.Compose"/> call
-	/// <c>RecordEditView.ShowAvaloniaEntry</c> makes on refresh) reflects it.
+	/// The context menus of the Avalonia detail view on the real product host: a
+	/// <see cref="RecordEditView"/> loaded through <see cref="MockFwXWindow"/> in the New UI
+	/// mode. Each menu is built as <c>OnDetailMenuRequested</c> builds it, through
+	/// <see cref="XCoreMenuBridge"/> and the row's native authorities; invoking an item's
+	/// Execute is the user clicking it. The tests assert what the menu offers, what a
+	/// command changes in the model, and that the recomposed detail reflects the change.
 	/// </summary>
 	[TestFixture]
 	[Apartment(System.Threading.ApartmentState.STA)]
@@ -66,9 +50,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_application = new MockFwXApp(new MockFwManager { Cache = Cache }, null, null);
 			m_configFilePath = Path.Combine(FwDirectoryFinder.CodeDirectory, m_application.DefaultConfigurationPathname);
-			// The hidden legacy DataTree's ShowObject (driven by EnsureMenuCommandAdapter) needs the
-			// legacy layout/parts Inventory loaded; that Inventory is keyed by the project path, so
-			// give the in-memory test project a writable temp path before the inventory bootstrap.
+			// The WinForms DataTree the help-topic test shows needs the layout/parts Inventory,
+			// keyed by the project path: give the test project a writable temp path first.
 			Cache.ProjectId.Path = Path.Combine(Path.GetTempPath(), Cache.ProjectId.Name,
 				Cache.ProjectId.Name + ".junk");
 		}
@@ -82,13 +65,13 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.RemoveLocalAndGlobalSettings();
 			m_window.LoadUI(m_configFilePath);
 			// The lexicon detail layout includes the Chorus-backed MessageSlice, which localizes
-			// strings when built; register a minimal LocalizationManager (as the product does at
-			// startup) so ShowObject can build the full tree headlessly.
+			// strings when built; register a minimal LocalizationManager so the WinForms
+			// DataTree can build the full tree headlessly.
 			TestLocalizationManagerBootstrap.EnsureInitialized();
 			// The mock app has no inner help-topic provider; give the PropertyTable a null-returning
-			// stub so the legacy Help command can be queried while materializing the menu.
+			// stub so Help can be asked for a topic while a menu is built.
 			TestLocalizationManagerBootstrap.EnsureHelpTopicProvider(m_propertyTable);
-			// Bootstrap the legacy layout/parts Inventory the production RecordEditView loads via
+			// Bootstrap the layout/parts Inventory the production RecordEditView loads via
 			// EnsureDataTreeInitialized (LayoutCache loads the real lexicon .fwlayout/Parts).
 			// Without it, DataTree.GetTemplateForObjLayout finds a null layout inventory and ShowObject
 			// throws an NRE. This is the same bootstrap the DictionaryConfigurationMigrator tests use.
@@ -122,71 +105,6 @@ namespace SIL.FieldWorks.XWorks
 				m_window.Dispose();
 				m_window = null;
 			}
-		}
-
-		// ----------------------------------------------------------------------------------------
-		// Insert Sense
-		// ----------------------------------------------------------------------------------------
-
-		[Test]
-		public void InsertSense_FromSenseMenu_AddsSenseToModel_AndComposedDetailReflectsIt()
-		{
-			var sensesBefore = m_entry.SensesOS.Count;
-			var senseHeadersBefore = ComposeSenseHeaderCount();
-
-			InvokeSliceMenuCommand(m_entry.SensesOS[0].Hvo, "mnuDataTree-Sense", "Insert Sense");
-
-			Assert.That(m_entry.SensesOS.Count, Is.EqualTo(sensesBefore + 1),
-				"Insert Sense must add a sense to the entry through the real command + UOW");
-			Assert.That(ComposeSenseHeaderCount(), Is.GreaterThan(senseHeadersBefore),
-				"the re-composed detail view (what RefreshAvaloniaDetail re-shows) gains a sense header for the new sense");
-		}
-
-		[Test]
-		public void InsertSense_ViaHotlinks_AddsSense_EndToEndThroughXCoreMenuBridge()
-		{
-			var sensesBefore = m_entry.SensesOS.Count;
-
-			// Hotlinks is the production path for the section's quick-add affordance:
-			// OnDetailMenuRequested(Kind=Hotlinks) builds ONLY the HotlinksId menu through the same
-			// XCoreMenuBridge; mnuDataTree-Sense-Hotlinks offers "Insert Sense".
-			InvokeHotlinksCommand(m_entry.SensesOS[0].Hvo, "mnuDataTree-Sense-Hotlinks", "Insert Sense");
-
-			Assert.That(m_entry.SensesOS.Count, Is.EqualTo(sensesBefore + 1),
-				"Insert Sense via the hotlinks path mutates the model end-to-end through XCoreMenuBridge");
-			Assert.That(RefreshedDetailFieldCount(), Is.GreaterThan(0),
-				"the host can re-show the detail view after a hotlink-create");
-		}
-
-		// --------------------------------------------------------------------------------------
-		// Insert Allomorph
-		// --------------------------------------------------------------------------------------
-
-		// The Allomorphs section binds its commands to the ENTRY, not to an allomorph:
-		// AlternateForms is a LexEntry field, so the section header's bound object is the entry.
-		[Test]
-		public void InsertAllomorph_ViaHotlinks_AddsAllomorph_EndToEndThroughXCoreMenuBridge()
-		{
-			var allomorphsBefore = m_entry.AlternateFormsOS.Count;
-
-			InvokeHotlinksCommand(m_entry.Hvo, "mnuDataTree-AlternateForms-Hotlinks",
-				"Insert Allomorph");
-
-			Assert.That(m_entry.AlternateFormsOS.Count, Is.EqualTo(allomorphsBefore + 1),
-				"Insert Allomorph via hotlinks mutates the model through XCoreMenuBridge");
-			Assert.That(RefreshedDetailFieldCount(), Is.GreaterThan(0),
-				"the host can re-show the detail view after a hotlink-create");
-		}
-
-		[Test]
-		public void InsertAllomorph_FromSectionMenu_AddsAllomorphToModel()
-		{
-			var allomorphsBefore = m_entry.AlternateFormsOS.Count;
-
-			InvokeSliceMenuCommand(m_entry.Hvo, "mnuDataTree-AlternateForms", "Insert Allomorph");
-
-			Assert.That(m_entry.AlternateFormsOS.Count, Is.EqualTo(allomorphsBefore + 1),
-				"Insert Allomorph from the section menu adds an allomorph via the real command + UOW");
 		}
 
 		// ===== Reference-vector rows: the per-item menu and Move Left / Move Right =====
@@ -269,9 +187,6 @@ namespace SIL.FieldWorks.XWorks
 			=> DetailMenuRequest.FromAnchor(null, field, DetailMenuKind.ItemMenu,
 				new ItemSelection { SelectedItemKey = field.Items[index].Key, SelectedItemIndex = index });
 
-		// Whether the hidden command adapter tree has been built for this view.
-		private bool HiddenTreeExists => (bool)GetField(m_view, "m_dataTreeInitialized");
-
 		// The item menu's native authority answers the reference-choices menu, so an item menu
 		// is built from the row and the item alone.
 
@@ -292,7 +207,7 @@ namespace SIL.FieldWorks.XWorks
 						"the authority does not answer leaf '{0}'", leaf.CommandId);
 				}
 				Assert.That(() => XCoreMenuBridge.CreateMenuItems(window, new[] { ReferenceItemMenuAuthority.MenuId },
-					null, null, authority), Throws.Nothing, "the whole menu builds through the bridge");
+					authority), Throws.Nothing, "the whole menu builds through the bridge");
 				var targets = leaves
 					.Where(l => l.Message == SIL.FieldWorks.FdoUi.CmObjectUi.JumpToToolMessage)
 					.Select(l => l.Command.TargetId).Distinct().ToList();
@@ -331,16 +246,15 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Assert.That(envUi.ContextMenuId, Is.EqualTo(ReferenceItemMenuAuthority.EnvironmentMenuId));
 				Assert.That(envAuthority.Owns(envUi.ContextMenuId), Is.True,
-					"an environment's item menu is answered natively too, so no item menu needs the adapter");
+					"an environment's item menu is answered natively too");
 			}
 		}
 
 		[Test]
-		public void ReferenceItemMenu_OfASubentry_IsBuiltWithoutTheAdapterOrTheMediator()
+		public void ReferenceItemMenu_OfASubentry_IsBuiltWithoutTheMediator()
 		{
 			MakeTwoSubentries();
 			var request = ItemRequest(SubentriesField(), 0);
-			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree exists yet");
 			var window = m_propertyTable.GetValue<XWindow>("window");
 			var spy = new DisplaySpyColleague();
 			window.Mediator.AddColleague(spy);
@@ -350,7 +264,6 @@ namespace SIL.FieldWorks.XWorks
 				using (itemUi)
 				{
 					Assert.That(spy.Asked, Is.False, "no leaf of an owned item menu reaches the mediator");
-					Assert.That(HiddenTreeExists, Is.False, "an owned item menu never builds the hidden tree");
 					var jump = FindItem(items, "Show Entry in Lexicon" + SIL.FieldWorks.FdoUi.CmObjectUi.CtrlClickSuffix);
 					Assert.That(jump?.Execute, Is.Not.Null, "the item's object UI answers the jump directly");
 					Assert.That(FindItem(items, "Move Right")?.IsEnabled, Is.True);
@@ -410,8 +323,7 @@ namespace SIL.FieldWorks.XWorks
 			"Filter for Notebook Records with this category" + Enabled
 		});
 
-		// The one divergence from the colleague path, by design: the mark reads the clicked
-		// item, where the hidden tree has no selection and so never offers it.
+		// The mark reads the clicked item, so the menu offers it with no WinForms selection.
 		[Test]
 		public void ShowSubentryUnderComponent_OnAComplexFormsComponentsRow_TogglesThePrimaryLexeme()
 		{
@@ -598,17 +510,16 @@ namespace SIL.FieldWorks.XWorks
 						Throws.Nothing, "the authority does not answer leaf '{0}'", leaf.CommandId);
 				}
 				var items = XCoreMenuBridge.CreateMenuItems(window,
-					new[] { ReferenceItemMenuAuthority.EnvironmentMenuId }, null, null, authority);
+					new[] { ReferenceItemMenuAuthority.EnvironmentMenuId }, authority);
 				Assert.That(items, Is.Not.Empty, "the whole menu builds through the bridge");
 				Assert.That(authority.DefaultActivation, Is.Not.Null, "Ctrl+click runs the jump");
 			}
 		}
 
 		[Test]
-		public void EnvironmentItemMenu_IsBuiltWithoutTheAdapterOrTheMediator()
+		public void EnvironmentItemMenu_IsBuiltWithoutTheMediator()
 		{
 			var field = EnvironmentsFieldWithOneItem();
-			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree exists yet");
 			var window = m_propertyTable.GetValue<XWindow>("window");
 			var spy = new DisplaySpyColleague();
 			window.Mediator.AddColleague(spy);
@@ -618,7 +529,6 @@ namespace SIL.FieldWorks.XWorks
 				using (itemUi)
 				{
 					Assert.That(spy.Asked, Is.False, "no leaf of the environment item menu reaches the mediator");
-					Assert.That(HiddenTreeExists, Is.False, "the environment item menu never builds the hidden tree");
 					var jump = FindItem(items, JumpToEnvironmentsLabel + SIL.FieldWorks.FdoUi.CmObjectUi.CtrlClickSuffix);
 					Assert.That(jump?.IsEnabled, Is.True, "the item's object UI answers the jump directly");
 					var describe = FindItem(items, DescribeErrorLabel);
@@ -671,7 +581,6 @@ namespace SIL.FieldWorks.XWorks
 			var field = EnvironmentsFieldWithOneItem();
 			var ids = LabelMenuIds(field);
 			Assert.That(ids, Does.Contain(EnvironmentInsertMenuAuthority.EnvironmentsMenuId));
-			Assert.That(HiddenTreeExists, Is.False, "precondition: no hidden tree exists yet");
 
 			// The caret sits in the empty slot for a new environment: no item is current.
 			var slot = new TextEditorStub { EditorText = string.Empty, Caret = 0 };
@@ -680,7 +589,6 @@ namespace SIL.FieldWorks.XWorks
 				"every id of the Environments label menu is answered natively");
 			var items = BuildWithSpy(ids, authority, out var asked);
 			Assert.That(asked, Is.False, "no leaf reaches the mediator");
-			Assert.That(HiddenTreeExists, Is.False, "the owned label menu never builds the hidden tree");
 			AssertInsertsEnabled(items, InsertSlashLabel);
 			FindItem(items, InsertSlashLabel).Execute();
 			Assert.That(slot.Typed, Is.EqualTo(new[] { (0, 0, "/", 0) }), "the slash starts the new environment");
@@ -694,8 +602,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// The String Representation row of an environment composes as Unsupported (its editor
 		/// is a WinForms plugin slice) on a tool that is not in the Avalonia catalog yet. Its
-		/// menu is owned all the same, with its inserts disabled, so the day either changes the
-		/// hidden adapter is already out of the picture.
+		/// menu is owned all the same, with its inserts disabled.
 		/// </summary>
 		[Test]
 		public void StringRepresentationLabelMenu_IsOwned_WithItsInsertsDisabled()
@@ -917,12 +824,11 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(Cache.ServiceLocator.ObjectRepository.IsValidObjectId(targetHvo), Is.True);
 
 			// The default activation posts the first enabled jump's link for the clicked
-			// subentry and builds no hidden tree on the way.
+			// subentry.
 			var link = CaptureFollowLink(() => m_view.OnDetailItemMenuRequested(request));
 			Assert.That(link, Is.Not.Null, "the Ctrl+click default runs a jump");
 			Assert.That(link.ToolName, Is.EqualTo("lexiconEdit"), "Show Entry in Lexicon is the first enabled jump");
 			Assert.That(link.TargetGuid, Is.EqualTo(new Guid(field.Items[1].Key)), "the jump targets the clicked subentry");
-			Assert.That(HiddenTreeExists, Is.False, "a native Ctrl+click never points the adapter at the row");
 		}
 
 		// Runs an action and returns the link it posts, once the post has been delivered.
@@ -992,16 +898,15 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetProperty("HelpTopicProvider",
 				new PatternHelpTopicProvider(id => providerKnowsToolTopics && id.Contains("-lexiconEdit-")), false);
 			m_propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
-			EnsureAdapter(m_entry.Hvo);
-			var dataTree = (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
 			var fields = DetailComposer.Compose(m_entry, Cache).Model.Fields;
+			var dataTree = ShowWinFormsDataTree();
 
 			var compared = 0;
 			var relationsCompared = 0;
 			var mismatches = new List<string>();
 			foreach (var sliceObj in dataTree.Slices)
 			{
-				if (!(sliceObj is Slice slice) || slice.Object == null || slice.IsLazyPlaceholder || slice.Flid == 0)
+				if (!(sliceObj is Slice slice) || slice.Object == null || slice.Flid == 0)
 					continue;
 				var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
 				var sliceField = mdc.FieldExists(slice.Flid) ? mdc.GetFieldName(slice.Flid) : null;
@@ -1030,8 +935,18 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(mismatches, Is.Empty);
 		}
 
-		// The reorder-vector menu's native authority and its equivalence net: the rendered tree
-		// must match the adapter's for every state a row can be in.
+		// Switches the view to the WinForms detail view, whose DataTree then shows the entry.
+		private LegacyDataTree ShowWinFormsDataTree()
+		{
+			m_propertyTable.SetProperty("UIMode", "Legacy", true);
+			DrainMediatorAndIdleQueues();
+			Assert.That(GetField(m_view, "m_activeUIFramework"), Is.EqualTo(UIFramework.Legacy),
+				"precondition: the view switched to the WinForms detail view");
+			Assert.That(m_view.DatTree.Root, Is.EqualTo(m_entry), "precondition: the DataTree shows the entry");
+			return m_view.DatTree;
+		}
+
+		// The reorder-vector menu's native authority, in every state a row can be in.
 
 		private static readonly ItemSelection NoItem = new ItemSelection { SelectedItemKey = null, SelectedItemIndex = -1 };
 
@@ -1042,7 +957,7 @@ namespace SIL.FieldWorks.XWorks
 			=> RecordEditView.ComposeSliceMenuIds(field.MenuId, field.IsMultiStringRow).ToArray();
 
 		// The entry's read-only Complex Forms row: it binds the reorder menu but composes as
-		// text, so it is the row where the adapter and the authority most easily disagree.
+		// text.
 		private DetailField ComplexFormsField()
 		{
 			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields
@@ -1074,34 +989,28 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ReorderVectorLabelMenu_NativeAuthority_RendersTheSameTreeAsTheAdapter_WithNoCurrentItem()
+		public void ReorderVectorLabelMenu_WithNoCurrentItem_OffersTheMovesDisabled_AndAlphabeticalOrder()
 		{
 			MakeTwoSubentries();
 			var field = SubentriesField();
 			Assert.That(field.MenuId, Is.EqualTo(ReorderVectorMenuAuthority.MenuId), "precondition: Subentries binds the reorder menu");
-			var ids = LabelMenuIds(field);
-			EnsureAdapter(field.ObjectHvo, field.Field);
 
-			var adapter = Describe(BuildItems(ids));
-			var native = Describe(BuildItems(ids, m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, NoItem))));
+			var menu = Describe(BuildItems(LabelMenuIds(field), m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem))));
 
-			Assert.That(native, Is.EqualTo(adapter), "the native authority must render exactly what the adapter renders");
-			Assert.That(adapter, Does.Contain("Move Left [enabled=False"), "no current item: Move Left offered, disabled");
-			Assert.That(adapter, Does.Contain("Move Right [enabled=False"), "no current item: Move Right offered, disabled");
-			Assert.That(adapter, Does.Contain("Alphabetical Order [enabled=True"), "reorder='true': Alphabetical Order offered and enabled");
+			Assert.That(menu, Does.Contain("Move Left" + Disabled), "no current item: Move Left offered, disabled");
+			Assert.That(menu, Does.Contain("Move Right" + Disabled), "no current item: Move Right offered, disabled");
+			Assert.That(menu, Does.Contain("Alphabetical Order" + Enabled), "reorder='true': Alphabetical Order offered and enabled");
 		}
 
-		// Both sides of the equivalence tests render through the bridge, so a rendering change
-		// they share passes them; this pins the merge itself.
+		// Pins the merge of the row's own menu with the shared object menu.
 		[Test]
 		public void ReorderVectorLabelMenu_KeepsTheSeparator_BetweenTheReorderMenu_AndTheObjectMenu()
 		{
 			MakeTwoSubentries();
 			var field = SubentriesField();
 			var ids = LabelMenuIds(field);
-			EnsureAdapter(field.ObjectHvo, field.Field);
 
-			var items = BuildItems(ids, m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, NoItem))).ToList();
+			var items = BuildItems(ids, m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem))).ToList();
 
 			var alphabetical = items.FindIndex(i => i.Label == "Alphabetical Order");
 			var visibility = items.FindIndex(i => i.Label == "Field Visibility");
@@ -1112,19 +1021,16 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ReorderVectorLabelMenu_ReadOnlyComplexFormsRow_RendersTheSameTreeAsTheAdapter()
+		public void ReorderVectorLabelMenu_ReadOnlyComplexFormsRow_HidesTheMoves_AndKeepsAlphabeticalOrder()
 		{
 			MakeTwoSubentries();
 			var field = ComplexFormsField();
-			var ids = LabelMenuIds(field);
-			EnsureAdapter(field.ObjectHvo, field.Field);
 
-			var adapter = Describe(BuildItems(ids));
-			var native = Describe(BuildItems(ids, m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, NoItem))));
+			var menu = Describe(BuildItems(LabelMenuIds(field), m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem))));
 
-			Assert.That(native, Is.EqualTo(adapter), "a read-only row keeps the menu the adapter gave it");
-			Assert.That(adapter, Does.Not.Contain("Move Left"), "WinForms hides the moves on this row by its label");
-			Assert.That(adapter, Does.Contain("Alphabetical Order [enabled=True"), "reorder='true': the order can still be reset");
+			Assert.That(menu, Does.Not.Contain("Move Left"), "WinForms hides the moves on this row by its label");
+			Assert.That(menu, Does.Not.Contain("Move Right"));
+			Assert.That(menu, Does.Contain("Alphabetical Order" + Enabled), "reorder='true': the order can still be reset");
 		}
 
 		[Test]
@@ -1139,24 +1045,6 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(FindItem(items, "Move Left").IsEnabled, Is.False, "the first item cannot move left");
 			Assert.That(FindItem(items, "Move Right").IsEnabled, Is.True, "the first item can move right");
 			Assert.That(FindItem(items, "Alphabetical Order").IsEnabled, Is.True);
-		}
-
-		[Test]
-		public void ReorderVectorMenu_WithoutTheAdapter_TheNativeAuthorityAnswers_WhereTheMediatorLeaksDisabledItems()
-		{
-			MakeTwoSubentries();
-			var field = SubentriesField();
-			var ids = new[] { ReorderVectorMenuAuthority.MenuId };
-			// No EnsureAdapter: the hidden tree never exists, so nothing on the mediator answers.
-
-			var mediatorOnly = BuildItems(ids);
-			var native = BuildItems(ids, m_view.CreateReorderVectorAuthority(LabelMenuRequest(field, NoItem)));
-
-			Assert.That(FindItem(mediatorOnly, "Alphabetical Order")?.IsEnabled, Is.False,
-				"without the adapter the mediator path leaks the item as visible-but-disabled");
-			Assert.That(FindItem(native, "Alphabetical Order")?.IsEnabled, Is.True,
-				"the authority answers from the row and needs no adapter");
-			Assert.That(native.Count(i => !i.IsSeparator), Is.EqualTo(3));
 		}
 
 		[Test]
@@ -1235,12 +1123,12 @@ namespace SIL.FieldWorks.XWorks
 				LabelMenuIds(multiString)), Is.True,
 				"a multi-string row's menu, writing-system list included, is answered natively");
 			var lexemeForm = LexemeFormField();
-			Assert.That(m_view.CreateMultiStringMenuAuthority(lexemeForm).Owns(MultiStringMenuAuthority.MenuId),
+			Assert.That(m_view.CreateWritingSystemsMenuAuthority(lexemeForm).Owns(WritingSystemsMenuAuthority.MenuId),
 				Is.True, "the shared multi-string group is owned on the Lexeme Form row too");
 			Assert.That(XCoreMenuBridge.OwnsAll(m_view.CreateMenuAuthority(LabelMenuRequest(lexemeForm, NoItem)),
 				LabelMenuIds(lexemeForm)), Is.True,
 				"the Lexeme Form row's menu, its own jump, swap and convert leaves included, is answered natively");
-			Assert.That(m_view.CreateMultiStringMenuAuthority(subentries).Owns(MultiStringMenuAuthority.MenuId),
+			Assert.That(m_view.CreateWritingSystemsMenuAuthority(subentries).Owns(WritingSystemsMenuAuthority.MenuId),
 				Is.False, "a row that is not multi-string never claims the multi-string menu");
 			Assert.That(XCoreMenuBridge.OwnsAll(null, new[] { ReorderVectorMenuAuthority.MenuId }), Is.False);
 		}
@@ -1320,7 +1208,7 @@ namespace SIL.FieldWorks.XWorks
 			window.Mediator.AddColleague(spy);
 			try
 			{
-				var items = XCoreMenuBridge.CreateMenuItems(window, ids, null, null, authority);
+				var items = XCoreMenuBridge.CreateMenuItems(window, ids, authority);
 				mediatorAsked = spy.Asked;
 				return items;
 			}
@@ -1334,7 +1222,6 @@ namespace SIL.FieldWorks.XWorks
 		public void OwnedMenu_WithSubmenus_IsBuiltWithoutAskingTheMediator()
 		{
 			var ids = new[] { RecordEditView.ObjectMenuId };
-			// No EnsureAdapter: the hidden tree never exists.
 
 			var items = BuildWithSpy(ids, new EchoAuthority(ids), out var asked);
 
@@ -1350,10 +1237,25 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void UnownedMenu_StillAsksTheMediator_ForSubmenuLeaves()
+		public void UnownedMenu_ShowsItsCommandsDisabled_WithoutAskingTheMediator()
 		{
-			BuildWithSpy(new[] { RecordEditView.ObjectMenuId }, null, out var asked);
-			Assert.That(asked, Is.True, "the mediator path decides submenu visibility by asking colleagues");
+			var items = BuildWithSpy(new[] { RecordEditView.ObjectMenuId }, null, out var asked);
+
+			Assert.That(asked, Is.False, "an id no authority owns asks the mediator nothing either");
+			var visibility = FindItem(items, "Field Visibility");
+			Assert.That(visibility?.Children.Select(c => c.Label),
+				Is.EqualTo(new[] { "Always visible", "Normally hidden, unless non-empty", "Normally hidden" }),
+				"a submenu keeps its label and its commands");
+			var leaves = visibility.Children.Concat(FindItem(items, "Move Field").Children)
+				.Concat(new[] { FindItem(items, "Help...") }).ToList();
+			Assert.That(leaves.Select(l => l.IsEnabled || l.Execute != null), Is.All.False, "no command can run");
+			Assert.That(items[0].IsSeparator, Is.False, "the menu's leading separator is trimmed");
+
+			// Nothing supplies a list submenu's items, so only its configured commands show.
+			items = BuildWithSpy(new[] { RecordEditView.MultiStringSliceMenuId }, null, out asked);
+			Assert.That(asked, Is.False);
+			Assert.That(FindItem(items, "Writing Systems")?.Children.Select(c => c.Label),
+				Is.EqualTo(new[] { "Show all right now", "Configure..." }));
 		}
 
 		// The XML walk sees what ChoiceGroup.Populate sees: top-level leaves exactly, nested
@@ -1511,7 +1413,6 @@ namespace SIL.FieldWorks.XWorks
 		public void OwnedMenu_WithAListSubmenu_TakesItsItemsFromTheAuthority()
 		{
 			// The writing-system list is the one list-populated submenu under an owned id.
-			// Populating it through the mediator would need the hidden adapter's slice.
 			var ids = new[] { RecordEditView.MultiStringSliceMenuId };
 			var items = BuildWithSpy(ids, new EchoAuthority(ids), out var askedMediator);
 
@@ -1528,68 +1429,49 @@ namespace SIL.FieldWorks.XWorks
 		// the row and the shared rule, the rest delegated to the per-object authority.
 
 		[Test]
-		public void MultiStringMenuAuthority_AnswersEveryLeafOfItsMenu()
+		public void WritingSystemsMenuAuthority_AnswersEveryLeafOfItsMenu()
 		{
-			var authority = m_view.CreateMultiStringMenuAuthority(LexemeFormField());
+			var authority = m_view.CreateWritingSystemsMenuAuthority(LexemeFormField());
 			var window = m_propertyTable.GetValue<XWindow>("window");
-			var menu = XCoreMenuBridge.ResolveMenu(window, MultiStringMenuAuthority.MenuId);
+			var menu = XCoreMenuBridge.ResolveMenu(window, WritingSystemsMenuAuthority.MenuId);
 
 			Assert.That(menu.Leaves.Select(l => l.CommandId), Is.EquivalentTo(new[]
 			{
-				MultiStringMenuAuthority.ShowAllCommandId, MultiStringMenuAuthority.ConfigureCommandId,
+				WritingSystemsMenuAuthority.ShowAllCommandId, WritingSystemsMenuAuthority.ConfigureCommandId,
 				ObjectMenuAuthority.AlwaysVisibleCommandId, ObjectMenuAuthority.IfDataCommandId,
 				ObjectMenuAuthority.NormallyHiddenCommandId, ObjectMenuAuthority.MoveFieldUpCommandId,
 				ObjectMenuAuthority.MoveFieldDownCommandId, ObjectMenuAuthority.HelpCommandId
 			}), "the shipped menu defines exactly the leaves the authority knows");
 			foreach (var leaf in menu.Leaves)
 			{
-				Assert.That(() => authority.Build(MultiStringMenuAuthority.MenuId, leaf), Throws.Nothing,
+				Assert.That(() => authority.Build(WritingSystemsMenuAuthority.MenuId, leaf), Throws.Nothing,
 					"the authority does not answer leaf '{0}'", leaf.CommandId);
 			}
 			// The list submenu has no configured leaves; the authority supplies its items.
-			Assert.That(menu.ListIds, Is.EqualTo(new[] { MultiStringMenuAuthority.WritingSystemListId }),
+			Assert.That(menu.ListIds, Is.EqualTo(new[] { WritingSystemsMenuAuthority.WritingSystemListId }),
 				"the writing-system list is the menu's one list submenu");
-			Assert.That(authority.BuildList(MultiStringMenuAuthority.MenuId,
-				MultiStringMenuAuthority.WritingSystemListId), Is.Not.Empty,
+			Assert.That(authority.BuildList(WritingSystemsMenuAuthority.MenuId,
+				WritingSystemsMenuAuthority.WritingSystemListId), Is.Not.Empty,
 				"the writing-system list offers the row's options");
 		}
 
 		[Test]
-		public void MultiStringMenuAuthority_RejectsWhatItDoesNotAnswer()
+		public void WritingSystemsMenuAuthority_RejectsWhatItDoesNotAnswer()
 		{
-			var authority = m_view.CreateMultiStringMenuAuthority(LexemeFormField());
+			var authority = m_view.CreateWritingSystemsMenuAuthority(LexemeFormField());
 			var foreignLeaf = LeafOf(ReorderVectorMenuAuthority.MenuId, ReorderVectorMenuAuthority.AlphabeticalOrderCommandId);
 
-			Assert.That(() => authority.Build(MultiStringMenuAuthority.MenuId, foreignLeaf),
+			Assert.That(() => authority.Build(WritingSystemsMenuAuthority.MenuId, foreignLeaf),
 				Throws.InvalidOperationException, "a foreign leaf is refused, never left to the mediator");
-			Assert.That(() => authority.BuildList(MultiStringMenuAuthority.MenuId, "SomeOtherList"),
+			Assert.That(() => authority.BuildList(WritingSystemsMenuAuthority.MenuId, "SomeOtherList"),
 				Throws.InvalidOperationException, "a foreign list is refused too");
 		}
 
-		// A transition contract: it compares the native menu with the mediator path and is
-		// deleted with that path. The standalone contracts above carry the behaviour after.
 		[Test]
-		public void MultiStringMenu_NativeAuthority_RendersWhatTheInterceptorPathRendered()
-		{
-			UseHelpProvider(KnowsEveryTopic);
-			var field = LexemeFormField();
-			var ids = LabelMenuIds(field);
-			EnsureAdapter(field.ObjectHvo, field.Field);
-			Assume.That(AdapterTargets(field), "precondition: the adapter twin is the Lexeme Form row");
-
-			var before = Describe(BuildItemsWithOverrideInterceptor(ids, field));
-			var after = Describe(BuildAsTheHostDoes(ids, field));
-
-			Assert.That(after, Is.EqualTo(before),
-				"the native menu renders what the mediator path rendered, writing systems included");
-		}
-
-		[Test]
-		public void MultiStringMenu_IsBuiltWithoutTheAdapterOrTheMediator()
+		public void MultiStringMenu_IsBuiltWithoutTheMediator()
 		{
 			UseHelpProvider(KnowsEveryTopic);
 			var field = OwnedMultiStringField();
-			// No EnsureAdapter: the hidden tree never exists.
 
 			var items = BuildWithSpy(LabelMenuIds(field),
 				m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem)), out var asked);
@@ -1608,7 +1490,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		// The per-object menu's native authority: Field Visibility, Move Field and Help answered
-		// from the row and the override layer, so an ordinary row's label menu needs no adapter.
+		// from the row and the override layer.
 
 		private static IHelpTopicProvider KnowsEveryTopic => new PatternHelpTopicProvider(id => true);
 
@@ -1618,30 +1500,9 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetPropertyPersistence("HelpTopicProvider", false);
 		}
 
-		private LegacyDataTree AdapterTree => (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
-
-		// The label menu exactly as OnDetailMenuRequested builds it: the row's authorities for
-		// the ids they own, the override interceptor for the rest.
+		// The label menu exactly as OnDetailMenuRequested builds it, from the row's authorities.
 		private IReadOnlyList<DetailMenuItem> BuildAsTheHostDoes(string[] ids, DetailField field)
-		{
-			var registry = new OverrideCommandRegistry();
-			m_view.AddOverrideCommands(registry, field);
-			var window = m_propertyTable.GetValue<XWindow>("window");
-			return XCoreMenuBridge.CreateMenuItems(window, ids, registry.TryBuild, null,
-				m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem)));
-		}
-
-		// Whether the adapter's current slice is the WinForms twin of the row: same object and
-		// same field.
-		private bool AdapterTargets(DetailField field)
-		{
-			var slice = AdapterTree.CurrentSlice;
-			if (slice?.Object == null || slice.Object.Hvo != field.ObjectHvo || slice.Flid == 0)
-				return false;
-			var mdc = (IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor;
-			return mdc.FieldExists(slice.Flid)
-				&& string.Equals(mdc.GetFieldName(slice.Flid), field.Field, StringComparison.Ordinal);
-		}
+			=> m_view.BuildMenuItems(ids, LabelMenuRequest(field, NoItem));
 
 		[Test]
 		public void ObjectMenuAuthority_AnswersEveryLeafOfItsMenus()
@@ -1666,13 +1527,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ObjectMenu_OfAnOrdinaryRow_IsBuiltWithoutTheAdapterOrTheMediator()
+		public void ObjectMenu_OfAnOrdinaryRow_IsBuiltWithoutTheMediator()
 		{
 			MakeTwoSubentries();
 			UseHelpProvider(KnowsEveryTopic);
 			var field = SubentriesField();
 			var ids = LabelMenuIds(field);
-			// No EnsureAdapter: the hidden tree never exists.
 
 			var items = BuildWithSpy(ids, m_view.CreateMenuAuthority(LabelMenuRequest(field, NoItem)), out var asked);
 
@@ -1688,10 +1548,9 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(FindItem(items, "Help...")?.Execute, Is.Not.Null, "Help opens the row's own topic");
 		}
 
-		// Baseline = the path this replaces: mediator through the adapter, interceptor for the
-		// field commands. An unlocatable row is the agreed exception: its commands disable.
+		// An unlocatable row is the agreed exception to a row's field commands: they disable.
 		[Test]
-		public void ObjectMenu_NativeAuthority_RendersWhatTheInterceptorPathRendered_ForEveryRowTheAdapterCanTarget()
+		public void ObjectMenu_OnEveryRow_OffersItsFieldCommands_DisabledWhereTheRowIsUnlocatable()
 		{
 			AddSense("second gloss");
 			MakeTwoSubentries();
@@ -1699,57 +1558,40 @@ namespace SIL.FieldWorks.XWorks
 			var fields = DetailComposer.Compose(m_entry, Cache).Model.Fields
 				.Where(f => f.ObjectHvo != 0 && !string.IsNullOrEmpty(f.Field)).ToList();
 
-			var compared = 0;
-			var untargeted = new List<string>();
+			var located = 0;
 			var unlocatable = new List<string>();
-			var mismatches = new List<string>();
 			foreach (var field in fields)
 			{
-				var ids = LabelMenuIds(field);
-				EnsureAdapter(field.ObjectHvo, field.Field);
-				if (!AdapterTargets(field))
-				{
-					untargeted.Add(field.Label + " (" + field.Field + ")");
-					continue;
-				}
-				var native = BuildAsTheHostDoes(ids, field);
+				var native = BuildAsTheHostDoes(LabelMenuIds(field), field);
+				var visibility = FindItem(native, "Field Visibility").Children;
+				var fieldItems = visibility.Concat(FindItem(native, "Move Field").Children).ToList();
 				if (!m_view.TryLocateOverrideTarget(field, out _, out _))
 				{
 					unlocatable.Add(string.Format("{0} ({1}) stableId={2} class={3} layout={4}", field.Label,
 						field.Field, field.StableId, field.ClassName, field.LayoutName));
-					var fieldItems = FindItem(native, "Field Visibility").Children
-						.Concat(FindItem(native, "Move Field").Children).ToList();
 					Assert.That(fieldItems.Select(i => i.IsEnabled), Is.All.False,
 						"an unlocatable row disables its field commands: " + field.Label);
 					continue;
 				}
-				compared++;
-				var before = Describe(BuildItemsWithOverrideInterceptor(ids, field));
-				var after = Describe(native);
-				if (!string.Equals(before, after, StringComparison.Ordinal))
-				{
-					mismatches.Add(string.Format("{0} ({1}):{2}--- interceptor path{2}{3}{2}--- authority{2}{4}",
-						field.Label, field.Field, Environment.NewLine, before, after));
-				}
+				located++;
+				Assert.That(visibility.Select(i => i.Execute), Is.All.Not.Null,
+					"a located row's visibility items all execute: " + field.Label);
+				Assert.That(visibility.Count(i => i.IsChecked), Is.EqualTo(1),
+					"exactly one visibility is the row's current one: " + field.Label);
 			}
-			TestContext.WriteLine("Rows the adapter could not target: " + string.Join(", ", untargeted));
 			TestContext.WriteLine("Rows with no override target:" + Environment.NewLine
 				+ string.Join(Environment.NewLine, unlocatable));
-			Assert.That(compared, Is.GreaterThan(10), "enough rows have an adapter twin to make the comparison meaningful");
-			Assert.That(mismatches, Is.Empty, string.Join(Environment.NewLine, mismatches));
+			Assert.That(located, Is.GreaterThan(10), "enough rows are located to make the check meaningful");
 		}
 
-		// The adapter finds no slice for the sense's Publish In row and answers Help from another
-		// slice; the authority resolves the row's own topic.
 		[Test]
 		public void Help_OnPublishSenseIn_OpensTheRowsOwnTopic()
 		{
 			UseHelpProvider(KnowsEveryTopic);
 			var sense = m_entry.SensesOS[0];
-			var field = DetailComposer.Compose(m_entry, Cache).Model.Fields
+			// A sense excluded from no publication hides this row unless hidden fields show.
+			var field = DetailComposer.Compose(m_entry, Cache, showHiddenFields: true).Model.Fields
 				.Single(f => f.ObjectHvo == sense.Hvo && f.Field == "PublishIn");
-			EnsureAdapter(field.ObjectHvo, field.Field);
-			TestContext.WriteLine("adapter topic: " + AdapterTree.CurrentSlice?.GetSliceHelpTopicID());
 
 			var topic = m_view.KnownHelpTopic(field);
 
@@ -1869,192 +1711,17 @@ namespace SIL.FieldWorks.XWorks
 				Throws.InvalidOperationException, "an owned id must be answered in full, never partially");
 		}
 
-		// ----------------------------------------------------------------------------------------
-		// Delete Sense / Delete object
-		// ----------------------------------------------------------------------------------------
-
-		// Skipped (desktop environment only): unlike Insert (always enabled), the Delete/Move/Demote/Merge sense
-		// commands only materialize+enable when their xCore display handlers can compute live
-		// slice-sequence context (position in the owning sequence, owner relationships). That context
-		// comes from a laid-out, VISIBLE legacy DataTree; the command-routing adapter tree is
-		// hidden +
-		// detached while Avalonia is active, so headlessly the items never reach the
-		// enabled state and the menu does not surface them. Hosting/laying out the detached tree in the
-		// test was tried and did not surface them -- the gap is the full menu-display path, not
-		// just
-		// slice layout. Runnable in the desktop environment where the legacy tree is shown. The InsertSense
-		// tests above exercise the same end-to-end adapter -> XCoreMenuBridge -> mediator -> UOW path
-		// headlessly, so the core execution+refresh seam is still covered.
-		[Test]
-		[Explicit("Requires the live (laid-out, visible) legacy DataTree menu-display path; see note above. Runs in the desktop environment.")]
-		public void DeleteSense_RemovesSenseFromModel_AndComposedDetailReflectsIt()
-		{
-			AddSense("extra gloss");
-			var sensesBefore = m_entry.SensesOS.Count;
-			Assert.That(sensesBefore, Is.GreaterThanOrEqualTo(2));
-			var targetHvo = m_entry.SensesOS[sensesBefore - 1].Hvo;
-			var senseHeadersBefore = ComposeSenseHeaderCount();
-
-			InvokeSliceMenuCommand(targetHvo, "mnuDataTree-Sense", "Delete this Sense and any Subsenses");
-
-			Assert.That(m_entry.SensesOS.Count, Is.EqualTo(sensesBefore - 1),
-				"Delete Sense removes the targeted sense via the real command");
-			Assert.That(Cache.ServiceLocator.ObjectRepository.IsValidObjectId(targetHvo), Is.False,
-				"the deleted sense object is really gone from the model");
-			Assert.That(ComposeSenseHeaderCount(), Is.LessThan(senseHeadersBefore),
-				"the re-composed detail view drops the deleted sense's header");
-		}
-
-		// ----------------------------------------------------------------------------------------
-		// Move Up / Move Down (in sequence)
-		// ----------------------------------------------------------------------------------------
-
-		[Test]
-		[Explicit("Requires the live (laid-out, visible) legacy DataTree menu-display path (Move command enablement needs live slice-sequence context). Runs in the desktop environment.")]
-		public void MoveDownThenMoveUp_ReordersSenses_AndRestoresOriginalOrder()
-		{
-			AddSense("second gloss");
-			AddSense("third gloss");
-			Assert.That(m_entry.SensesOS.Count, Is.EqualTo(3));
-			var firstHvo = m_entry.SensesOS[0].Hvo;
-			var secondHvo = m_entry.SensesOS[1].Hvo;
-
-			// Move the first sense DOWN: it should swap with the second.
-			InvokeSliceMenuCommand(firstHvo, "mnuDataTree-Sense", "Move Sense Down");
-			Assert.That(m_entry.SensesOS[0].Hvo, Is.EqualTo(secondHvo),
-				"Move Down advances the targeted sense past its successor");
-			Assert.That(m_entry.SensesOS[1].Hvo, Is.EqualTo(firstHvo));
-
-			// Move it back UP: the original order is restored -- a sequence proving both
-			// directions.
-			InvokeSliceMenuCommand(firstHvo, "mnuDataTree-Sense", "Move Sense Up");
-			Assert.That(m_entry.SensesOS[0].Hvo, Is.EqualTo(firstHvo),
-				"Move Up returns the sense to the front, restoring the original order");
-			Assert.That(m_entry.SensesOS[1].Hvo, Is.EqualTo(secondHvo));
-
-			Assert.That(RefreshedDetailFieldCount(), Is.GreaterThan(0),
-				"the detail view still composes after the reorder sequence");
-		}
-
-		// ----------------------------------------------------------------------------------------
-		// Promote / Demote (Make Subsense)
-		// ----------------------------------------------------------------------------------------
-
-		[Test]
-		[Explicit("Requires the live (laid-out, visible) legacy DataTree menu-display path (Demote/Promote enablement needs live slice-sequence/owner context). Runs in the desktop environment.")]
-		public void DemoteThenPromoteSense_MovesSenseBetweenOwners()
-		{
-			AddSense("second gloss");
-			Assert.That(m_entry.SensesOS.Count, Is.EqualTo(2));
-			var firstHvo = m_entry.SensesOS[0].Hvo;
-			var secondHvo = m_entry.SensesOS[1].Hvo;
-
-			// Demote: the second top-level sense becomes a subsense of the first (shipped label is "Demote").
-			InvokeSliceMenuCommand(secondHvo, "mnuDataTree-Sense", "Demote");
-			Assert.That(m_entry.SensesOS.Count, Is.EqualTo(1),
-				"demote removes the sense from the entry's top-level senses");
-			var first = (ILexSense)Cache.ServiceLocator.GetObject(firstHvo);
-			Assert.That(first.SensesOS.Select(s => s.Hvo), Does.Contain(secondHvo),
-				"the demoted sense is now nested under the previous sibling");
-
-			// Promote: the subsense returns to the entry's top-level senses.
-			InvokeSliceMenuCommand(secondHvo, "mnuDataTree-Sense", "Promote");
-			Assert.That(m_entry.SensesOS.Select(s => s.Hvo), Does.Contain(secondHvo),
-				"promote lifts the subsense back to the entry's senses");
-			Assert.That(((ILexSense)Cache.ServiceLocator.GetObject(firstHvo)).SensesOS.Count, Is.EqualTo(0),
-				"the former owner no longer owns it");
-		}
-
-		// ----------------------------------------------------------------------------------------
-		// Merge
-		// ----------------------------------------------------------------------------------------
-
-		[Test]
-		[Explicit("Requires the live (laid-out, visible) legacy DataTree menu-display path (the sense-merge command must materialize+enable before its class guard runs). Runs in the desktop environment.")]
-		public void Merge_SenseClassGuard_OnlyTargetsMatchingClass()
-		{
-			AddSense("second gloss");
-			var senseHvo = m_entry.SensesOS[0].Hvo;
-
-			// OnDataTreeMerge's class guard (LT-22352) returns false when the merge command's declared
-			// className (LexSense) does not match the current slice's object class. Targeting a NON-sense
-			// row (the entry/citation row, a LexEntry) with the sense-merge command must be a guarded
-			// no-op -- the model is untouched and nothing is mis-merged. This proves the adapter
-			// targeting
-			// reaches the merge handler and that its guard fires on the real object class.
-			var sensesBefore = m_entry.SensesOS.Count;
-			var citationHvo = m_entry.Hvo;
-			var invoked = TryInvokeMergeAgainst(citationHvo);
-
-			Assert.That(invoked, Is.True,
-				"the sense-merge command must materialize and dispatch through the adapter (its guard then "
-				+ "decides the outcome)");
-			Assert.That(m_entry.SensesOS.Count, Is.EqualTo(sensesBefore),
-				"a class-guarded merge against a non-sense object must not mutate the senses");
-			Assert.That(Cache.ServiceLocator.ObjectRepository.IsValidObjectId(senseHvo), Is.True,
-				"no sense was merged away by the guarded command");
-		}
-
 		// -----------------------------------------------------------------
-		// Lexeme Form slice menu: adapter reachability, Writing Systems
+		// Lexeme Form row menu: Writing Systems
 		// -----------------------------------------------------------------
 
-		// The adapter tree is never shown, so message-target selection must keep it in the
-		// colleague chain for handlers defined on DataTree itself, such as OnJumpToTool.
-		[Test]
-		public void HiddenAdapterTree_StaysInTheColleagueChain_SoItsOwnHandlersAreReachable()
-		{
-			EnsureAdapter(m_entry.LexemeFormOA.Hvo, "Form");
-
-			var dataTree = (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
-			Assert.That(dataTree.Visible, Is.False,
-				"precondition: the adapter tree is hidden while Avalonia is the active host");
-			Assert.That(dataTree.IsExternalCommandAdapter, Is.True,
-				"precondition: the host flagged it as the command-routing adapter");
-			Assert.That(dataTree.GetMessageTargets(), Does.Contain(dataTree),
-				"handlers defined on the tree itself (JumpToTool, Delete, Insert) must stay reachable");
-		}
-
-		// The Lexeme Form row and its indented siblings share one MoForm, so matching by
-		// object alone is ambiguous; the concordance jump and the Writing Systems list
-		// both need the Form slice.
-		[Test]
-		public void LexemeFormRow_TargetsTheFormSlice_NotJustSomeSliceOnTheSameMorph()
-		{
-			EnsureAdapter(m_entry.LexemeFormOA.Hvo, "Form");
-
-			var dataTree = (LegacyDataTree)GetField(m_view, "m_dataEntryForm");
-			var current = dataTree.CurrentSlice;
-			Assert.That(current, Is.Not.Null, "a slice must be targeted for the Lexeme Form row");
-			Assert.That(current.Object?.Hvo, Is.EqualTo(m_entry.LexemeFormOA.Hvo));
-			Assert.That(current.Flid, Is.EqualTo(MoFormTags.kflidForm),
-				"the targeted slice must be the Form field's own slice");
-		}
-
-		// DataTree.OnDisplayJumpToTool offers the jump only when CurrentSlice.Flid is the
-		// MoForm's Form field, so an enabled item proves the tree is reachable and the row
-		// targeted that slice.
-		[Test]
-		public void ConcordanceCommand_OnTheLexemeFormRow_IsEnabledByItsRealHandler()
-		{
-			EnsureAdapter(m_entry.LexemeFormOA.Hvo, "Form");
-
-			var jump = FindItem(BuildItems(new[] { "mnuDataTree-LexemeForm", "mnuDataTree-MultiStringSlice" }),
-				"Show Lexeme Form in Concordance");
-
-			Assert.That(jump, Is.Not.Null, "the command materializes on the Lexeme Form row");
-			Assert.That(jump.IsEnabled, Is.True,
-				"DataTree.OnDisplayJumpToTool must run and resolve a concordance target for the Form field");
-			Assert.That(jump.Execute, Is.Not.Null, "and it carries a mediator-dispatch action");
-		}
-
-		// The writing-system entries come from an inline list group: they need the Form slice
-		// targeted and the group spliced into its parent.
+		// The writing-system entries come from an inline list: they splice into the submenu
+		// between its two commands.
 		[Test]
 		public void LexemeFormSliceMenu_WritingSystemsSubmenu_ListsTheProjectWritingSystems()
 		{
-			EnsureAdapter(m_entry.LexemeFormOA.Hvo, "Form");
-			var items = BuildItems(new[] { "mnuDataTree-LexemeForm", "mnuDataTree-MultiStringSlice" });
+			var field = LexemeFormField();
+			var items = BuildAsTheHostDoes(LabelMenuIds(field), field);
 
 			var writingSystems = FindItem(items, "Writing Systems");
 			Assert.That(writingSystems, Is.Not.Null,
@@ -2063,16 +1730,12 @@ namespace SIL.FieldWorks.XWorks
 			var labels = writingSystems.Children.Where(c => !c.IsSeparator).Select(c => c.Label).ToList();
 			Assert.That(labels, Does.Contain("Show all right now"));
 			Assert.That(labels, Does.Contain("Configure..."));
-
-			// Both commands are handled by the slice, so they enable only once it is
-			// reachable through the colleague chain.
 			Assert.That(FindItem(items, "Show all right now").IsEnabled, Is.True);
 			Assert.That(FindItem(items, "Configure...").IsEnabled, Is.True);
 
-			// The inline list splices the slice's own writing systems between the two commands.
 			var spliced = labels.Where(l => l != "Show all right now" && l != "Configure...").ToList();
 			Assert.That(spliced, Is.Not.Empty,
-				"the inline list group must contribute the slice's writing systems, not be nested away");
+				"the inline list must contribute the row's writing systems, not be nested away");
 
 			var vernacular = Cache.LangProject.CurrentVernacularWritingSystems
 				.Select(ws => ws.DisplayLabel).ToList();
@@ -2095,7 +1758,6 @@ namespace SIL.FieldWorks.XWorks
 			var field = LexemeFormField();
 			try
 			{
-				EnsureAdapter(m_entry.LexemeFormOA.Hvo, "Form");
 				var writingSystems = BuildWritingSystemsSubmenu(field);
 				var checkedEntries = writingSystems.Children
 					.Where(c => !c.IsSeparator && c.IsChecked && c.Execute != null).ToList();
@@ -2226,6 +1888,80 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		private ILexEntry AddOtherEntry()
+		{
+			ILexEntry other = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var stemMorphType = GetMorphTypeOrCreateOne("stem");
+				var noun = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
+				other = AddLexeme(m_createdObjects, "other-entry", stemMorphType, "other gloss", noun);
+			});
+			return other;
+		}
+
+		// LT-22692: leaving a record with an edit still open builds the next record's view once;
+		// the left record's commit is judged against the record about to be shown.
+		[Test]
+		public void LeavingARecordWithAnOpenEdit_BuildsTheNextRecordOnce()
+		{
+			var other = AddOtherEntry();
+			m_view.Clerk.JumpToRecord(m_entry.Hvo);
+			DrainMediatorAndIdleQueues();
+
+			var holder = (DetailEditContextHolder)GetField(m_view, "m_detailEditContext");
+			var shown = ((DetailHostControl)GetField(m_view, "m_avaloniaEntryForm")).ShownDetail;
+			var gloss = shown.Fields.First(f => f.Field == "Gloss" && f.IsEditable
+				&& f.Values != null && f.Values.Count > 0);
+			Assert.That(holder.Current.TrySetText(gloss, gloss.Values[0].WsTag, "edited gloss"),
+				Is.True);
+			Assert.That(holder.Current.IsOpen, Is.True, "precondition: the edit is still open");
+
+			var shows = m_view.DetailShowCount;
+			m_view.Clerk.JumpToRecord(other.Hvo);
+			DrainMediatorAndIdleQueues();
+
+			Assert.That(m_view.DetailShowCount, Is.EqualTo(shows + 1),
+				"the next record is built once, not again for the left record's commit");
+		}
+
+		// LT-22692: while no record is recorded as shown, an outside change to the clerk's
+		// current record still brings it up.
+		[Test]
+		public void OutsideChange_WithNoRecordShown_ShowsTheClerksCurrentRecord()
+		{
+			m_view.Clerk.JumpToRecord(m_entry.Hvo);
+			DrainMediatorAndIdleQueues();
+			typeof(RecordEditView).GetMethod("SetShownRecord",
+				BindingFlags.Instance | BindingFlags.NonPublic).Invoke(m_view, new object[] { null, null });
+
+			var shows = m_view.DetailShowCount;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				m_entry.Bibliography.set_String(Cache.DefaultAnalWs,
+					TsStringUtils.MakeString("outside", Cache.DefaultAnalWs)));
+			DrainMediatorAndIdleQueues();
+
+			Assert.That(m_view.DetailShowCount, Is.EqualTo(shows + 1));
+			Assert.That(GetField(m_view, "m_shownRecord"), Is.SameAs(m_entry));
+		}
+
+		// LT-22692: the quiet wait runs only the last action deferred to it, and only once.
+		[Test]
+		public void DeferUntilQuiet_RunsOnlyTheLastAction_Once()
+		{
+			var ran = new List<string>();
+			m_view.DeferUntilQuiet(() => ran.Add("first"));
+			m_view.DeferUntilQuiet(() => ran.Add("second"));
+			Assert.That(m_view.IsRefreshQuietPending, Is.True, "the wait is running");
+
+			m_view.OnRefreshQuiet();
+			Assert.That(ran, Is.EqualTo(new[] { "second" }));
+			Assert.That(m_view.IsRefreshQuietPending, Is.False, "and stops once it has run");
+
+			m_view.OnRefreshQuiet();
+			Assert.That(ran.Count, Is.EqualTo(1), "nothing runs twice");
+		}
+
 		// The reveal survives everything within the record and expires only when the shown
 		// record changes.
 		[Test]
@@ -2235,13 +1971,7 @@ namespace SIL.FieldWorks.XWorks
 			InvokeShowAllRightNow(field);
 			Assert.That(RevealedFields(), Does.Contain(TemplateId(field)), "precondition: revealed");
 
-			ILexEntry other = null;
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-				var stemMorphType = GetMorphTypeOrCreateOne("stem");
-				var noun = GetGrammaticalCategoryOrCreateOne("noun", Cache.LangProject.PartsOfSpeechOA);
-				other = AddLexeme(m_createdObjects, "other-entry", stemMorphType, "other gloss", noun);
-			});
+			var other = AddOtherEntry();
 			m_view.Clerk.JumpToRecord(other.Hvo);
 			DrainMediatorAndIdleQueues();
 
@@ -2290,12 +2020,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		// Drives the intercepted "Show all right now" item for a row the way
-		// OnDetailMenuRequested would: target the adapter, materialize the submenu, invoke,
-		// drain.
+		// Drives the "Show all right now" item for a row the way OnDetailMenuRequested would:
+		// build the submenu, invoke, drain.
 		private void InvokeShowAllRightNow(DetailField field)
 		{
-			EnsureAdapter(field.ObjectHvo, field.Field);
 			var showAll = FindItem(BuildWritingSystemsSubmenu(field).Children, "Show all right now");
 			Assert.That(showAll, Is.Not.Null, "the reveal item must materialize");
 			Assert.That(showAll.IsEnabled, Is.True);
@@ -2387,7 +2115,6 @@ namespace SIL.FieldWorks.XWorks
 				+ $"index={location.Index} up={up}");
 			try
 			{
-				// No EnsureAdapter: the authority answers Move Field from the row alone.
 				var items = BuildAsTheHostDoes(new[] { ObjectMenuAuthority.MenuId }, field);
 				var item = FindItem(items, up ? "Move Up" : "Move Down");
 				Assert.That(item, Is.Not.Null, "the Move Field submenu must offer the item");
@@ -2415,7 +2142,7 @@ namespace SIL.FieldWorks.XWorks
 
 		// The first composed row its own layout places at the top level (LocateTarget
 		// reports no parent) and that can move, found through the compile + locate pair
-		// AddOverrideCommands uses.
+		// the menu uses.
 		private DetailField FindTopLevelMovableRow(out ViewNodeLocation location)
 		{
 			foreach (var field in DetailComposer.Compose(m_entry, Cache).Model.Fields)
@@ -2499,22 +2226,10 @@ namespace SIL.FieldWorks.XWorks
 			return store;
 		}
 
-		// Materializes a menu the way OnDetailMenuRequested does, WITH the override interceptor,
-		// so the intercepted writing-system items are the ones under test.
-		private IReadOnlyList<DetailMenuItem> BuildItemsWithOverrideInterceptor(string[] menuIds,
-			DetailField field)
-		{
-			var registry = new OverrideCommandRegistry();
-			m_view.AddOverrideCommands(registry, field);
-			var window = m_propertyTable.GetValue<XWindow>("window");
-			return XCoreMenuBridge.CreateMenuItems(window, menuIds, registry.TryBuild);
-		}
-
 		private ViewDefinitionOverride ReadOverrideFor(DetailField field)
 			=> GetOverrideStore().TryGet(field.ClassName, field.LayoutName);
 
-		// The Writing Systems submenu as the host builds it: the multi-string group comes from
-		// its native authority, whatever the row's own menu id still needs.
+		// The Writing Systems submenu as the host builds it for the Lexeme Form row.
 		private DetailMenuItem BuildWritingSystemsSubmenu(DetailField field)
 		{
 			var items = BuildAsTheHostDoes(
@@ -2540,66 +2255,11 @@ namespace SIL.FieldWorks.XWorks
 			=> GetOverrideStore().Save(new ViewDefinitionOverride(
 				field.ClassName, field.LayoutName, "detail", null, null));
 
-		// Drives a SLICE-menu command exactly as OnDetailMenuRequested(Kind=SliceMenu) does: ensure the
-		// adapter targets the object, materialize the menu (menuId + the host-appended mnuDataTree-Object)
-		// through XCoreMenuBridge, find the item by label, invoke its Execute (mediator dispatch). Then
-		// drain the mediator/idle queues so the UOW PropChanged + refresh settle.
-		private void InvokeSliceMenuCommand(int targetHvo, string menuId, string itemLabel)
-		{
-			EnsureAdapter(targetHvo);
-			var items = BuildItems(new[] { menuId, "mnuDataTree-Object" });
-			InvokeItem(items, itemLabel);
-			DrainMediatorAndIdleQueues();
-		}
-
-		// Drives a HOTLINKS command as OnDetailMenuRequested(Kind=Hotlinks) does: only the HotlinksId
-		// menu is materialized.
-		private void InvokeHotlinksCommand(int targetHvo, string hotlinksId, string itemLabel)
-		{
-			EnsureAdapter(targetHvo);
-			var items = BuildItems(new[] { hotlinksId });
-			InvokeItem(items, itemLabel);
-			DrainMediatorAndIdleQueues();
-		}
-
-		// Targets a (non-sense) object with the sense-merge command and returns whether an enabled item
-		// was found+invoked. We do not depend on a chooser dialog: the class guard short-circuits before
-		// HandleMergeCommand opens any UI when the target class mismatches.
-		private bool TryInvokeMergeAgainst(int targetHvo)
-		{
-			EnsureAdapter(targetHvo);
-			var items = BuildItems(new[] { "mnuDataTree-Sense", "mnuDataTree-Object" });
-			var merge = FindItem(items, "Merge Sense into...");
-			if (merge?.Execute == null)
-				return false;
-			merge.Execute();
-			DrainMediatorAndIdleQueues();
-			return true;
-		}
-
-		private void EnsureAdapter(int targetHvo, string fieldName = null)
-		{
-			var method = typeof(RecordEditView).GetMethod("EnsureMenuCommandAdapter",
-				BindingFlags.Instance | BindingFlags.NonPublic);
-			Assert.That(method, Is.Not.Null, "EnsureMenuCommandAdapter must exist (adapter targeting seam)");
-			method.Invoke(m_view, new object[] { targetHvo, fieldName });
-		}
-
-		// Without an authority every leaf takes the mediator path, as the adapter menu does.
-		private IReadOnlyList<DetailMenuItem> BuildItems(string[] menuIds, IDetailMenuAuthority authority = null)
+		private IReadOnlyList<DetailMenuItem> BuildItems(string[] menuIds, IDetailMenuAuthority authority)
 		{
 			var window = m_propertyTable.GetValue<XWindow>("window");
 			Assert.That(window, Is.Not.Null);
-			return XCoreMenuBridge.CreateMenuItems(window, menuIds, null, null, authority);
-		}
-
-		private void InvokeItem(IReadOnlyList<DetailMenuItem> items, string label)
-		{
-			var item = FindItem(items, label);
-			Assert.That(item, Is.Not.Null, "expected a '{0}' menu item to materialize", label);
-			Assert.That(item.IsEnabled, Is.True, "the '{0}' command must be enabled for the target", label);
-			Assert.That(item.Execute, Is.Not.Null, "the '{0}' item must carry a mediator-dispatch action", label);
-			item.Execute();
+			return XCoreMenuBridge.CreateMenuItems(window, menuIds, authority);
 		}
 
 		// Items come from XCoreMenuBridge with accelerators already stripped; match on the visible label,
@@ -2622,18 +2282,6 @@ namespace SIL.FieldWorks.XWorks
 		// -----------------------------------------------------------------
 		// Helpers -- refresh / detail assertions
 		// -----------------------------------------------------------------
-
-		// Re-composes the displayed entry exactly as RecordEditView.ShowAvaloniaEntry does on refresh
-		// and counts the per-sense section headers (one per sense regardless of the sense's
-		// content --
-		// an empty new sense still gets a header, unlike its ifData Gloss row). This is the
-		// user-visible proof that the recomposed detail view reflects the model mutation.
-		private int ComposeSenseHeaderCount()
-		{
-			var composed = DetailComposer.Compose(m_entry, Cache);
-			Assert.That(composed, Is.Not.Null, "the entry must compose");
-			return composed.Model.Fields.Count(f => f.Kind == DetailFieldKind.Header && f.Field == "Senses");
-		}
 
 		// Calls the host's real RefreshAvaloniaDetail and reports the field count of the recomposed
 		// model, proving the host can re-render after the command without throwing.

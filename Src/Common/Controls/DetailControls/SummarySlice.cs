@@ -11,6 +11,7 @@ using System.Windows.Forms.VisualStyles;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.DetailRules;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
@@ -18,6 +19,7 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 using XCore;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -399,13 +401,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			var command = (Command)commandObject;
 			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			bool fIsValid = false;
-			if (className == "RnGenericRec")
-			{
-				if (Object != null && Object is IRnGenericRec && Object.Owner is IRnGenericRec)
-					fIsValid = true;
-			}
-			display.Enabled = fIsValid;
+			display.Enabled = className == "RnGenericRec" && RecordNesting.CanPromote(Object);
 			return true;
 		}
 
@@ -416,41 +412,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (this.Object == null)
+			if (!(Object is IRnGenericRec rec) || !RecordNesting.CanPromote(rec))
 				return false;
-			IRnGenericRec rec = this.Object as IRnGenericRec;
-			if (rec == null)
-				return false;		// shouldn't get here
-			IRnGenericRec recOwner = rec.Owner as IRnGenericRec;
-			if (recOwner == null)
-				return false;		// shouldn't get here
-			// Grab the mediator now for later use, because this slice may get disposed before we
-			// use it.
-			Mediator mediator = m_mediator;
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoPromote,
-				Resources.DetailControlsStrings.ksRedoPromote,
-				Cache.ActionHandlerAccessor, () =>
-				{
-					if (recOwner.Owner is IRnGenericRec)
-					{
-						(recOwner.Owner as IRnGenericRec).SubRecordsOS.Insert(recOwner.OwnOrd + 1, rec);
-					}
-					else if (recOwner.Owner is IRnResearchNbk)
-					{
-						(recOwner.Owner as IRnResearchNbk).RecordsOC.Add(rec);
-					}
-					else
-					{
-						throw new Exception("RnGenericRec object not owned by either RnResearchNbk or RnGenericRec??");
-					}
-				});
-			if (recOwner.Owner is IRnResearchNbk)
-			{
-				// If possible, jump to the newly promoted record.
-#pragma warning disable 618 // suppress obsolete warning
-				mediator.BroadcastMessageUntilHandled("JumpToRecord", rec.Hvo);
-#pragma warning restore 618
-			}
+			// Read now: the move may dispose this slice. The jump comes last, since its filter
+			// prompt runs the refresh that disposes it.
+			var window = m_propertyTable.GetWindow();
+			if (RecordNesting.Promote(rec) && RecordNesting.IsTopLevel(rec))
+				Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, rec.Hvo, window));
 			return true;
 		}
 
@@ -463,16 +431,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			var command = (Command)commandObject;
 			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");
-			bool fIsValid = false;
-			if (className == "RnGenericRec")
-			{
-				if (Object != null && Object is IRnGenericRec)
-				{
-					if (Object.Owner is IRnGenericRec && (Object.Owner as IRnGenericRec).SubRecordsOS.Count > 1)
-						fIsValid = true;
-				}
-			}
-			display.Enabled = fIsValid;
+			display.Enabled = className == "RnGenericRec" && RecordNesting.CanDemoteSubrecord(Object);
 			return true;
 		}
 
@@ -483,48 +442,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			if (this.Object == null)
+			if (!(Object is IRnGenericRec rec) || !RecordNesting.CanDemoteSubrecord(rec))
 				return false;
-			IRnGenericRec rec = this.Object as IRnGenericRec;
-			if (rec == null)
-				return false;		// shouldn't get here
-			IRnGenericRec newOwner = null;
-			if (Object.Owner is IRnGenericRec)
-			{
-				IRnGenericRec recOwner = Object.Owner as IRnGenericRec;
-				if (recOwner.SubRecordsOS.Count == 2)
-				{
-					if (Object.OwnOrd == 0)
-						newOwner = recOwner.SubRecordsOS[1];
-					else
-						newOwner = recOwner.SubRecordsOS[0];
-				}
-				else
-				{
-					List<IRnGenericRec> owners = new List<IRnGenericRec>();
-					foreach (var recT in recOwner.SubRecordsOS)
-					{
-						if (recT != rec)
-							owners.Add(recT);
-					}
-					newOwner = ContainingDataTree.ChooseNewOwner(owners.ToArray(),
-						Resources.DetailControlsStrings.ksChooseOwnerOfDemotedSubrecord);
-				}
-			}
-			else
-			{
-				return false;
-			}
-			if (newOwner == null)
-				return true;
-			if (newOwner == rec)
-				throw new Exception("RnGenericRec cannot own itself!");
-
-			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(Resources.DetailControlsStrings.ksUndoDemote,
-				Resources.DetailControlsStrings.ksRedoDemote, Cache.ActionHandlerAccessor, () =>
-				{
-					newOwner.SubRecordsOS.Insert(0, rec);
-				});
+			var newOwner = RecordNesting.ChooseOwner(RecordNesting.SubrecordDemoteOwners(rec),
+				candidates => DemotedRecordOwnerChooser.ChooseForSubrecord(Cache, m_mediator, m_propertyTable, candidates));
+			if (newOwner != null)
+				RecordNesting.Demote(rec, newOwner);
 			return true;
 		}
 		#endregion

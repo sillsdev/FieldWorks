@@ -1556,6 +1556,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The selected database file ({0}) does not exist..
+        /// </summary>
+        internal static string ksInvalidDatabaseFileX {
+            get {
+                return ResourceManager.GetString("ksInvalidDatabaseFileX", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to The following invalid data was imported:.
         /// </summary>
         internal static string ksInvalidDataImported {
@@ -2991,6 +3000,15 @@ namespace SIL.FieldWorks.LexText.Controls {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to The database file must be defined..
+        /// </summary>
+        internal static string ksUndefinedDatabaseFile {
+            get {
+                return ResourceManager.GetString("ksUndefinedDatabaseFile", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to No definition available for this item..
         /// </summary>

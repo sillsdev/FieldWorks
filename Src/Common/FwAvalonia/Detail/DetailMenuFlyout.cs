@@ -105,8 +105,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					Header = item.Label,
 					IsEnabled = item.IsEnabled,
-					// Legacy WinForms menu density, pinned explicitly (the Fluent defaults pad
-					// context menus far taller than the legacy adapter menu).
+					// WinForms menu density, pinned explicitly (the Fluent defaults pad context
+					// menus far taller than a WinForms menu).
 					Padding = FwAvaloniaDensity.MenuItemPadding,
 					MinHeight = FwAvaloniaDensity.MenuItemMinHeight
 				};

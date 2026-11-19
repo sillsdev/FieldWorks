@@ -456,6 +456,15 @@ namespace SIL.SilSidePane
 			Item currentItem = _sidePane.CurrentItem;
 			Assert.That(currentItem, Is.SameAs(item));
 		}
+
+		[Test]
+		public void CurrentItem_whenNoTabSelected()
+		{
+			Tab tab = new Tab("tabname");
+			_sidePane.AddTab(tab);
+			_sidePane.AddItem(tab, new Item("itemname"));
+			Assert.That(_sidePane.CurrentItem, Is.Null);
+		}
 		#endregion
 
 		#region GetTabByName

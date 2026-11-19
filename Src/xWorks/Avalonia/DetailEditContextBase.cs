@@ -18,7 +18,7 @@ namespace SIL.FieldWorks.XWorks
 	/// required-lexeme validation rule, so the first-slice context and the full-entry composed
 	/// context cannot drift apart. Derived contexts supply only the field write routing.
 	/// </summary>
-	public abstract class DetailEditContextBase : IDetailEditContext
+	public abstract class DetailEditContextBase : IDetailEditContext, IPendingEditFlushRegistry
 	{
 		private LcmDetailEditSession _session;
 		private string _sessionOwnerKey;

@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	public static class ReversalIndexServices
 	{
 		internal const string ConfigFileExtension = ".fwdictconfig";
-		internal const string RevIndexDir = "ReversalIndex";
+		public const string RevIndexDir = "ReversalIndex";
 		internal const string ConfigDir = "ConfigurationSettings";
 		internal const string AllIndexesFileName = "AllReversalIndexes";
 		internal const string DictConfigElement = "DictionaryConfiguration";

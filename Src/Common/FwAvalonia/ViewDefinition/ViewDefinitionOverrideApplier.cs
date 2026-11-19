@@ -313,10 +313,12 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				n.ChooserLinks, n.EnumStringList, visibleWritingSystems, n.ToggleValue, n.Reorder,
 				helpTopicId: n.HelpTopicId, sliceId: n.SliceId,
 				optionalWritingSystem: n.OptionalWritingSystem,
-				forceIncludeEnglish: n.ForceIncludeEnglish);
+				forceIncludeEnglish: n.ForceIncludeEnglish,
+				visibilityField: n.VisibilityField,
+				partRefId: n.PartRefId);
 
-		// Copy a (leaf) node under a new StableId; AutomationId is dropped so the duplicate gets a fresh,
-		// non-colliding identity (the renderer derives one from the new StableId by convention).
+		// Copy a (leaf) node under a new StableId, as a row of its own: no AutomationId
+		// (the renderer derives one from the new id) and no PartRefId.
 		private static ViewNode CloneWithId(ViewNode n, string newId)
 			=> new ViewNode(
 				newId, n.Kind, n.Label, n.Abbreviation, n.Field, n.RawEditor, n.EditorClassification,
@@ -327,6 +329,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.ViewDefinition
 				n.ChooserLinks, n.EnumStringList, n.VisibleWritingSystems, n.ToggleValue, n.Reorder,
 				helpTopicId: n.HelpTopicId, sliceId: n.SliceId,
 				optionalWritingSystem: n.OptionalWritingSystem,
-				forceIncludeEnglish: n.ForceIncludeEnglish);
+				forceIncludeEnglish: n.ForceIncludeEnglish,
+				visibilityField: n.VisibilityField);
 	}
 }

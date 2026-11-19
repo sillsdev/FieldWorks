@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
@@ -9,6 +10,9 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using XCore;
 
@@ -92,6 +96,9 @@ namespace SIL.FieldWorks.XWorks
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
 			Assert.That(control, Is.Not.Null);
 			EnsureCurrentRecord(control);
+			var winFormsTargets = control.GetMessageTargets();
+			Assert.That(winFormsTargets, Has.Some.SameAs(control.DatTree), "the WinForms view's tree answers commands");
+			Assert.That(winFormsTargets.OfType<DTMenuHandler>(), Is.Not.Empty, "so does its menu handler");
 
 			m_propertyTable.SetProperty("UIMode", "New", true);
 			DrainMediatorAndIdleQueues();
@@ -100,6 +107,10 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(sameControl, Is.SameAs(control), "Changing the UI mode should update the live content control rather than requiring a tool reload in the test harness.");
 			Assert.That(control.Clerk.CurrentObject, Is.Not.Null);
 			Assert.That(GetPrivateFieldValue(control, "m_activeUIFramework"), Is.EqualTo(UIFramework.Avalonia));
+			// The tree left from the WinForms view stays, but answers no New UI command.
+			var newUiTargets = control.GetMessageTargets();
+			Assert.That(newUiTargets, Has.None.SameAs(control.DatTree), "the tree left from the WinForms view");
+			Assert.That(newUiTargets.OfType<DTMenuHandler>(), Is.Empty, "its menu handler");
 		}
 
 		// LT-22582: flipping New->Legacy must tear down the Avalonia refresh controller + host NOW
@@ -189,6 +200,204 @@ namespace SIL.FieldWorks.XWorks
 				"Tool '{0}' is registered for the Avalonia edit framework (§20.3), so New mode resolves to Avalonia.",
 				toolValue);
 		}
+
+		// Switching from New to the WinForms view with no current record must still initialize
+		// the DataTree: leaving the tool (or closing the window) calls its PrepareToGoAway.
+		[Test]
+		public void FlipNewToLegacy_WithNoCurrentRecord_PrepareToGoAwaySucceeds()
+		{
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+
+			LoadRecordEditView("ProdRestrictEdit");
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			Assert.That(control.Clerk.CurrentObject, Is.Null, "precondition: the list is empty");
+			Assert.That(GetPrivateFieldValue(control, "m_activeUIFramework"), Is.EqualTo(UIFramework.Avalonia));
+
+			m_propertyTable.SetProperty("UIMode", "Legacy", true);
+			DrainMediatorAndIdleQueues();
+			Assert.That(GetPrivateFieldValue(control, "m_activeUIFramework"), Is.EqualTo(UIFramework.Legacy));
+
+			Assert.That(control.PrepareToGoAway(), Is.True);
+		}
+
+		// LT-22692: refresh relevance follows what the view shows, the record and the objects its
+		// rows are bound to, so a change to one of them redraws the view.
+		[Test]
+		public void ShowingARecord_RemembersItAndItsRowObjects_ForRefreshRelevance()
+		{
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+
+			LoadRecordEditView();
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			EnsureCurrentRecord(control);
+
+			var entry = (ILexEntry)control.Clerk.CurrentObject;
+			Assert.That(GetPrivateField<ICmObject>(control, "m_shownRecord"), Is.SameAs(entry));
+			var rowObjects = GetPrivateField<HashSet<int>>(control, "m_shownRowObjects");
+			Assert.That(rowObjects, Does.Contain(entry.Hvo));
+			foreach (var sense in entry.SensesOS)
+				Assert.That(rowObjects, Does.Contain(sense.Hvo), "a sense's rows are bound to it");
+		}
+
+		// LT-22692: moving between two subrecords keeps their record on display in Notebook;
+		// settling the edit left open must not rebuild the view a second time.
+		[Test]
+		public void LeavingASubrecordWithAnOpenEdit_BuildsTheViewOnce()
+		{
+			IRnGenericRec record = null, first = null, second = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				if (Cache.LangProject.ResearchNotebookOA == null)
+				{
+					Cache.LangProject.ResearchNotebookOA =
+						Cache.ServiceLocator.GetInstance<IRnResearchNbkFactory>().Create();
+				}
+				var factory = Cache.ServiceLocator.GetInstance<IRnGenericRecFactory>();
+				record = factory.Create();
+				Cache.LangProject.ResearchNotebookOA.RecordsOC.Add(record);
+				record.Title = TsStringUtils.MakeString("parent", Cache.DefaultAnalWs);
+				first = factory.Create();
+				record.SubRecordsOS.Add(first);
+				first.Title = TsStringUtils.MakeString("first", Cache.DefaultAnalWs);
+				second = factory.Create();
+				record.SubRecordsOS.Add(second);
+				second.Title = TsStringUtils.MakeString("second", Cache.DefaultAnalWs);
+			});
+			try
+			{
+				m_propertyTable.SetProperty("UIMode", "New", true);
+				m_propertyTable.SetPropertyPersistence("UIMode", false);
+				LoadRecordEditView("notebookEdit");
+				DrainMediatorAndIdleQueues();
+				var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+				Assert.That(control, Is.Not.Null);
+
+				control.Clerk.JumpToRecord(first.Hvo);
+				DrainMediatorAndIdleQueues();
+				Assert.That(GetPrivateField<ICmObject>(control, "m_shownRecord"), Is.SameAs(record),
+					"precondition: Notebook shows the subrecord inside its record");
+
+				var holder = GetPrivateField<DetailEditContextHolder>(control, "m_detailEditContext");
+				var shown = GetPrivateField<DetailHostControl>(control, "m_avaloniaEntryForm").ShownDetail;
+				var title = shown.Fields.First(f => f.ObjectHvo == first.Hvo && f.Field == "Title"
+					&& f.IsEditable && f.Values != null && f.Values.Count > 0);
+				Assert.That(holder.Current.TrySetText(title, title.Values[0].WsTag, "first edited"),
+					Is.True);
+				Assert.That(holder.Current.IsOpen, Is.True, "precondition: the edit is still open");
+
+				var shows = control.DetailShowCount;
+				control.Clerk.JumpToRecord(second.Hvo);
+				DrainMediatorAndIdleQueues();
+
+				Assert.That(control.DetailShowCount, Is.EqualTo(shows + 1),
+					"the view is built once, not again for the left subrecord's commit");
+			}
+			finally
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				{
+					if (record.IsValidObject)
+						record.Delete();
+				});
+			}
+		}
+
+		// LT-22811: View > Refresh and closing the Styles dialog reach the Avalonia view through
+		// RefreshDisplay, which recomposes it at Normal's new size.
+		[Test]
+		public void RefreshDisplay_InNewMode_RecomposesAtNormalsNewSize()
+		{
+			m_propertyTable.SetProperty("UIMode", "New", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+
+			LoadRecordEditView();
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			EnsureCurrentRecord(control);
+			Assert.That(GetPrivateField<DetailHostControl>(control, "m_avaloniaEntryForm")?.ShownDetail,
+				Is.Not.Null, "precondition: the Avalonia view shows the entry");
+
+			IStStyle normal = null;
+			ITsTextProps originalRules = null;
+			var createdNormal = false;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				normal = Cache.LangProject.StylesOC
+					.FirstOrDefault(s => s.Name == StyleServices.NormalStyleName);
+				createdNormal = normal == null;
+				if (createdNormal)
+				{
+					normal = Cache.ServiceLocator.GetInstance<IStStyleFactory>().Create();
+					Cache.LangProject.StylesOC.Add(normal);
+					normal.Name = StyleServices.NormalStyleName;
+					normal.Type = StyleType.kstParagraph;
+				}
+				originalRules = normal.Rules;
+				var props = TsStringUtils.MakePropsBldr();
+				props.SetIntPropValues((int)FwTextPropType.ktptFontSize,
+					(int)FwTextPropVar.ktpvMilliPoint, 20000);
+				normal.Rules = props.GetTextProps();
+			});
+			try
+			{
+				DrainMediatorAndIdleQueues();
+				Assert.That(ShownValueFontSize(control), Is.Not.EqualTo(20 * UnitsPerPoint).Within(0.01),
+					"precondition: changing the style alone does not recompose the view");
+
+				Assert.That(control.RefreshDisplay(), Is.False,
+					"the views inside still refresh themselves");
+				DrainMediatorAndIdleQueues();
+
+				Assert.That(ShownValueFontSize(control), Is.EqualTo(20 * UnitsPerPoint).Within(0.01));
+			}
+			finally
+			{
+				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				{
+					if (createdNormal)
+						Cache.LangProject.StylesOC.Remove(normal);
+					else
+						normal.Rules = originalRules;
+				});
+			}
+		}
+
+		// LT-22811: in the WinForms UI mode, RefreshDisplay leaves the refresh to the
+		// views inside.
+		[Test]
+		public void RefreshDisplay_InLegacyMode_LeavesTheRefreshToTheViewsInside()
+		{
+			m_propertyTable.SetProperty("UIMode", "Legacy", true);
+			m_propertyTable.SetPropertyPersistence("UIMode", false);
+
+			LoadRecordEditView();
+			DrainMediatorAndIdleQueues();
+
+			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
+			Assert.That(control, Is.Not.Null);
+			EnsureCurrentRecord(control);
+
+			Assert.That(control.RefreshDisplay(), Is.False);
+			DrainMediatorAndIdleQueues();
+			Assert.That(GetPrivateFieldValue(control, "m_avaloniaEntryForm"), Is.Null,
+				"no Avalonia view is built");
+		}
+
+		// Avalonia sizes text in device-independent units, 96 to the inch.
+		private const double UnitsPerPoint = 96.0 / 72.0;
+
+		private static double ShownValueFontSize(RecordEditView control)
+			=> GetPrivateField<DetailHostControl>(control, "m_avaloniaEntryForm").ShownDetail.ValueFontSize;
 
 		private void LoadRecordEditView()
 		{

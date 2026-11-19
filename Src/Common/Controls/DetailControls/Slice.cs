@@ -13,6 +13,7 @@ using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.DetailRules;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.FdoUi;
@@ -711,22 +712,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				CheckDisposed();
 
 				return true;
-			}
-		}
-
-		/// <summary>
-		/// True for a lazy placeholder standing in for objects not yet built. It reports its
-		/// OWNER as its Object, so object lookups must skip it. Distinct from
-		/// <see cref="IsRealSlice"/>, which for view slices reports layout state, not
-		/// placeholder-ness.
-		/// </summary>
-		public virtual bool IsLazyPlaceholder
-		{
-			get
-			{
-				CheckDisposed();
-
-				return false;
 			}
 		}
 
@@ -2091,10 +2076,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					else
 					{
 						// If possible, jump to the newly inserted sub item.
-#pragma warning disable 618 // suppress obsolete warning
-						if (m_mediator.BroadcastMessageUntilHandled("JumpToRecord", uiObj.Object.Hvo))
-#pragma warning restore 618
-							return insertionPosition;
+						Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord,
+							uiObj.Object.Hvo, m_propertyTable.GetWindow()));
 						// If we haven't found a slice...common now, because there's rarely a need to expand anything...
 						// and some slice was added, focus it.
 						foreach (Slice slice in Parent.Controls)
@@ -2465,14 +2448,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (newObj == null)
 				throw new ConfigurationException("NewSlice:GetObjectHvoForMenusToOperateOn is either messed up or should not have been called, because it could not find the object to be moved to a copy of its owner.", m_configurationNode);
 
-			if (origObj is ICloneableCmObject)
+			if (DetailObjectDuplication.CanCopy(origObj))
 			{
 				string undoMsg = String.Format("Undo {0}", label);
 				string redoMsg = String.Format("Redo {0}", label);
-				UndoableUnitOfWorkHelper.Do(undoMsg, redoMsg, m_cache.ActionHandlerAccessor,
-					() => {
-						((ICloneableCmObject)origObj).SetCloneProperties(newObj);
-					});
+				DetailObjectDuplication.CopyProperties(origObj, newObj, undoMsg, redoMsg);
 			}
 			else
 			{
@@ -2537,12 +2517,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// hides the data tree but does not remove slices when no record is current.
 			// Thus, a slice that is not visible might belong to a display of a deleted
 			// or unavailable object, so be very careful what you enable!
-			//
-			// Exception: a hidden command-adapter tree still needs its slice handlers
-			// reachable; its owner points CurrentSlice at the acted-on row first, so the
-			// deleted-object hazard above does not apply.
-			var isCommandAdapter = ContainingDataTree != null && ContainingDataTree.IsExternalCommandAdapter;
-			if ((Visible && ContainingDataTree.Visible) || isCommandAdapter)
+			if (Visible && ContainingDataTree.Visible)
 			{
 				if (Control != null && Control.IsDisposed)
 					throw new ObjectDisposedException(ToString() + GetHashCode(), "Trying to use object that no longer exists: ");

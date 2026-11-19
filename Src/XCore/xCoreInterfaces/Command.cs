@@ -719,6 +719,16 @@ namespace XCore
 
 		public void InvokeCommand()
 		{
+			InvokeCommand(null);
+		}
+
+		/// <summary>
+		/// Runs the command through <paramref name="authority"/> when it answers the command,
+		/// else sends its message through the mediator.
+		/// </summary>
+		/// <param name="authority">Null to send the message.</param>
+		public void InvokeCommand(ICommandAuthority authority)
+		{
 			Trace.WriteLineIf(m_traceCMDSwitch.TraceInfo, BuildDebugMsg("InvokeCommand-Start"), m_traceCMDSwitch.DisplayName);
 
 			CheckDisposed();
@@ -750,9 +760,12 @@ namespace XCore
 					using (new WaitCursor(Form.ActiveForm))
 					{
 						Logger.WriteEvent("Start: " + msgString);
+						if (authority == null || !authority.Execute(this))
+						{
 #pragma warning disable 618 // suppress obsolete warning
-						m_mediator.SendMessage(msgString, this);
+							m_mediator.SendMessage(msgString, this);
 #pragma warning restore 618
+						}
 						Logger.WriteEvent("Done: " + msgString);
 					}
 				}

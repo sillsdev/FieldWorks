@@ -60,7 +60,8 @@ migration burden.
 | Accept/Cancel + Enter/Escape (122 files) | `IsDefault`/`IsCancel` buttons in every converted dialog view |
 | Commit-on-select vs explicit OK | EntryGo single-stage (no OK button) vs two-stage (dialog-conversion.md §2c); Chooser single-select |
 | Dependent two-stage selection | dialog-conversion.md §2c (`EntryGoAuxiliaryOption`, LinkMSA/LinkAllomorph launchers) |
-| WS typography + keyboard switch on text input (255 files set WS on controls) | editing: `FwMultiWsTextField`; search/entry boxes: `EntryGoSearchFieldSpec` + `EntryGoLauncherShared.BuildVernacularSearchFieldSpec` (dialog-conversion.md §2d) |
+| WS typography + keyboard switch on text input (255 files set WS on controls) | editing: `FwMultiWsTextField`; search/entry boxes: `EntryGoSearchFieldSpec` + `EntryGoLauncherShared.BuildSearchFieldSpec` (dialog-conversion.md §2d) |
+| Writing-system selector on a search field (`BaseGoDlg.m_cbWritingSystems`) | `EntryGoSearchFieldSpec.WritingSystems` + `WritingSystemChanged`, a dropdown `FwOptionChooser` in `EntryGoDialogView`, and a shared `EntryGoLauncherShared.SearchWritingSystem` read by the search per query; an analysis ws searches glosses, not forms (dialog-conversion.md §2d) |
 | RTL from writing system (99 files) | `FlowDirection` from `ws.RightToLeftScript` — `FwFieldControls.cs`, §2d spec |
 | Fenced LCModel edits / one undo step | region: `IDetailEditContext`/`LcmDetailEditSession`; launcher on-OK: `UndoableUnitOfWorkHelper.Do` in `LcmInsertEntryDialogLauncher.Apply` |
 | Validation gating + inline error display | gating: `DialogViewModelBase.GetValidationErrors`; the inline-display exemplar is `CreateFeatureDialogView.axaml` (`!IsValid` → visible message) — copy it; do not invent a new error surface |
@@ -114,15 +115,6 @@ view -- that is what the fail-closed resolver is for.
   confirmation. Prefer a small shared base (`WizardViewModelBase`) over
   per-wizard copies — three known consumers justify it.
 - **Likely first consumer:** the smallest wizard, not NotebookImportWiz.
-
-<a id="gap-ws-selector"></a>
-### GAP-WS-SELECTOR: Writing-system selector on search fields
-- **Evidence:** legacy `BaseGoDlg.m_cbWritingSystems` lets the user choose
-  which WS to search; the §2d spec carries only the default vernacular WS
-  (`EntryGoLauncherShared.BuildVernacularSearchFieldSpec`).
-- **First implementation must cover:** extending `EntryGoSearchFieldSpec`
-  with a WS option list + selection callback that re-runs the search and
-  re-derives typography/keyboard.
 
 <a id="gap-tristate"></a>
 ### GAP-TRISTATE: Tri-state checkbox tree
