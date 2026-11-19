@@ -243,7 +243,7 @@ namespace FwAvaloniaTests
 		// A data-entry view with a collapsible section heading, a plain heading and a field
 		// label, shown in a window; returns the text block drawing each of the three.
 		private static (TextBlock Collapsible, TextBlock Plain, TextBlock FieldLabel) ShowHeadings(
-			string uiElementFont)
+			string uiElementFont, double uiElementSize = 0)
 		{
 			var values = new List<DetailWsValue> { new DetailWsValue("vern", "casa") };
 			var fields = new List<DetailField>
@@ -259,7 +259,8 @@ namespace FwAvaloniaTests
 			};
 			var model = new DetailModel("LexEntry", "identity", fields, new List<ViewDiagnostic>())
 			{
-				UiElementFontFamily = uiElementFont
+				UiElementFontFamily = uiElementFont,
+				UiElementFontSize = uiElementSize
 			};
 			var window = new Window { Content = new DataTree(model) };
 			window.Show();
@@ -278,6 +279,26 @@ namespace FwAvaloniaTests
 			Assert.That(plain.FontFamily.FamilyNames.First(), Is.EqualTo("Times New Roman"));
 			Assert.That(fieldLabel.FontFamily, Is.EqualTo(FwUiFont.UiFontFamily),
 				"field labels have never followed UiElement; they take the theme font");
+		}
+
+		[AvaloniaTest]
+		public void SectionHeadings_FollowTheUiElementSize_FieldLabelsStayAtTheirSize()
+		{
+			var (collapsible, plain, fieldLabel) = ShowHeadings("Times New Roman", 20.0);
+
+			Assert.That(collapsible.FontSize, Is.EqualTo(20.0));
+			Assert.That(plain.FontSize, Is.EqualTo(20.0));
+			Assert.That(fieldLabel.FontSize, Is.EqualTo(FwAvaloniaDensity.LabelFontSize),
+				"field labels have never followed UiElement; they keep the label size");
+		}
+
+		[AvaloniaTest]
+		public void SectionHeadings_WithoutAUiElementSize_UseTheSectionHeaderSize()
+		{
+			var (collapsible, plain, _) = ShowHeadings("Times New Roman");
+
+			Assert.That(collapsible.FontSize, Is.EqualTo(FwAvaloniaDensity.SectionHeaderFontSize));
+			Assert.That(plain.FontSize, Is.EqualTo(FwAvaloniaDensity.SectionHeaderFontSize));
 		}
 
 		[AvaloniaTest]

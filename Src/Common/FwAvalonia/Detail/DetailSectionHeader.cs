@@ -56,6 +56,9 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		/// <summary>Sets the font family of the heading text.</summary>
 		public void SetLabelFontFamily(FontFamily family) => _text.FontFamily = family;
 
+		/// <summary>Sets the font size of the heading text.</summary>
+		public void SetLabelFontSize(double size) => _text.FontSize = size;
+
 		/// <summary>The text shown for the current state.</summary>
 		public string CurrentLabel => _isExpanded ? _label : _collapsedLabel;
 

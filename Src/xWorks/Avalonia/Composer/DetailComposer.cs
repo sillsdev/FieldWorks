@@ -191,7 +191,8 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DetailModel(obj.ClassName, layoutName, state.Fields, root.Diagnostics,
 				state.ValueFontSize)
 			{
-				UiElementFontFamily = UiElementFontName(cache)
+				UiElementFontFamily = UiElementFontName(cache),
+				UiElementFontSize = UiElementFontSize(cache)
 			};
 			return new ComposedDetail(model, context);
 		}
@@ -220,6 +221,36 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 			}
 		}
+
+		/// <summary>
+		/// The font size, in device-independent units, the project's <c>UiElement</c> style
+		/// gives the UI writing system: its own size for that writing system, otherwise its
+		/// size for all writing systems. 0 when the style is missing or sets no size, so the
+		/// theme size applies.
+		/// </summary>
+		internal static double UiElementFontSize(LcmCache cache)
+		{
+			try
+			{
+				var style = cache.LangProject?.StylesOC
+					.FirstOrDefault(s => s.Name == StyleServices.UiElementStylename);
+				if (style == null)
+					return 0;
+				var info = new FwCoreDlgControls.StyleInfo(style);
+				var own = info.FontInfoForWs(cache.DefaultUserWs)?.m_fontSize;
+				if (own != null && own.ValueIsSet && own.Value > 0)
+					return NormalStyleFontSizes.Units(own.Value);
+				var all = info.FontInfoForWs(-1)?.m_fontSize;
+				return all != null && all.ValueIsSet && all.Value > 0
+					? NormalStyleFontSizes.Units(all.Value) : 0;
+			}
+			catch (Exception e)
+			{
+				Logger.WriteError("Reading the UiElement style failed; section headings use the theme size.", e);
+				return 0;
+			}
+		}
+
 		/// <summary>
 		/// Walks a possibility list's tree in document order (parent before children) into
 		/// chooser options, hierarchy carried as <see cref="DetailChoiceOption.Depth"/> --

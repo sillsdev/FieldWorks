@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (!_sizes.TryGetValue(ws, out var size))
 			{
-				size = Millipoints(ws) / MillipointsPerPoint * UnitsPerPoint;
+				size = Units(Millipoints(ws));
 				_sizes[ws] = size;
 			}
 			return size;
@@ -78,6 +78,12 @@ namespace SIL.FieldWorks.XWorks
 		/// part's fontsize <paramref name="percent"/>; 0 or less leaves it unscaled.
 		/// </summary>
 		public double For(int ws, int percent) => For(ws) * (percent > 0 ? percent / 100.0 : 1.0);
+
+		/// <summary>
+		/// <paramref name="millipoints"/>, the unit style font sizes are stored in, as Avalonia
+		/// device-independent units.
+		/// </summary>
+		internal static double Units(int millipoints) => millipoints / MillipointsPerPoint * UnitsPerPoint;
 
 		private int Millipoints(int ws)
 		{

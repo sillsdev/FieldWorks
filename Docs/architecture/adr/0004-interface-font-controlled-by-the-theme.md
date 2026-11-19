@@ -22,9 +22,10 @@ needs a bundled font, or when the line-height tokens land.
 
 Text that follows the `UiElement` style in the WinForms detail view keeps
 following it. The detail view's section headings (the `UiElement` runs in the
-`*-Jt-Summary` parts) take the font the project's `UiElement` style gives the UI
-writing system; the composer reads it and the model carries it, so each project
-window has its own and a second window never changes the first. Menus, dialog
+`*-Jt-Summary` parts) take the font and size the project's `UiElement` style
+gives the UI writing system; the composer reads them and the model carries
+them, so each project window has its own and a second window never changes the
+first. Menus, dialog
 controls and field labels use the theme font: nothing in them reads `UiElement`
 today (slice labels are fixed 10 pt sans serif). The browse filter bar's
 `UiElement` text has no Avalonia counterpart yet and follows when one exists.

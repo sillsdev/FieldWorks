@@ -999,6 +999,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 					var button = new DetailSectionHeader(headerLabel, field.CollapsedLabel,
 						IsExpanded(field), _toggleableHeaders.Contains(row));
 					button.SetLabelFontFamily(FwUiFont.UiElementFamily(Model.UiElementFontFamily));
+					if (Model.UiElementFontSize > 0)
+						button.SetLabelFontSize(Model.UiElementFontSize);
 					button.Click += (s, e) => ToggleSection(field, button);
 					shown.Header = button;
 					header = button;
@@ -1009,6 +1011,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 				{
 					var label = DetailSectionHeader.CreateLabel(headerLabel);
 					label.FontFamily = FwUiFont.UiElementFamily(Model.UiElementFontFamily);
+					if (Model.UiElementFontSize > 0)
+						label.FontSize = Model.UiElementFontSize;
 					// A null background only hit-tests the glyphs; the whole header area must
 					// take the right-click.
 					label.Background = FwAvaloniaDensity.TransparentBrush;
