@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Morphology;
 using SIL.Machine.Morphology.HermitCrab;
+using SIL.Machine.Morphology.HermitCrab.MorphologicalRules;
 using System.Reflection;
 using System.IO;
 using HCSynthByGloss;
@@ -144,6 +145,26 @@ namespace SIL.HCSynthByGlossTests
 				.Single(r => (string)r.Attribute("type") == "environment");
 			Assert.That(reason.Elements("Environment").Select(e => e.Value).ToList(),
 				Has.Count.EqualTo(2).And.All.Not.Empty);
+		}
+
+		/// <summary>The trace names the required slot that made a template fail.</summary>
+		[Test]
+		public void TraceNamesUnreachableRequiredSlot()
+		{
+			var traceManager = new HcXmlTraceManager { IsTracing = true };
+			var table = new CharacterDefinitionTable();
+			table.AddSegment("a");
+			var trace = new XElement("WordAnalysisTrace");
+			var word = new Word(new Stratum(table), table.Segment("a")) { CurrentTrace = trace };
+			var template = new AffixTemplate { Name = "synthetic template" };
+			var slot = new AffixTemplateSlot(new AffixProcessRule()) { Name = "synthetic slot" };
+
+			traceManager.EndUnapplyTemplate(template, word, false,
+				FailureReason.UnreachableRequiredSlot, slot);
+
+			XElement reason = trace.Element("TemplateAnalysisTraceOut").Element("FailureReason");
+			Assert.That((string)reason.Attribute("type"), Is.EqualTo("unreachableRequiredSlot"));
+			Assert.That(reason.Element("Slot").Value, Is.EqualTo("synthetic slot"));
 		}
 	}
 }
