@@ -411,6 +411,7 @@
     <ClInclude Include="TestVwSelection.h" />
     <ClInclude Include="TestVwSync.h" />
     <ClInclude Include="TestVwTableBox.h" />
+    <ClInclude Include="TestVwWrapGroup.h" />
     <ClInclude Include="TestVwTextBoxes.h" />
     <ClInclude Include="TestVwTextStore.h" />
     <ClInclude Include="TestVwTxtSrc.h" />
@@ -430,10 +431,10 @@
 
   <!-- Pre-build: Generate Collection.cpp from test headers (same as makefile) -->
     <Target Name="GenerateCollection" BeforeTargets="ClCompile"
-        Inputs="testViews.h;DummyBaseVc.h;DummyRootsite.h;MockLgWritingSystemFactory.h;MockLgWritingSystem.h;TestNotifier.h;TestUndoStack.h;TestLayoutPage.h;TestLgCollatingEngine.h;TestVirtualHandlers.h;TestVwTxtSrc.h;TestVwParagraph.h;TestVwPattern.h;TestVwSync.h;TestVwEnv.h;TestVwOverlay.h;TestLazyBox.h;TestVwRootBox.h;TestVwSelection.h;TestInsertDiffPara.h;TestVwTextStore.h;TestVwGraphics.h;TestVwTextBoxes.h;TestVwTableBox.h;TestLgLineBreaker.h;TestUniscribeEngine.h;TestGraphiteEngine.h;RenderEngineTestBase.h;MockRenderEngineFactory.h;TestTsStrBldr.h;TestTsString.h;TestTsPropsBldr.h;TestTsTextProps.h;TestViewCaches.h"
+        Inputs="testViews.h;DummyBaseVc.h;DummyRootsite.h;MockLgWritingSystemFactory.h;MockLgWritingSystem.h;TestNotifier.h;TestUndoStack.h;TestLayoutPage.h;TestLgCollatingEngine.h;TestVirtualHandlers.h;TestVwTxtSrc.h;TestVwParagraph.h;TestVwPattern.h;TestVwSync.h;TestVwEnv.h;TestVwOverlay.h;TestLazyBox.h;TestVwRootBox.h;TestVwSelection.h;TestInsertDiffPara.h;TestVwTextStore.h;TestVwGraphics.h;TestVwTextBoxes.h;TestVwTableBox.h;TestVwWrapGroup.h;TestLgLineBreaker.h;TestUniscribeEngine.h;TestGraphiteEngine.h;RenderEngineTestBase.h;MockRenderEngineFactory.h;TestTsStrBldr.h;TestTsString.h;TestTsPropsBldr.h;TestTsTextProps.h;TestViewCaches.h"
           Outputs="Collection.cpp">
     <Message Text="Generating Collection.cpp from test headers..." Importance="high" />
-      <Exec Command="$(FwRoot)\Bin\CollectUnit++Tests.cmd Views testViews.h DummyBaseVc.h DummyRootsite.h MockLgWritingSystemFactory.h MockLgWritingSystem.h TestNotifier.h TestUndoStack.h TestLayoutPage.h TestLgCollatingEngine.h TestVirtualHandlers.h TestVwTxtSrc.h TestVwParagraph.h TestVwPattern.h TestVwSync.h TestVwEnv.h TestVwOverlay.h TestLazyBox.h TestVwRootBox.h TestVwSelection.h TestInsertDiffPara.h TestVwTextStore.h TestVwGraphics.h TestVwTextBoxes.h TestVwTableBox.h TestLgLineBreaker.h TestUniscribeEngine.h TestGraphiteEngine.h RenderEngineTestBase.h MockRenderEngineFactory.h TestTsStrBldr.h TestTsString.h TestTsPropsBldr.h TestTsTextProps.h TestViewCaches.h Collection.cpp"
+      <Exec Command="$(FwRoot)\Bin\CollectUnit++Tests.cmd Views testViews.h DummyBaseVc.h DummyRootsite.h MockLgWritingSystemFactory.h MockLgWritingSystem.h TestNotifier.h TestUndoStack.h TestLayoutPage.h TestLgCollatingEngine.h TestVirtualHandlers.h TestVwTxtSrc.h TestVwParagraph.h TestVwPattern.h TestVwSync.h TestVwEnv.h TestVwOverlay.h TestLazyBox.h TestVwRootBox.h TestVwSelection.h TestInsertDiffPara.h TestVwTextStore.h TestVwGraphics.h TestVwTextBoxes.h TestVwTableBox.h TestVwWrapGroup.h TestLgLineBreaker.h TestUniscribeEngine.h TestGraphiteEngine.h RenderEngineTestBase.h MockRenderEngineFactory.h TestTsStrBldr.h TestTsString.h TestTsPropsBldr.h TestTsTextProps.h TestViewCaches.h Collection.cpp"
           WorkingDirectory="$(ProjectDir)" />
   </Target>
 

@@ -6362,6 +6362,25 @@ protected:
 	}
 
 
+	// Return the table cell that holds pvpbox directly or through wrap groups; otherwise null.
+	static VwTableCellBox * CellOf(VwParagraphBox * pvpbox)
+	{
+		VwGroupBox * pgbox = pvpbox->Container();
+		while (pgbox && pgbox->IsWrapGroupBox())
+			pgbox = pgbox->Container();
+		return dynamic_cast<VwTableCellBox *>(pgbox);
+	}
+
+	// Return the wrap group whose children hold pvpboxPrev and pvpboxCurr if that group shows
+	// them side by side on one line; otherwise null.
+	static VwWrapGroupBox * OneLineWrapGroupBetween(VwParagraphBox * pvpboxPrev,
+		VwParagraphBox * pvpboxCurr)
+	{
+		VwWrapGroupBox * pwgbox = dynamic_cast<VwWrapGroupBox *>(
+			VwGroupBox::CommonContainer(pvpboxPrev, pvpboxCurr));
+		return pwgbox && pwgbox->IsOneLine() ? pwgbox : NULL;
+	}
+
 	/*----------------------------------------------------------------------------------------------
 		Process an entire paragraph. Adds to string builder whatever should go into the clipboard
 		from pvpboxCurr(which is not changed). Before that, inserts whatever separator should
@@ -6376,17 +6395,27 @@ protected:
 			GetParaLevelProps(pvpboxPrev, &qttp);
 			// Decide whether to insert tab or newline.
 			StrUniBufSmall stubsSep = m_stubsNewline;
-			VwTableCellBox * ptcboxPrev =
-				dynamic_cast<VwTableCellBox *>(pvpboxPrev->Container());
-			if (ptcboxPrev)
+			VwTableCellBox * ptcboxPrev = CellOf(pvpboxPrev);
+			VwWrapGroupBox * pwgboxOneLine = OneLineWrapGroupBetween(pvpboxPrev, pvpboxCurr);
+			if (pwgboxOneLine)
 			{
-				VwTableCellBox * ptcboxCurr =
-					dynamic_cast<VwTableCellBox *>(pvpboxCurr->Container());
+				// Items shown side by side copy with the separator shown between them.
+				stubsSep = L"";
+				if (pwgboxOneLine->Separator())
+				{
+					SmartBstr sbstrSep;
+					CheckHr(pwgboxOneLine->Separator()->get_Text(&sbstrSep));
+					stubsSep = sbstrSep.Chars();
+				}
+			}
+			else if (ptcboxPrev)
+			{
+				VwTableCellBox * ptcboxCurr = CellOf(pvpboxCurr);
 				if (ptcboxCurr == ptcboxPrev)
 				{
 					// Two different paragraphs in the same cell. We want to use newline if the WHOLE selection
 					// is in that cell, otherwise, vertical bar
-					if (m_pvwsel->m_pvpbox->Container() != ptcboxCurr || (m_pvpboxLast != NULL && m_pvpboxLast->Container() != ptcboxCurr))
+					if (CellOf(m_pvwsel->m_pvpbox) != ptcboxCurr || (m_pvpboxLast != NULL && CellOf(m_pvpboxLast) != ptcboxCurr))
 						stubsSep = L"|";
 				}
 				else if (ptcboxCurr && ptcboxPrev->Container() == ptcboxCurr->Container())

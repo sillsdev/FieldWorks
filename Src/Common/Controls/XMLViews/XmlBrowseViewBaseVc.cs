@@ -23,6 +23,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.Utils;
 using XCore;
 
@@ -1114,6 +1115,17 @@ namespace SIL.FieldWorks.Common.Controls
 					(int)FwTextPropVar.ktpvEnum, IsWritingSystemRTL(node) ? -1 : 0);
 			}
 
+			var previewItems = fIsCellActive && !MultiColumnPreview && IsListChoiceColumn(node)
+				? (m_sda as XMLViewsDataCache)?.GetPreviewItems(hvo)
+				: null;
+			if (previewItems != null)
+			{
+				AddListPreview(vwenv, node, hvo, previewItems);
+				vwenv.CloseTableCell();
+				m_wsBest = 0;
+				return;
+			}
+
 			// According to LT-8947, in bulk edit preview mode, we want to try to show the
 			// original cell contents on the same line with the preview arrow and the new cell contents.
 			// to accomplish this, we use 3 InnerPiles in a paragraph
@@ -1289,6 +1301,212 @@ namespace SIL.FieldWorks.Common.Controls
 				AddAlternateCellContents(vwenv, icol);
 			}
 			vwenv.CloseInnerPile();
+		}
+
+		private static readonly HashSet<string> s_listChoiceBulkEditTypes = new HashSet<string>
+		{
+			"complexListMultiple", "semanticDomainListMultiple", "variantEntryTypes", "complexEntryTypes"
+		};
+
+		/// <summary>
+		/// True if the column's bulk edit chooses several items from a list.
+		/// </summary>
+		private static bool IsListChoiceColumn(XmlNode node)
+		{
+			return s_listChoiceBulkEditTypes.Contains(
+				XmlUtils.GetOptionalAttributeValue(node, "bulkEdit", string.Empty));
+		}
+
+		/// <summary>
+		/// Show a list-choice preview as the current items, the preview arrow, then the new
+		/// items, each item shown as the column shows it outside the preview. All of it goes
+		/// on one line, items separated by commas, when it fits the column; otherwise each
+		/// item, as well as the arrow, goes on a line of its own.
+		/// </summary>
+		private void AddListPreview(IVwEnv vwenv, XmlNode node, int hvo,
+			XMLViewsDataCache.PreviewItems previewItems)
+		{
+			// The stored items change only together with the preview value.
+			vwenv.NoteDependency(new[] { hvo }, new[] { XMLViewsDataCache.ktagAlternateValue }, 1);
+			try
+			{
+				// Make sure to use the same WS as the column uses outside of preview.
+				SetForcedWs(node);
+				var itemNode = FindListItemNode(vwenv, node, hvo);
+				var tssSeparator = TsStringUtils.MakeString(", ",
+					m_cache.ServiceLocator.WritingSystemManager.UserWs);
+				vwenv.OpenWrapGroup(null);
+				// OriginalNames is the fallback if we are not able to fetch names
+				// to use from the item itself.
+				AddListPreviewItems(vwenv, tssSeparator, itemNode, previewItems.Original,
+					previewItems.OriginalNames);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptPadTrailing,
+					(int)FwTextPropVar.ktpvMilliPoint, 2500);
+				vwenv.set_IntProperty((int)FwTextPropType.ktptPadLeading,
+					(int)FwTextPropVar.ktpvMilliPoint, 2500);
+				AddPreviewArrow(vwenv, node);
+				// AlternateNames is the fallback if we are not able to fetch names
+				// to use from the item itself.
+				AddListPreviewItems(vwenv, tssSeparator, itemNode, previewItems.Alternate,
+					previewItems.AlternateNames);
+				vwenv.CloseWrapGroup();
+			}
+			finally
+			{
+				WsForce = 0;
+			}
+		}
+
+		/// <summary>
+		/// Add a wrap group showing each item with itemNode, the seq or obj element the column
+		/// shows the list with; when itemNode is null, show each item's name instead.
+		/// </summary>
+		private void AddListPreviewItems(IVwEnv vwenv, ITsString tssSeparator, XmlNode itemNode,
+			int[] items, ITsString[] names)
+		{
+			vwenv.OpenWrapGroup(tssSeparator);
+			int fragId = itemNode == null ? 0 : GetSubFragId(itemNode, null);
+			for (int i = 0; i < items.Length; i++)
+			{
+				if (itemNode != null && ItemLayoutOpensParagraph(items[i], itemNode))
+				{
+					// If item layout opens its own paragraph, we don't want to open another.
+					vwenv.AddObj(items[i], this, fragId);
+					continue;
+				}
+				vwenv.OpenParagraph();
+				if (itemNode == null)
+					// Use stored names as fallback if we can't fetch names from the items.
+					vwenv.AddString(names[i]);
+				else
+					vwenv.AddObj(items[i], this, fragId);
+				vwenv.CloseParagraph();
+			}
+			vwenv.CloseWrapGroup();
+		}
+
+		private XmlNode FindListItemNode(IVwEnv vwenv, XmlNode column, int hvo)
+		{
+			IManyOnePathSortItem item = null;
+			if (SortItemProvider != null)
+			{
+				int hvoDum, tag, ihvo;
+				// Check which row the cell is in.
+				// EmbeddingLevel - 2 is the root that holds the row list.
+				vwenv.GetOuterObject(vwenv.EmbeddingLevel - 2, out hvoDum, out tag, out ihvo);
+				item = SortItemProvider.SortItemAt(ihvo);
+			}
+			return FindListItemNode(column, hvo, item);
+		}
+
+		/// <summary>
+		/// Return the seq or obj element through which the column shows the list its bulk edit
+		/// changes, for the row showing hvo, or null if there is none. The search starts from
+		/// the part the column's cell is drawn from outside the preview: through the row's path
+		/// when item is not null, otherwise from hvo itself.
+		/// </summary>
+		internal XmlNode FindListItemNode(XmlNode column, int hvo, IManyOnePathSortItem item)
+		{
+			var fieldSpec = XmlUtils.GetOptionalAttributeValue(column, "field");
+			var idot = fieldSpec?.IndexOf('.') ?? -1;
+			if (idot <= 0)
+				return null;
+			var clsidTarget = m_mdc.GetClassId(fieldSpec.Substring(0, idot));
+			var fieldName = fieldSpec.Substring(idot + 1);
+
+			var hvoStart = hvo;
+			XmlNode startNode = null;
+			if (item != null)
+			{
+				startNode = XmlViewsUtils.GetDisplayCommandForColumn(item, column, m_cache, m_mdc,
+					m_sda, m_layouts, out hvoStart, null).Node;
+			}
+			if (startNode == null)
+				startNode = GetColumnNode(column, hvo, m_sda, m_layouts);
+			var clsidStart = m_sda.get_IntProp(hvoStart, CmObjectTags.kflidClass);
+			return FindFieldNode(startNode, clsidStart, clsidTarget, fieldName, 0);
+		}
+
+		/// <summary>
+		/// Return the seq or obj element within node, which shows an object of class clsid,
+		/// that shows field fieldName of an object of class clsidTarget, or null if there is
+		/// none. Part references are followed. When clsid is not clsidTarget, as for a row that
+		/// stands for an object not yet created, the search continues into the layout that node
+		/// uses for each field that holds objects of class clsidTarget.
+		/// </summary>
+		private XmlNode FindFieldNode(XmlNode node, int clsid, int clsidTarget, string fieldName,
+			int depth)
+		{
+			const int kMaxDepth = 10;
+			if (node == null || depth > kMaxDepth)
+				return null;
+			if (node.Name == "seq" || node.Name == "obj")
+			{
+				var field = XmlUtils.GetOptionalAttributeValue(node, "field");
+				if (field == null)
+					return null;
+				if (IsSameOrSubclass(clsid, clsidTarget))
+					return field == fieldName ? node : null;
+				var mdc = m_mdc as IFwMetaDataCacheManaged;
+				if (mdc == null || !mdc.FieldExists(clsid, field, true))
+					return null;
+				var clsidDst = m_mdc.GetDstClsId(m_mdc.GetFieldId2(clsid, field, true));
+				if (clsidDst == 0 || !IsSameOrSubclass(clsidTarget, clsidDst))
+					return null;
+				var layoutNode = GetNodeForPart(XmlVc.GetLayoutName(node, null), true,
+					clsidTarget);
+				return FindFieldNode(layoutNode, clsidTarget, clsidTarget, fieldName, depth + 1);
+			}
+			if (node.Name == "part" && XmlUtils.GetOptionalAttributeValue(node, "ref") != null)
+			{
+				var part = GetNodeForPart(XmlUtils.GetOptionalAttributeValue(node, "ref"), false,
+					clsid);
+				return FindFieldNode(part, clsid, clsidTarget, fieldName, depth + 1);
+			}
+			foreach (var child in node.ChildNodes.OfType<XmlElement>())
+			{
+				var result = FindFieldNode(child, clsid, clsidTarget, fieldName, depth + 1);
+				if (result != null)
+					return result;
+			}
+			return null;
+		}
+
+		private bool IsSameOrSubclass(int clsid, int clsidBase)
+		{
+			for (var clsidCurrent = clsid; ; clsidCurrent = m_mdc.GetBaseClsId(clsidCurrent))
+			{
+				if (clsidCurrent == clsidBase)
+					return true;
+				if (clsidCurrent == 0)
+					return false;
+			}
+		}
+
+		/// <summary>
+		/// True if the layout itemNode uses to show hvoItem puts the item in a paragraph of its
+		/// own, so it must not be shown inside another paragraph.
+		/// </summary>
+		private bool ItemLayoutOpensParagraph(int hvoItem, XmlNode itemNode)
+		{
+			var layoutNode = XmlVc.GetDisplayNodeForChild(
+				GetNodeForPart(hvoItem, XmlVc.GetLayoutName(itemNode, null), true), itemNode,
+				m_layouts);
+			return NodeOpensParagraph(layoutNode, hvoItem, 0);
+		}
+
+		private bool NodeOpensParagraph(XmlNode node, int hvo, int depth)
+		{
+			const int kMaxDepth = 5;
+			if (node == null || depth > kMaxDepth)
+				return false;
+			if (node.Name == "layout" && XmlUtils.GetOptionalAttributeValue(node, "flowType") == "para")
+				return true;
+			var children = node.ChildNodes.OfType<XmlElement>().ToList();
+			return children.Count > 0 && children.All(child => child.Name == "para" ||
+				(child.Name == "part" && child.HasAttribute("ref") &&
+				NodeOpensParagraph(GetNodeForPart(hvo, child.GetAttribute("ref"), false), hvo,
+					depth + 1)));
 		}
 
 		private void AddPreviewArrow(IVwEnv vwenv, XmlNode node)

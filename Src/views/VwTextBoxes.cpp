@@ -946,7 +946,8 @@ public:  // we can make anything public since the whole class is private to this
 
 	int m_fIsNested; // 0 = unknown, 1 = nested, 2 = not nested.
 
-	// Answer true if any container of the paragraph we're laying out is a paragraph.
+	// Answer true if any container of the paragraph we're laying out is a paragraph or a wrap
+	// group; such a paragraph takes only the width its own content needs.
 	// Since this doesn't change we compute it the first time (if any) that it is needed.
 	bool IsNested()
 	{
@@ -956,7 +957,7 @@ public:  // we can make anything public since the whole class is private to this
 			m_fIsNested = 2; // default, not nested, use this if loop ends without finding paragraph.
 			for (VwGroupBox * pgbox = m_pvpbox->Container(); pgbox; pgbox = pgbox->Container())
 			{
-				if (pgbox->IsParagraphBox())
+				if (pgbox->IsParagraphBox() || pgbox->IsWrapGroupBox())
 				{
 					m_fIsNested = 1;
 					break;

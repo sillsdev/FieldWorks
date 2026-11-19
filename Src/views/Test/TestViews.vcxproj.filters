@@ -89,6 +89,9 @@
     <ClInclude Include="TestVwTableBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestVwWrapGroup.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="TestVwTextBoxes.h">
       <Filter>Header Files</Filter>
     </ClInclude>

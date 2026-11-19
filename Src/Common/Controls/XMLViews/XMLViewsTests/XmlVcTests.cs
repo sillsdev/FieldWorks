@@ -744,6 +744,22 @@ namespace XMLViewsTests
 		}
 
 		/// <summary>
+		/// Start a group shown on one line when it fits, otherwise stacked
+		/// </summary>
+		public void OpenWrapGroup(ITsString tssSeparator)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// End a group shown on one line when it fits, otherwise stacked
+		/// </summary>
+		public void CloseWrapGroup()
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
 		/// :&gt; ENHANCE JohnT: VwLength is used only in three places now. Would it be better to
 		///             :&gt; just have an int plus a FwTextPropVar?
 		///              Start a table.

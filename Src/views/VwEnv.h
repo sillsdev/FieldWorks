@@ -110,6 +110,8 @@ public:
 	STDMETHOD(CloseInnerPile)();
 	STDMETHOD(OpenSpan)();
 	STDMETHOD(CloseSpan)();
+	STDMETHOD(OpenWrapGroup)(ITsString * ptssSeparator);
+	STDMETHOD(CloseWrapGroup)();
 	STDMETHOD(OpenTable)(int cCols, VwLength vwlenWidth, int twBorder,
 		VwAlignment vaAlign, VwFramePosition vfpFrame, VwRule vrlRule,
 		int twSpacing, int twPadding, ComBool fSelectOneCol);

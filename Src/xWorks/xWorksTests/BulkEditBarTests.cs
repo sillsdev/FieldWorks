@@ -20,6 +20,7 @@ using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Filters;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -1703,6 +1704,101 @@ namespace SIL.FieldWorks.XWorks
 
 			// make sure we didn't add a variant entry type to the complex entry ref.
 			Assert.That(complexEntryRef.VariantEntryTypesRS.Count, Is.EqualTo(0));
+		}
+
+		[Test]
+		public void ListChoicePreview_StoresTheCurrentAndNewItemsOfEachChangedRow()
+		{
+			var variantList = AddOneVariantEachToHimbiliraSenseAndPusEntry();
+			var variantRef = variantList[1].EntryRefsOS[0];
+			var currentType = variantRef.VariantEntryTypesRS[0];
+			var choiceFreeVariant = GetVariantTypeOrCreateOne("Free Variant");
+
+			m_bulkEditBar.SwitchTab("ListChoice");
+			m_bv.ShowColumn("VariantEntryTypesBrowse");
+			m_bulkEditBar.SetTargetField("Variant Types");
+			RecordClerk clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
+			clerk.JumpToRecord(variantRef.Hvo);
+			((MockFwXWindow)m_window).ProcessPendingItems();
+			var listChoiceControl =
+				(ComplexListChooserBEditControl)m_bulkEditBar.CurrentBulkEditSpecControl;
+			m_bv.OnUncheckAll();
+			m_bv.SetCheckedItems(new List<int> { variantRef.Hvo });
+			listChoiceControl.ChosenObjects = new ICmObject[] { choiceFreeVariant };
+			listChoiceControl.ReplaceMode = false;
+
+			m_bulkEditBar.ClickPreview();
+
+			var items = m_bv.SpecialCache.GetPreviewItems(variantRef.Hvo);
+			Assert.That(items, Is.Not.Null);
+			Assert.That(items.Original, Is.EqualTo(new[] { currentType.Hvo }));
+			Assert.That(items.OriginalNames.Select(tss => tss.Text),
+				Is.EqualTo(new[] { currentType.ShortNameTSS.Text }));
+			Assert.That(items.Alternate, Is.EqualTo(new[] { currentType.Hvo, choiceFreeVariant.Hvo }));
+			Assert.That(items.AlternateNames.Select(tss => tss.Text),
+				Is.EqualTo(new[] { currentType.ShortNameTSS.Text, choiceFreeVariant.ShortNameTSS.Text }));
+		}
+
+		[TestCase("PublishInForSenses", "PublishIn", "Name")]
+		[TestCase("DomainsOfSensesForSense", "SemanticDomains", "AbbrAndName")]
+		[TestCase("AnthropologyCategoriesForSense", "AnthroCodes", "PossibilityAbbrAndName")]
+		[TestCase("UsagesForSense", "UsageTypes", "Name")]
+		public void FindListItemNode_FindsTheListInASenseColumn(string columnLayout,
+			string expectedField, string expectedItemLayout)
+		{
+			var sense = Cache.LangProject.LexDbOA.Entries.SelectMany(entry => entry.SensesOS).First();
+
+			var itemNode = m_bv.BrowseView.Vc.FindListItemNode(ColumnSpec(columnLayout), sense.Hvo,
+				null);
+
+			AssertListItemNode(itemNode, expectedField, expectedItemLayout);
+		}
+
+		[Test]
+		public void FindListItemNode_FollowsTheOwnerForARowWithoutTheTargetObject()
+		{
+			var entry = Cache.LangProject.LexDbOA.Entries.First(e => e.PronunciationsOS.Count == 0);
+
+			var itemNode = m_bv.BrowseView.Vc.FindListItemNode(
+				ColumnSpec("PublishInForPronunciations"), entry.Hvo, null);
+
+			AssertListItemNode(itemNode, "PublishIn", "Name");
+		}
+
+		[Test]
+		public void FindListItemNode_FollowsTheRowPathForComplexFormTypes()
+		{
+			var entryPus = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().First();
+			var complexRef = AddOneComplexEntry(entryPus).EntryRefsOS[0];
+			m_bulkEditBar.SwitchTab("ListChoice");
+			var column = ColumnSpec("ComplexEntryTypesBrowse");
+			m_bulkEditBar.SetTargetField("Complex Form Types");
+			RecordClerk clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
+			clerk.JumpToRecord(complexRef.Hvo);
+			((MockFwXWindow)m_window).ProcessPendingItems();
+			var item = m_bv.BrowseView.SortItemProvider.SortItemAt(clerk.CurrentIndex);
+			Assert.That(item.KeyObject, Is.EqualTo(complexRef.Hvo));
+
+			var itemNode = m_bv.BrowseView.Vc.FindListItemNode(column, complexRef.Hvo, item);
+
+			AssertListItemNode(itemNode, "ComplexEntryTypes", "ComplexEntryTypesInBrowse");
+		}
+
+		private XmlNode ColumnSpec(string layout)
+		{
+			if (!m_bv.ColumnSpecs.Any(spec => XmlUtils.GetOptionalAttributeValue(spec, "layout") == layout))
+				m_bv.ShowColumn(layout);
+			return m_bv.ColumnSpecs.First(spec =>
+				XmlUtils.GetOptionalAttributeValue(spec, "layout") == layout);
+		}
+
+		private static void AssertListItemNode(XmlNode itemNode, string expectedField,
+			string expectedItemLayout)
+		{
+			Assert.That(itemNode, Is.Not.Null);
+			Assert.That(XmlUtils.GetOptionalAttributeValue(itemNode, "field"), Is.EqualTo(expectedField));
+			Assert.That(XmlUtils.GetOptionalAttributeValue(itemNode, "layout"),
+				Is.EqualTo(expectedItemLayout));
 		}
 
 		private ILexEntry AddOneComplexEntry(ILexEntry part)
