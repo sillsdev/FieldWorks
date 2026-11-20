@@ -46,7 +46,7 @@ namespace FwAvaloniaTests
 			public void Dispose() => DisposeCount++;
 		}
 
-		[Test]
+		[AvaloniaTest]
 		public void DisposeDialogResources_DisposesDisposableBodyAndViewModel()
 		{
 			var body = new DisposableControl();
@@ -58,7 +58,7 @@ namespace FwAvaloniaTests
 			Assert.That(vm.DisposeCount, Is.EqualTo(1), "the VM is disposed if IDisposable (it owns its resources)");
 		}
 
-		[Test]
+		[AvaloniaTest]
 		public void DisposeDialogResources_NonDisposableViewModel_DoesNotThrow()
 		{
 			Assert.DoesNotThrow(() => AvaloniaDialogHost.DisposeDialogResources(new Control(), new PlainVm()));
