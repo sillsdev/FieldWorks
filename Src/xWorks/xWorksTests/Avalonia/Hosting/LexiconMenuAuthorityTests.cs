@@ -833,7 +833,7 @@ namespace SIL.FieldWorks.XWorks
 		// the in-string menus, then the hotlinks.
 		private List<(DetailField Row, string MenuId, DetailMenuKind Kind)> OwnedMenuRows()
 		{
-			var rows = Rows();
+			var rows = WithEntryRelationsByLabel(Rows());
 			var bound = rows.Where(f => LexiconLabelMenuIds.Contains(f.MenuId))
 				.Select(f => (f, f.MenuId, DetailMenuKind.SliceMenu));
 			bound = bound.Concat(rows.Where(f => LexiconInStringMenuIds.Contains(f.ContextMenuId))
@@ -841,6 +841,20 @@ namespace SIL.FieldWorks.XWorks
 			bound = bound.Concat(rows.Where(f => LexiconHotlinksIds.Contains(f.HotlinksId))
 				.Select(f => (f, f.HotlinksId, DetailMenuKind.Hotlinks)));
 			return bound.ToList();
+		}
+
+		// liblcm yields an entry's relations in hash order, which follows their random GUIDs and
+		// so changes between runs; ordering those rows by label keeps the pinned output stable.
+		private static List<DetailField> WithEntryRelationsByLabel(IReadOnlyList<DetailField> rows)
+		{
+			var result = rows.ToList();
+			var slots = Enumerable.Range(0, result.Count)
+				.Where(i => result[i].Field == "LexEntryReferences").ToList();
+			var sorted = slots.Select(i => result[i])
+				.OrderBy(f => f.Label, StringComparer.Ordinal).ToList();
+			for (var i = 0; i < slots.Count; i++)
+				result[slots[i]] = sorted[i];
+			return result;
 		}
 
 		private DetailMenuLeaf DeleteTranslationLeaf()
