@@ -843,8 +843,8 @@ namespace SIL.FieldWorks.XWorks
 			return bound.ToList();
 		}
 
-		// liblcm yields an entry's relations in hash order, which follows their random GUIDs and
-		// so changes between runs; ordering those rows by label keeps the pinned output stable.
+		// An entry's relations come out in a different order from run to run, but the pinned
+		// output needs a fixed one, so those rows are ordered by label.
 		private static List<DetailField> WithEntryRelationsByLabel(IReadOnlyList<DetailField> rows)
 		{
 			var result = rows.ToList();
