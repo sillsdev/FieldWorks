@@ -37,6 +37,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			// publishes as generated constants are actually registered here too.
 			MergeTokens("avares://FwAvaloniaTheme/Tokens/DialogTokens.axaml");
 			ImeCompositionGuard.Install();
+			// After the token merge: the interface font family is itself a token.
+			FwUiFont.ApplyTo(this);
 		}
 
 		private void MergeTokens(string avaresUri)

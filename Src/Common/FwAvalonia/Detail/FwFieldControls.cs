@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 			if (model == null)
 				return FwAvaloniaDensity.WsAbbrevWidth;
 
-			var typeface = new Typeface(FontFamily.Default);
+			var typeface = new Typeface(FwUiFont.UiFontFamily);
 			double widest = 0;
 			foreach (var abbrev in model.Fields.Where(f => f.IsMultiStringRow)
 				.SelectMany(f => f.Values).Select(v => v.WsAbbrev)

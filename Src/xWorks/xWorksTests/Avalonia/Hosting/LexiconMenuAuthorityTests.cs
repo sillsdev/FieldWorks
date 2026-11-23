@@ -307,7 +307,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void OwnedMenu_RendersItsPinnedItems_OnEveryLexiconRowThatBindsOne()
 		{
-			var rows = OwnedMenuRows();
+			var rows = WithRelationRowsByLabel(OwnedMenuRows());
 			Assert.That(rows.Select(r => r.MenuId).Distinct(), Is.EquivalentTo(
 				LexiconLabelMenuIds.Concat(LexiconInStringMenuIds).Concat(LexiconHotlinksIds)),
 				"precondition: the entry composes a row for every owned id");
@@ -841,6 +841,24 @@ namespace SIL.FieldWorks.XWorks
 			bound = bound.Concat(rows.Where(f => LexiconHotlinksIds.Contains(f.HotlinksId))
 				.Select(f => (f, f.HotlinksId, DetailMenuKind.Hotlinks)));
 			return bound.ToList();
+		}
+
+		// liblcm returns an entry's relations in no defined order, and both detail views
+		// keep it, so the pin compares relation rows by label, in their own positions.
+		private static List<(DetailField Row, string MenuId, DetailMenuKind Kind)> WithRelationRowsByLabel(
+			List<(DetailField Row, string MenuId, DetailMenuKind Kind)> rows)
+		{
+			var result = rows.ToList();
+			foreach (var kind in rows.Select(r => r.Kind).Distinct())
+			{
+				var positions = Enumerable.Range(0, rows.Count)
+					.Where(i => rows[i].Kind == kind && rows[i].Row.Field == "LexEntryReferences").ToList();
+				var sorted = positions.Select(i => rows[i])
+					.OrderBy(r => r.Row.Label, StringComparer.Ordinal).ToList();
+				for (var i = 0; i < positions.Count; i++)
+					result[positions[i]] = sorted[i];
+			}
+			return result;
 		}
 
 		private DetailMenuLeaf DeleteTranslationLeaf()

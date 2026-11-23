@@ -2196,6 +2196,23 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		public IReadOnlyList<ViewDiagnostic> Diagnostics { get; }
 
 		/// <summary>
+		/// The font family the project's <c>UiElement</c> style gives the UI writing system,
+		/// supplied by the composer. Section headings follow it, as they do in the WinForms
+		/// detail view; menus, dialogs and field labels stay on the theme interface font. Null
+		/// when the style sets no font. A property of this window's model, so a second project
+		/// window never changes the first.
+		/// </summary>
+		public string UiElementFontFamily { get; set; }
+
+		/// <summary>
+		/// The font size, in device-independent units, the project's <c>UiElement</c> style
+		/// gives the UI writing system, supplied by the composer. Section headings show at it,
+		/// as they do in the WinForms detail view. 0 when the style sets no size, leaving the
+		/// headings at the theme size.
+		/// </summary>
+		public double UiElementFontSize { get; set; }
+
+		/// <summary>
 		/// The font size of the field values, in device-independent units: the project's Normal
 		/// style size. A value that carries its own <see cref="DetailWsValue.FontSize"/> shows at
 		/// that instead. 0 leaves the values at the theme's size.

@@ -13,7 +13,8 @@ namespace FwAvaloniaDialogsTests
 {
 	/// <summary>
 	/// Headless Avalonia application builder for the dialog-MVVM tests. Reuses <see cref="FwAvaloniaApp"/>
-	/// from the foundation so the Fluent theme applies and templated controls (TabControl, CheckBox,
+	/// from the foundation so the Semi theme and the FieldWorks interface font apply and
+	/// templated controls (TabControl, CheckBox,
 	/// ComboBox, Button) realize under the headless platform.
 	/// </summary>
 	public static class TestAppBuilder
