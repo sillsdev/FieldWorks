@@ -146,6 +146,7 @@ $(VIEWSTEST_SRC)\Collection.cpp: $(VIEWSTEST_SRC)\DummyBaseVc.h $(VIEWSTEST_SRC)
  $(VIEWSTEST_SRC)\TestVwGraphics.h \
  $(VIEWSTEST_SRC)\TestVwTextBoxes.h \
  $(VIEWSTEST_SRC)\TestVwTableBox.h \
+ $(VIEWSTEST_SRC)\TestVwWrapGroup.h \
  $(VIEWSTEST_SRC)\TestLgLineBreaker.h\
  $(VIEWSTEST_SRC)\TestUniscribeEngine.h\
  $(VIEWSTEST_SRC)\TestGraphiteEngine.h\

@@ -1388,6 +1388,21 @@ namespace SIL.FieldWorks.Common.RootSites
 			OpenFlowObject();
 		}
 
+		/// <summary>
+		/// Start a wrap group. Collectors treat it like a div: its contents are collected in
+		/// order, and the separator, which the display only draws, is not collected.
+		/// </summary>
+		public virtual void OpenWrapGroup(ITsString tssSeparator)
+		{
+			OpenFlowObject();
+		}
+
+		/// <summary/>
+		public virtual void CloseWrapGroup()
+		{
+			CloseFlowObject();
+		}
+
 		/// <summary>Call virtual OpenParagraph</summary>
 		public void OpenConcPara(int ichMinItem, int ichLimItem,
 			VwConcParaOpts cpoFlags, int dmpAlign)

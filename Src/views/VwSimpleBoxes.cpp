@@ -3726,3 +3726,280 @@ int VwInnerPileBox::SyncedFirstBoxTopY(int dypInch, VwRootBox * prootb, VwSynchr
 {
 	return VwPileBox::SyncedFirstBoxTopY(dypInch, prootb, NULL);
 }
+
+//:>********************************************************************************************
+//:>	VwWrapGroupBox methods
+//:>********************************************************************************************
+
+/*----------------------------------------------------------------------------------------------
+	Make a wrap group. If ptssSeparator is not null or empty, it is drawn between the children
+	whenever they fit on one line, in the group's character properties as overridden by the
+	separator string's own properties.
+----------------------------------------------------------------------------------------------*/
+VwWrapGroupBox::VwWrapGroupBox(VwPropertyStore * pzvps, ITsString * ptssSeparator)
+	: VwPileBox(pzvps), m_pvpboxSep(NULL), m_pvpboxSepContainer(NULL), m_fOneLine(false),
+	m_dysAscent(0), m_ysSeparatorTop(0)
+{
+	int cch = 0;
+	if (ptssSeparator)
+		CheckHr(ptssSeparator->get_Length(&cch));
+	if (cch == 0)
+		return;
+	m_qtssSeparator = ptssSeparator;
+	// Layout leaves white space at the end of a line out of its width, so a separator ending
+	// in a space gets an invisible word joiner after it to keep that space's width.
+	ITsStringPtr qtssDisplay = ptssSeparator;
+	SmartBstr sbstrSep;
+	CheckHr(ptssSeparator->get_Text(&sbstrSep));
+	if (IsSeparatorSpace(sbstrSep.Chars()[cch - 1]))
+	{
+		ITsStrBldrPtr qtsb;
+		CheckHr(ptssSeparator->GetBldr(&qtsb));
+		ITsTextPropsPtr qttpLast;
+		CheckHr(ptssSeparator->get_PropertiesAt(cch - 1, &qttpLast));
+		StrUni stuJoiner(L"\x2060");
+		CheckHr(qtsb->Replace(cch, cch, stuJoiner.Bstr(), qttpLast));
+		CheckHr(qtsb->GetString(&qtssDisplay));
+	}
+	// The separator keeps the group's character properties but none of its margins, and is
+	// left-aligned so that its width is the width of its text.
+	VwPropertyStorePtr qzvpsEmbedded;
+	CheckHr(pzvps->ComputedPropertiesForEmbedding(&qzvpsEmbedded));
+	VwPropertyStorePtr qzvpsSep;
+	CheckHr(qzvpsEmbedded->ComputedPropertiesForInt(ktptAlign, ktpvEnum, ktalLeft, &qzvpsSep));
+	m_pvpboxSepContainer = NewObj VwParagraphBox(qzvpsSep);
+	m_pvpboxSepContainer->Container(this);
+	m_pvpboxSep = NewObj VwParagraphBox(qzvpsSep);
+	m_pvpboxSep->Container(m_pvpboxSepContainer);
+	m_pvpboxSep->Source()->AddString(qtssDisplay, qzvpsSep, NULL);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Answer true if ch is a space character that line layout would leave out of the width of
+	a separator ending in it.
+----------------------------------------------------------------------------------------------*/
+bool VwWrapGroupBox::IsSeparatorSpace(OLECHAR ch)
+{
+	return ch == L' ' || ch == L'\t' || ch == 0x00A0 || ch == 0x3000 ||
+		(ch >= 0x2000 && ch <= 0x200A);
+}
+
+VwWrapGroupBox::~VwWrapGroupBox()
+{
+	if (m_pvpboxSep)
+		delete m_pvpboxSep;
+	if (m_pvpboxSepContainer)
+		delete m_pvpboxSepContainer;
+}
+
+/*----------------------------------------------------------------------------------------------
+	Lay out the children in the available width, then arrange them on one line if they all fit
+	there side by side, separators included; otherwise stack them.
+----------------------------------------------------------------------------------------------*/
+void VwWrapGroupBox::DoLayout(IVwGraphics* pvg, int dxAvailWidth, int dxpAvailOnLine,
+	bool fSyncTops)
+{
+	int dxpInch;
+	CheckHr(pvg->get_XUnitsPerInch(&dxpInch));
+	int dxpInnerAvailWidth = dxAvailWidth - SurroundWidth(dxpInch);
+	LayoutChildren(pvg, dxpInnerAvailWidth);
+	Arrange(pvg, OneLineWidth(dxpInch) <= dxpInnerAvailWidth);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Lay out each child, and the children of nested wrap groups, in the given width without
+	positioning them. Nested groups are arranged later by Arrange, as this group decides.
+----------------------------------------------------------------------------------------------*/
+void VwWrapGroupBox::LayoutChildren(IVwGraphics * pvg, int dxpInnerAvailWidth)
+{
+	int dxpInch;
+	CheckHr(pvg->get_XUnitsPerInch(&dxpInch));
+	if (m_pvpboxSep)
+		m_pvpboxSep->DoLayout(pvg, INT_MAX);
+	for (VwBox * pbox = m_pboxFirst; pbox; pbox = pbox->NextOrLazy())
+	{
+		VwWrapGroupBox * pwgbox = dynamic_cast<VwWrapGroupBox *>(pbox);
+		if (pwgbox)
+			pwgbox->LayoutChildren(pvg, dxpInnerAvailWidth - pwgbox->SurroundWidth(dxpInch));
+		else
+			pbox->DoLayout(pvg, dxpInnerAvailWidth);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------
+	Return the width the children need side by side on one line, separators included and this
+	box's own margins, borders and padding excluded, or INT_MAX if any child (or any child of a
+	nested group) takes more than one line. Requires a prior LayoutChildren.
+----------------------------------------------------------------------------------------------*/
+int VwWrapGroupBox::OneLineWidth(int dxpInch)
+{
+	int dxpSep = m_pvpboxSep ? m_pvpboxSep->Width() : 0;
+	long long dxpTotal = 0;
+	for (VwBox * pbox = m_pboxFirst; pbox; pbox = pbox->NextOrLazy())
+	{
+		int dxpChild;
+		VwWrapGroupBox * pwgbox = dynamic_cast<VwWrapGroupBox *>(pbox);
+		if (pwgbox)
+		{
+			dxpChild = pwgbox->OneLineWidth(dxpInch);
+			if (dxpChild == INT_MAX)
+				return INT_MAX;
+			dxpChild += pwgbox->SurroundWidth(dxpInch);
+		}
+		else
+		{
+			if (pbox->CLines() > 1)
+				return INT_MAX;
+			dxpChild = pbox->Width();
+		}
+		if (pbox != m_pboxFirst)
+			dxpTotal += dxpSep;
+		dxpTotal += dxpChild;
+		if (dxpTotal >= INT_MAX)
+			return INT_MAX;
+	}
+	return (int)dxpTotal;
+}
+
+/*----------------------------------------------------------------------------------------------
+	Position the children, and those of nested wrap groups, either on one line or stacked, and
+	set this box's size. Requires a prior LayoutChildren.
+----------------------------------------------------------------------------------------------*/
+void VwWrapGroupBox::Arrange(IVwGraphics * pvg, bool fOneLine)
+{
+	m_fOneLine = fOneLine;
+	for (VwBox * pbox = m_pboxFirst; pbox; pbox = pbox->NextOrLazy())
+	{
+		VwWrapGroupBox * pwgbox = dynamic_cast<VwWrapGroupBox *>(pbox);
+		if (pwgbox)
+			pwgbox->Arrange(pvg, fOneLine);
+	}
+	m_vxsSeparator.Clear();
+	if (fOneLine)
+	{
+		ArrangeOneLine(pvg);
+		return;
+	}
+	AdjustInnerBoxes(pvg);
+	m_dysAscent = m_pboxFirst ? m_pboxFirst->Top() + m_pboxFirst->Ascent() : Height();
+}
+
+/*----------------------------------------------------------------------------------------------
+	Place the children side by side on a shared baseline, in reading order (right to left in a
+	right-to-left group), note where each separator goes, and set this box's size to fit.
+----------------------------------------------------------------------------------------------*/
+void VwWrapGroupBox::ArrangeOneLine(IVwGraphics * pvg)
+{
+	int dxpInch;
+	CheckHr(pvg->get_XUnitsPerInch(&dxpInch));
+	int dypInch;
+	CheckHr(pvg->get_YUnitsPerInch(&dypInch));
+	int dxpSep = m_pvpboxSep ? m_pvpboxSep->Width() : 0;
+
+	int dypMaxAscent = 0;
+	int dxpContent = 0;
+	for (VwBox * pbox = m_pboxFirst; pbox; pbox = pbox->NextOrLazy())
+	{
+		dypMaxAscent = std::max(dypMaxAscent, pbox->Ascent());
+		if (pbox != m_pboxFirst)
+			dxpContent += dxpSep;
+		dxpContent += pbox->Width();
+	}
+	bool fSeparators = m_pvpboxSep && m_pboxFirst && m_pboxFirst->NextOrLazy();
+	if (fSeparators)
+		dypMaxAscent = std::max(dypMaxAscent, m_pvpboxSep->Ascent());
+
+	bool fRtl = m_qzvps->RightToLeft();
+	int xpLeft = GapLeft(dxpInch);
+	int ypTop = GapTop(dypInch);
+	int ypBottom = ypTop;
+	// Offset from the leading edge of the content, in reading order.
+	int dxpPos = 0;
+	for (VwBox * pbox = m_pboxFirst; pbox; pbox = pbox->NextOrLazy())
+	{
+		if (pbox != m_pboxFirst)
+		{
+			if (m_pvpboxSep)
+				m_vxsSeparator.Push(xpLeft + (fRtl ? dxpContent - dxpPos - dxpSep : dxpPos));
+			dxpPos += dxpSep;
+		}
+		pbox->Left(xpLeft + (fRtl ? dxpContent - dxpPos - pbox->Width() : dxpPos));
+		pbox->Top(ypTop + dypMaxAscent - pbox->Ascent());
+		ypBottom = std::max(ypBottom, pbox->Bottom());
+		dxpPos += pbox->Width();
+	}
+	if (fSeparators)
+	{
+		m_ysSeparatorTop = ypTop + dypMaxAscent - m_pvpboxSep->Ascent();
+		ypBottom = std::max(ypBottom, m_ysSeparatorTop + m_pvpboxSep->Height());
+	}
+	m_dysAscent = ypTop + dypMaxAscent;
+	m_dysHeight = ypBottom + GapBottom(dypInch);
+	m_dxsWidth = dxpContent + SurroundWidth(dxpInch);
+}
+
+int VwWrapGroupBox::Ascent()
+{
+	return m_dysAscent;
+}
+
+void VwWrapGroupBox::DrawForeground(IVwGraphics * pvg, Rect rcSrc, Rect rcDst)
+{
+	DrawForeground(pvg, rcSrc, rcDst, ChooseSecondIfInverted(-1, Height() + 2),
+		ChooseSecondIfInverted(Height() + 2, -Height() - 2));
+}
+
+void VwWrapGroupBox::DrawForeground(IVwGraphics * pvg, Rect rcSrc, Rect rcDst, int ysTopOfPage,
+	int dysPageHeight, bool fDisplayPartialLines)
+{
+	if (!m_fOneLine)
+	{
+		SuperClass::DrawForeground(pvg, rcSrc, rcDst, ysTopOfPage, dysPageHeight,
+			fDisplayPartialLines);
+		return;
+	}
+	// Children on one line all share the same rows, so none is culled by its vertical position.
+	VwGroupBox::DrawForeground(pvg, rcSrc, rcDst, ysTopOfPage, dysPageHeight,
+		fDisplayPartialLines);
+	DrawSeparators(pvg, rcSrc, rcDst);
+}
+
+/*----------------------------------------------------------------------------------------------
+	Draw the separator at each position noted by the last one-line arrangement.
+----------------------------------------------------------------------------------------------*/
+void VwWrapGroupBox::DrawSeparators(IVwGraphics * pvg, Rect rcSrc, Rect rcDst)
+{
+	if (!m_pvpboxSep)
+		return;
+	rcSrc.Offset(-Left(), -Top());
+	for (int ixs = 0; ixs < m_vxsSeparator.Size(); ixs++)
+	{
+		m_pvpboxSep->Left(m_vxsSeparator[ixs]);
+		m_pvpboxSep->Top(m_ysSeparatorTop);
+		m_pvpboxSep->Draw(pvg, rcSrc, rcDst);
+	}
+}
+
+VwBox * VwWrapGroupBox::FindBoxClicked(IVwGraphics * pvg, int xd, int yd, Rect rcSrc,
+	Rect rcDst, Rect * prcSrc, Rect * prcDst)
+{
+	if (m_fOneLine)
+		return VwGroupBox::FindBoxClicked(pvg, xd, yd, rcSrc, rcDst, prcSrc, prcDst);
+	return SuperClass::FindBoxClicked(pvg, xd, yd, rcSrc, rcDst, prcSrc, prcDst);
+}
+
+VwBox * VwWrapGroupBox::FindNonPileChildAtOffset(int dysPosition, int dpiY,
+	int * pdysOffsetIntoBox)
+{
+	if (m_fOneLine)
+		return VwBox::FindNonPileChildAtOffset(dysPosition, dpiY, pdysOffsetIntoBox);
+	return SuperClass::FindNonPileChildAtOffset(dysPosition, dpiY, pdysOffsetIntoBox);
+}
+
+void VwWrapGroupBox::GetPageLines(IVwGraphics * pvg, PageLineVec & vln)
+{
+	if (m_fOneLine)
+		VwBox::GetPageLines(pvg, vln);
+	else
+		SuperClass::GetPageLines(pvg, vln);
+}

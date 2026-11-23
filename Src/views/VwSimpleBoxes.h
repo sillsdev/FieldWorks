@@ -216,6 +216,10 @@ public:
 	{
 		return false;
 	}
+	virtual bool IsWrapGroupBox()
+	{
+		return false;
+	}
 
 	// True for boxes created by the layout routine, typically by breaking strings into lines.
 	// Such boxes may be destroyed and created by layout() and relayout(), and are never
@@ -1135,6 +1139,113 @@ public:
 	// In other paragraphs, it basically doesn't matter, and can remain zero.
 	int m_dysAscent;
 	virtual void CountColumnsAndLines(int * pcCol, int * pcRow);
+};
+
+/*----------------------------------------------------------------------------------------------
+Class: VwWrapGroupBox
+Description: A pile that shows its children side by side on one line, with an optional
+	separator drawn between them, when they all fit in the available width; otherwise it stacks
+	them one per line like an ordinary pile. A wrap group nested directly in another wrap group
+	follows the outer group's choice, so the whole outer group switches between the two layouts
+	at once. Separators are drawn, not part of the box tree, so they cannot be selected; text
+	copied from a group on one line still has them between its items.
+Hungarian: wgbox
+----------------------------------------------------------------------------------------------*/
+class VwWrapGroupBox : public VwPileBox
+{
+	typedef VwPileBox SuperClass;
+	friend class VwBox; //allows deserialization to use zero-argument constructor
+
+protected:
+	VwWrapGroupBox() : VwPileBox(), m_pvpboxSep(NULL), m_pvpboxSepContainer(NULL),
+		m_fOneLine(false), m_dysAscent(0), m_ysSeparatorTop(0)
+	{
+	}
+public:
+	VwWrapGroupBox(VwPropertyStore * pzvps, ITsString * ptssSeparator);
+	virtual ~VwWrapGroupBox();
+
+	virtual short SerializeKey() {return 11;}
+
+	virtual void DoLayout(IVwGraphics* pvg, int dxAvailWidth, int dxpAvailOnLine = -1,
+		bool fSyncTops = false);
+	virtual void DrawForeground(IVwGraphics * pvg, Rect rcSrc, Rect rcDst);
+	virtual void DrawForeground(IVwGraphics * pvg, Rect rcSrc, Rect rcDst, int ysTopOfPage,
+		int dysPageHeight, bool fDisplayPartialLines = false);
+	virtual VwBox * FindBoxClicked(IVwGraphics * pvg, int xd, int yd, Rect rcSrc, Rect rcDst,
+		Rect * prcSrc, Rect * prcDst);
+	virtual VwBox * FindNonPileChildAtOffset(int dysPosition, int dpiY,
+		int * pdysOffsetIntoBox = NULL);
+	virtual void GetPageLines(IVwGraphics * pvg, PageLineVec & vln);
+	virtual int Ascent();
+	virtual bool IsWrapGroupBox()
+	{
+		return true;
+	}
+	virtual OLECHAR * Name()
+	{
+		static OleStringLiteral name(L"WrapGroup");
+		return name;
+	}
+	// Don't try to break a wrap group across pages.
+	virtual bool FindNiceBreak(VwPrintInfo * pvpi, Rect rcSrc, Rect rcDst,
+		int ysStart, int * pysEnd, bool fDisregardKeeps)
+	{return false;}
+	virtual VwBox * NavDown(VwBox * pboxStart)
+	{
+		return m_fOneLine ? NULL : SuperClass::NavDown(pboxStart);
+	}
+	virtual VwBox * NavUp(VwBox * pboxStart)
+	{
+		return m_fOneLine ? NULL : SuperClass::NavUp(pboxStart);
+	}
+	virtual VwBox * NavLeft(VwBox * pboxStart)
+	{
+		return m_fOneLine
+			? (m_qzvps->RightToLeft() ? pboxStart->NextOrLazy() : BoxBefore(pboxStart))
+			: NULL;
+	}
+	virtual VwBox * NavRight(VwBox * pboxStart)
+	{
+		return m_fOneLine
+			? (m_qzvps->RightToLeft() ? BoxBefore(pboxStart) : pboxStart->NextOrLazy())
+			: NULL;
+	}
+
+	// True when the last layout put the children side by side on one line.
+	bool IsOneLine()
+	{
+		return m_fOneLine;
+	}
+	// Left edge, relative to this box, of each separator drawn by the last one-line layout.
+	IntVec & SeparatorPositions()
+	{
+		return m_vxsSeparator;
+	}
+	// The separator exactly as given when the group was made; null if it has none.
+	ITsString * Separator()
+	{
+		return m_qtssSeparator;
+	}
+
+protected:
+	void LayoutChildren(IVwGraphics * pvg, int dxpInnerAvailWidth);
+	int OneLineWidth(int dxpInch);
+	void Arrange(IVwGraphics * pvg, bool fOneLine);
+	void ArrangeOneLine(IVwGraphics * pvg);
+	void DrawSeparators(IVwGraphics * pvg, Rect rcSrc, Rect rcDst);
+	static bool IsSeparatorSpace(OLECHAR ch);
+
+	// Lays out and draws the separator text; owned by this box and never in its child chain.
+	VwParagraphBox * m_pvpboxSep;
+	// Empty box that contains m_pvpboxSep, so code that looks for the separator's neighbours
+	// finds none instead of searching this box's children for it.
+	VwParagraphBox * m_pvpboxSepContainer;
+	ITsStringPtr m_qtssSeparator;
+	bool m_fOneLine;
+	int m_dysAscent;
+	IntVec m_vxsSeparator;
+	int m_ysSeparatorTop;
 };
 
 class IVwNotifier;

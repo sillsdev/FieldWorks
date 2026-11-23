@@ -76,6 +76,57 @@ namespace SIL.FieldWorks.Common.Controls
 		private readonly Dictionary<HvoFlidKey, int> m_integerCache = new Dictionary<HvoFlidKey, int>();
 		private readonly Dictionary<HvoFlidWSKey, ITsString> m_mlStringCache = new Dictionary<HvoFlidWSKey, ITsString>();
 		private readonly Dictionary<HvoFlidKey, ITsString> m_stringCache = new Dictionary<HvoFlidKey, ITsString>();
+		private readonly Dictionary<int, PreviewItems> m_previewItems = new Dictionary<int, PreviewItems>();
+
+		/// <summary>
+		/// The individual list items a bulk edit preview would change an object's list from and
+		/// to, in display order, each with a fallback name to show if the item cannot be shown
+		/// the way its column normally shows it. Each name's array is parallel to its
+		/// objects array.
+		/// </summary>
+		public sealed class PreviewItems
+		{
+			/// <summary/>
+			public PreviewItems(int[] original, ITsString[] originalNames, int[] alternate,
+				ITsString[] alternateNames)
+			{
+				Original = original;
+				OriginalNames = originalNames;
+				Alternate = alternate;
+				AlternateNames = alternateNames;
+			}
+
+			/// <summary>The items the object has now.</summary>
+			public int[] Original { get; }
+
+			/// <summary>The names of the items the object has now.</summary>
+			public ITsString[] OriginalNames { get; }
+
+			/// <summary>The items the preview would give the object.</summary>
+			public int[] Alternate { get; }
+
+			/// <summary>The names of the items the preview would give the object.</summary>
+			public ITsString[] AlternateNames { get; }
+		}
+
+		/// <summary>
+		/// Store the list items a preview of a list-choice bulk edit shows for hvo, replacing
+		/// any stored before. This makes no PropChanged call.
+		/// </summary>
+		public void SetPreviewItems(int hvo, PreviewItems items)
+		{
+			m_previewItems[hvo] = items;
+		}
+
+		/// <summary>
+		/// Get the list items most recently stored for hvo by SetPreviewItems, or null if none
+		/// have been.
+		/// </summary>
+		public PreviewItems GetPreviewItems(int hvo)
+		{
+			PreviewItems items;
+			return m_previewItems.TryGetValue(hvo, out items) ? items : null;
+		}
 
 		/// <summary>
 		/// This virtual flid needs special treatment, as we need to maintain any separators
