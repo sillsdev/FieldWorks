@@ -219,8 +219,6 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		protected override void OnGotFocus(EventArgs e)
 		{
-			// Raise our GotFocus before passing focus on; raised after, it would mark this text,
-			// not the Sandbox, as the view for Copy and Paste (LT-22679).
 			base.OnGotFocus(e);
 			if (ExistingFocusBox != null)
 				ExistingFocusBox.Focus();
