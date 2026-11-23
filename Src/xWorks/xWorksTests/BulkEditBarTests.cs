@@ -1773,11 +1773,12 @@ namespace SIL.FieldWorks.XWorks
 			m_bulkEditBar.SwitchTab("ListChoice");
 			var column = ColumnSpec("ComplexEntryTypesBrowse");
 			m_bulkEditBar.SetTargetField("Complex Form Types");
-			RecordClerk clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-			clerk.JumpToRecord(complexRef.Hvo);
 			((MockFwXWindow)m_window).ProcessPendingItems();
-			var item = m_bv.BrowseView.SortItemProvider.SortItemAt(clerk.CurrentIndex);
-			Assert.That(item.KeyObject, Is.EqualTo(complexRef.Hvo));
+			var sortItems = m_bv.BrowseView.SortItemProvider;
+			var index = sortItems.IndexOf(complexRef.Hvo);
+			Assert.That(index, Is.GreaterThanOrEqualTo(0), "the reference should be a row");
+			var item = sortItems.SortItemAt(index);
+			Assert.That(item.RootObjectHvo, Is.EqualTo(complexRef.Hvo));
 
 			var itemNode = m_bv.BrowseView.Vc.FindListItemNode(column, complexRef.Hvo, item);
 
@@ -1796,9 +1797,10 @@ namespace SIL.FieldWorks.XWorks
 			string expectedItemLayout)
 		{
 			Assert.That(itemNode, Is.Not.Null);
-			Assert.That(XmlUtils.GetOptionalAttributeValue(itemNode, "field"), Is.EqualTo(expectedField));
+			Assert.That(XmlUtils.GetOptionalAttributeValue(itemNode, "field"), Is.EqualTo(expectedField),
+				itemNode.OuterXml);
 			Assert.That(XmlUtils.GetOptionalAttributeValue(itemNode, "layout"),
-				Is.EqualTo(expectedItemLayout));
+				Is.EqualTo(expectedItemLayout), itemNode.OuterXml);
 		}
 
 		private ILexEntry AddOneComplexEntry(ILexEntry part)

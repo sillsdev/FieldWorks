@@ -362,6 +362,42 @@ namespace TestViews
 			unitpp::assert_eq("last item leftmost", 0, ChildAt(pwgbox, 2)->Left());
 		}
 
+		void testLeftAndRightFollowTheItemsOnScreen()
+		{
+			MakeView(kfragWrapFlat);
+			Layout(300);
+			VwWrapGroupBox * pwgbox = Group();
+			unitpp::assert_true("left to right, one line", pwgbox->IsOneLine());
+			VwBox * pboxMiddle = ChildAt(pwgbox, 1);
+			unitpp::assert_true("left to right, left of middle",
+				pwgbox->NavLeft(pboxMiddle) == ChildAt(pwgbox, 0));
+			unitpp::assert_true("left to right, right of middle",
+				pwgbox->NavRight(pboxMiddle) == ChildAt(pwgbox, 2));
+			unitpp::assert_true("left to right, nothing left of leftmost",
+				pwgbox->NavLeft(ChildAt(pwgbox, 0)) == NULL);
+
+			Layout(ChildAt(pwgbox, 0)->Width());
+			pwgbox = Group();
+			unitpp::assert_true("stacked", !pwgbox->IsOneLine());
+			unitpp::assert_true("stacked, no left", pwgbox->NavLeft(ChildAt(pwgbox, 1)) == NULL);
+			unitpp::assert_true("stacked, no right", pwgbox->NavRight(ChildAt(pwgbox, 1)) == NULL);
+		}
+
+		void testLeftAndRightFollowTheItemsOnScreenRightToLeft()
+		{
+			MakeView(kfragWrapFlat, true);
+			Layout(300);
+			VwWrapGroupBox * pwgbox = Group();
+			unitpp::assert_true("right to left, one line", pwgbox->IsOneLine());
+			VwBox * pboxMiddle = ChildAt(pwgbox, 1);
+			unitpp::assert_true("right to left, left of middle",
+				pwgbox->NavLeft(pboxMiddle) == ChildAt(pwgbox, 2));
+			unitpp::assert_true("right to left, right of middle",
+				pwgbox->NavRight(pboxMiddle) == ChildAt(pwgbox, 0));
+			unitpp::assert_true("right to left, nothing left of leftmost",
+				pwgbox->NavLeft(ChildAt(pwgbox, 2)) == NULL);
+		}
+
 		void testEmptyGroup()
 		{
 			MakeView(kfragWrapEmpty, false, L", ");

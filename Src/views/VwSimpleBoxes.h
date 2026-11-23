@@ -1201,11 +1201,15 @@ public:
 	}
 	virtual VwBox * NavLeft(VwBox * pboxStart)
 	{
-		return m_fOneLine ? BoxBefore(pboxStart) : NULL;
+		return m_fOneLine
+			? (m_qzvps->RightToLeft() ? pboxStart->NextOrLazy() : BoxBefore(pboxStart))
+			: NULL;
 	}
 	virtual VwBox * NavRight(VwBox * pboxStart)
 	{
-		return m_fOneLine ? pboxStart->NextOrLazy() : NULL;
+		return m_fOneLine
+			? (m_qzvps->RightToLeft() ? BoxBefore(pboxStart) : pboxStart->NextOrLazy())
+			: NULL;
 	}
 
 	// True when the last layout put the children side by side on one line.
