@@ -115,6 +115,38 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
+		/// The main window sends Edit > Copy and Paste to the view ActiveViewHelper reports
+		/// (LT-22679), so focusing the text must leave the Sandbox, not the text, reported.
+		/// </summary>
+		[Test]
+		public void OnGotFocus_FocusBoxInstalled_SandboxIsActiveView()
+		{
+			var occurrences = SegmentServices.GetAnalysisOccurrences(m_para0_0).ToList();
+			using (var form = new Form())
+			using (var otherControl = new TextBox())
+			using (var doc = new SandboxHostingInterlinDoc(m_stText0))
+			{
+				form.Controls.Add(otherControl);
+				form.Controls.Add(doc);
+				using (var viewHelper = new ActiveViewHelper(form))
+				{
+					form.Show();
+					doc.SelectOccurrence(occurrences[0]);
+					doc.FocusBox.Visible = true;
+					var sandbox = doc.FocusBox.InterlinWordControl as Sandbox;
+					Assert.That(sandbox, Is.Not.Null);
+					otherControl.Focus();
+					Assume.That(otherControl.Focused, Is.True);
+
+					doc.Focus();
+
+					Assume.That(sandbox.Focused, Is.True, "the text hands focus to its Sandbox");
+					Assert.That(viewHelper.ActiveView, Is.SameAs(sandbox));
+				}
+			}
+		}
+
+		/// <summary>
 		/// Xxxhope xxxthis xxxwill xxxdo. xxxI xxxhope.
 		/// </summary>
 		[Test]
@@ -397,6 +429,50 @@ namespace SIL.FieldWorks.IText
 		{
 			ReflectionHelper.CallMethod(Vc, "SetActiveFreeform", hvoSeg,
 				SegmentTags.kflidFreeTranslation, ws, 0);
+		}
+	}
+
+	/// <summary>
+	/// An interlinear text whose focus box holds a real Sandbox rather than a mock, so
+	/// focus tracking sees the same root site FLEx shows.
+	/// </summary>
+	class SandboxHostingInterlinDoc : MockInterlinDocForAnalyis
+	{
+		internal SandboxHostingInterlinDoc(IStText testText) : base(testText)
+		{
+			LineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject, Cache.DefaultVernWs, Cache.DefaultAnalWs);
+		}
+
+		protected override FocusBoxController CreateFocusBoxInternal()
+		{
+			return new SandboxHostingFocusBox(LineChoices);
+		}
+	}
+
+	/// <summary>
+	/// A focus box that builds its real Sandbox without the main window's command set.
+	/// It owns its Mediator and PropertyTable because the Sandbox writes to them while
+	/// being disposed, after the text has disposed its own.
+	/// </summary>
+	class SandboxHostingFocusBox : FocusBoxController
+	{
+		internal SandboxHostingFocusBox(InterlinLineChoices lineChoices)
+		{
+			m_mediator = new Mediator();
+			m_propertyTable = new PropertyTable(m_mediator);
+			m_lineChoices = lineChoices;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			var propertyTable = m_propertyTable;
+			var mediator = m_mediator;
+			base.Dispose(disposing);
+			if (disposing)
+			{
+				propertyTable?.Dispose();
+				mediator?.Dispose();
+			}
 		}
 	}
 
