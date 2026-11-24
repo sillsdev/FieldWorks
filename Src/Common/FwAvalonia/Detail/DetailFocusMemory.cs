@@ -97,6 +97,14 @@ namespace SIL.FieldWorks.Common.FwAvalonia.Detail
 		}
 
 		/// <summary>
+		/// A memento that only asks for keyboard focus on the first of
+		/// <paramref name="rowAutomationIds"/> that can take it, for a view shown to start work
+		/// in one of its rows.
+		/// </summary>
+		public static Memento ForRows(IReadOnlyList<string> rowAutomationIds)
+			=> new Memento(null, -1, rowAutomationIds: rowAutomationIds);
+
+		/// <summary>
 		/// Captures the detail view's current scroll offset plus, when focus is inside <paramref name="root"/>,
 		/// the focused editor's stable automation id and caret. Scroll continuity matters even when
 		/// focus lives in a transient popup/context menu (e.g. removing a vector item from its

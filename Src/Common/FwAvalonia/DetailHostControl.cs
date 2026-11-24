@@ -52,6 +52,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 		/// <paramref name="rootHvo"/> of 0 never matches. <paramref name="hotlinkItems"/>
 		/// supplies a section header's hotlink commands; without it no hotlinks are shown.
 		/// </summary>
+		/// <param name="focusRows">The automation ids of the rows to try giving the keyboard
+		/// to once shown, in order, wherever it is now; null carries focus across.</param>
 		public void ShowDetail(DetailModel detail, IDetailEditContext editContext = null,
 			Action<string> writingSystemFocused = null,
 			Func<string, bool?> getExpansionState = null,
@@ -62,7 +64,8 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			Func<double?> getLabelColumnWidth = null,
 			Action<double> labelColumnWidthChanged = null,
 			int rootHvo = 0,
-			Func<DetailField, IReadOnlyList<DetailMenuItem>> hotlinkItems = null)
+			Func<DetailField, IReadOnlyList<DetailMenuItem>> hotlinkItems = null,
+			IReadOnlyList<string> focusRows = null)
 		{
 			if (detail == null) throw new ArgumentNullException(nameof(detail));
 			// Splitter position persists per-HOST across re-shows: this long-lived host owns
@@ -101,7 +104,41 @@ namespace SIL.FieldWorks.Common.FwAvalonia
 			var focusMemento = DetailFocusMemory.Capture(CurrentContent);
 			DetailFocusMemory.ReleaseFocus(CurrentContent);
 			SetHostContent(view);
-			DetailFocusMemory.RestoreAfterLayout(view, focusMemento);
+			if (focusRows == null)
+			{
+				DetailFocusMemory.RestoreAfterLayout(view, focusMemento);
+				return;
+			}
+			// The window's keyboard follows only once a row of this view has taken focus.
+			Action<DetailField> takeKeyboard = null;
+			takeKeyboard = field =>
+			{
+				view.RowFocused -= takeKeyboard;
+				TakeKeyboard();
+			};
+			view.RowFocused += takeKeyboard;
+			DetailFocusMemory.RestoreAfterLayout(view, DetailFocusMemory.ForRows(focusRows));
+		}
+
+		/// <summary>
+		/// Gives the keyboard to the first of <paramref name="rowAutomationIds"/> the shown
+		/// detail shows and that can take it, wherever the keyboard is now.
+		/// </summary>
+		/// <returns>Whether a row took it.</returns>
+		public bool FocusRow(IReadOnlyList<string> rowAutomationIds)
+		{
+			if (!(CurrentContent is DataTree tree) || !tree.FocusFirstRow(rowAutomationIds))
+				return false;
+			TakeKeyboard();
+			return true;
+		}
+
+		// Moves the window's keyboard focus into the hosted view, so the row focused there
+		// is where typing goes.
+		private void TakeKeyboard()
+		{
+			if (!ContainsFocus)
+				Host.Focus();
 		}
 
 		/// <summary>

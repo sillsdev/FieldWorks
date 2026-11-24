@@ -109,6 +109,51 @@ namespace FwAvaloniaTests
 			Assert.That(FindEditor(second, "GlossEditor.vern").IsFocused, Is.True);
 		}
 
+		// A view shown to start work in one of its rows, with nothing remembered from an
+		// earlier view: the first row named that can take focus gets it.
+		[AvaloniaTest]
+		public void RowsToFocus_FocusTheFirstRowThatCanTakeIt_InAViewShownFresh()
+		{
+			var view = NewView();
+			DetailFocusMemory.RestoreAfterLayout(view,
+				DetailFocusMemory.ForRows(new[] { "RowNotShown", "GlossEditor", "LexemeFormEditor" }));
+			var window = new Window { Content = view, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(FindEditor(view, "GlossEditor.vern").IsFocused, Is.True);
+		}
+
+		// The row named sits far below the fold of a view shown fresh: focusing it scrolls it
+		// into view.
+		[AvaloniaTest]
+		public void RowsToFocus_ScrollTheFocusedRowIntoView()
+		{
+			var view = NewLongView();
+			DetailFocusMemory.RestoreAfterLayout(view, DetailFocusMemory.ForRows(new[] { "Field50" }));
+			var window = new Window { Content = view, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+			view.UpdateLayout();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(FindEditor(view, "Field50.vern").IsFocused, Is.True);
+			Assert.That(FindScroller(view).Offset.Y, Is.GreaterThan(0), "the view scrolled down to the row");
+		}
+
+		// With no row named that the view shows, nothing takes focus.
+		[AvaloniaTest]
+		public void RowsToFocus_NoneShown_FocusNothing()
+		{
+			var view = NewView();
+			DetailFocusMemory.RestoreAfterLayout(view, DetailFocusMemory.ForRows(new[] { "RowNotShown" }));
+			var window = new Window { Content = view, Width = 420, Height = 200 };
+			window.Show();
+			Dispatcher.UIThread.RunJobs();
+
+			Assert.That(view.GetVisualDescendants().OfType<TextBox>().Any(box => box.IsFocused), Is.False);
+		}
+
 		// A gesture replaced the focused row's object with a new one, whose rows carry ids the
 		// outgoing view cannot know: the first row showing that object takes focus.
 		[AvaloniaTest]

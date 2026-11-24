@@ -150,6 +150,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		bool m_fSuspendSettingCurrentSlice = false;
 		bool m_fCurrentContentControlObjectTriggered = false;
+		// The Jump to field request (object, field name, text) waiting for the root's slices
+		// to be ready for focus; null when none waits.
+		private Tuple<int, string, string> m_fieldJumpWhenReady;
 
 		/// <summary>
 		/// These variables are used to prevent refreshes from occurring when they're not wanted,
@@ -922,6 +925,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					m_tooltip.RemoveAll();
 
 				m_root = null;
+				m_fieldJumpWhenReady = null;
 			}
 			finally
 			{
@@ -1094,6 +1098,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (m_root != root)
 				{
 					m_root = root;
+					m_fieldJumpWhenReady = null;
 					if (m_rch != null)
 					{
 						// We need to refresh the record list if homograph numbers change.
@@ -1143,158 +1148,41 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		/// <summary>
-		/// Jump to the slice that contains the given field object and value.
+		/// Makes the slice a Jump to field request lands on current and focuses it; does
+		/// nothing when no slice fits. A root just shown is answered once its slices can
+		/// take focus, unless another root is shown first.
 		/// </summary>
-		private void JumpToField(object arguments)
+		/// <param name="fieldHvo">The object the clicked piece of the preview came from.</param>
+		/// <param name="fieldName">The preview's name for that object's field.</param>
+		/// <param name="fieldValue">The text the clicked piece shows.</param>
+		public void JumpToField(int fieldHvo, string fieldName, string fieldValue)
 		{
-			var array = (object[])arguments;
-			int fieldHvo = (int)array[0];
-			string fieldName = PlainFieldName((string)array[1]);
-			string fieldValue = (string)array[2];
-			ICmObject fieldObj = Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(fieldHvo);
-			// fieldObj.fieldName == fieldValue.
-			bool found = false;
-			if (!String.IsNullOrEmpty(fieldName))
+			CheckDisposed();
+
+			if (m_fSuspendSettingCurrentSlice)
 			{
-				// Try matching object and field first.
-				foreach (Slice slice in Slices)
-				{
-					if (slice.IsHeaderNode)
-					{
-						continue;
-					}
-					int sliceFlid = GetFlid(slice);
-					string sliceFieldName = sliceFlid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(sliceFlid);
-					if (sliceFieldName == fieldName && slice.Object == fieldObj)
-					{
-						found = true;
-					}
-					// Look for special cases.
-					else if (fieldName == "ComplexFormEntryRefs" && sliceFieldName == "PrimaryLexemes" &&
-						slice.Object is ILexEntryRef ler && ler.OwningEntry == fieldObj)
-					{
-						found = true;
-					}
-					else if (fieldName == "ConfigReferencedEntries" && sliceFieldName == "ComponentLexemes" &&
-						slice.Object == fieldObj)
-					{
-						found = true;
-					}
-					else if (fieldName == "DefinitionOrGloss" && (sliceFieldName == "Definition" || sliceFieldName == "Gloss") &&
-							slice.Object == fieldObj &&
-							SliceMatchesValue(slice, fieldValue))
-					{
-						found = true;
-					}
-					else if (fieldName == "LookupComplexEntryType" && sliceFieldName == "ComplexEntryTypes" &&
-							slice.Object is ILexEntryRef ler2 && ler2.OwningEntry == fieldObj)
-					{
-						found = true;
-					}
-					else if ((fieldName == "MLHeadWord" || fieldName == "HeadWordRef") &&
-							(sliceFieldName == "Form" || sliceFieldName == "CitationForm") &&
-							(slice.Object == fieldObj || fieldObj is ILexEntry lexEntry && lexEntry.LexemeFormOA == slice.Object) &&
-							SliceMatchesValue(slice, fieldValue))
-					{
-						found = true;
-					}
-					else if (fieldName == "MLPartOfSpeech" && sliceFieldName == "MorphoSyntaxAnalysis" &&
-							slice is MSAReferenceComboBoxSlice && slice.Object is ILexSense sense && sense.MorphoSyntaxAnalysisRA == fieldObj)
-					{
-						found = true;
-					}
-					else if (fieldName == "MorphTypes" && sliceFieldName == "MorphType" &&
-						slice.Object is IMoAffixForm affix && fieldObj is IMoMorphSynAnalysis msa && msa.MorphTypes.Contains(affix.MorphTypeRA))
-					{
-						found = true;
-					}
-					else if (fieldName == "MorphTypes" && sliceFieldName == "MorphTypes" &&
-						slice.Object is IMoAffixForm affix2 && affix2.MorphTypeRA == fieldObj)
-					{
-						found = true;
-					}
-					else if (fieldName == "ReverseAbbr" && sliceFieldName == "ComplexEntryTypes" &&
-							slice.Object is ILexEntryRef ler3 && ler3.ComplexEntryTypesRS.Contains(fieldObj))
-					{
-						found = true;
-					}
-					else if (fieldName == "ReverseAbbr" && sliceFieldName == "VariantEntryTypes" &&
-							slice.Object is ILexEntryRef ler4 && ler4.EntryTypes.Contains(fieldObj))
-					{
-						found = true;
-					}
-					if (found)
-					{
-						m_currentSliceNew = slice;
-						break;
-					}
-				}
+				m_fieldJumpWhenReady = Tuple.Create(fieldHvo, fieldName, fieldValue);
+				return;
 			}
-			if (!found)
-			{
-				Slice objectSlice = null;
-				Slice valueSlice = null;
-				// Look for the closest matching slice.
-				foreach (Slice slice in Slices)
-				{
-					if (slice.IsHeaderNode)
-					{
-						continue;
-					}
-					int sliceFlid = GetFlid(slice);
-					string sliceFieldName = sliceFlid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(sliceFlid);
-					if ((fieldName == "MLHeadWord" || fieldName == "HeadWordRef") && sliceFieldName == "Form" &&
-						(slice.Object == fieldObj || fieldObj is ILexEntry lexEntry && lexEntry.LexemeFormOA == slice.Object))
-					{
-						// MLHeadWord, and HeadWordRef default to Form if the value doesn't match CitationForm or Form.
-						m_currentSliceNew = slice;
-						found = true;
-						break;
-					}
-					// Try matching object and/or value.
-					if (slice.Object == fieldObj && SliceMatchesValue(slice, fieldValue))
-					{
-						m_currentSliceNew = slice;
-						found = true;
-						break;
-					}
-					if (objectSlice == null && fieldObj != Root && slice.Object == fieldObj)
-					{
-						objectSlice = slice;
-					}
-					if (valueSlice == null && SliceMatchesValue(slice, fieldValue))
-					{
-						valueSlice = slice;
-					}
-				}
-				// Prefer matching value over matching object.
-				if (!found && valueSlice != null)
-				{
-					m_currentSliceNew = valueSlice;
-					found = true;
-				}
-				else if (!found && objectSlice != null)
-				{
-					m_currentSliceNew = objectSlice;
-					found = true;
-				}
-			}
-			if (found)
-			{
-				// Set the current slice.
-				m_fCurrentContentControlObjectTriggered = true;
-				OnReadyToSetCurrentSlice(false);
-			}
+			if (!Cache.ServiceLocator.GetInstance<ICmObjectRepository>().TryGetObject(fieldHvo, out ICmObject fieldObj))
+				return;
+			var slices = Slices.ToList();
+			var rows = slices.Select(slice => slice.IsHeaderNode
+				? null
+				: new DetailFieldJumpRow(slice.Object, () => FieldNameOf(slice),
+					text => SliceMatchesValue(slice, text))).ToList();
+			int index = DetailFieldJump.FindRow(rows, Root, fieldObj, fieldName, fieldValue);
+			if (index < 0)
+				return;
+			m_currentSliceNew = slices[index];
+			m_fCurrentContentControlObjectTriggered = true;
+			OnReadyToSetCurrentSlice(false);
 		}
 
-		private string PlainFieldName(string fieldname)
+		private string FieldNameOf(Slice slice)
 		{
-			if (fieldname.EndsWith("OA") || fieldname.EndsWith("OS") || fieldname.EndsWith("OC")
-				|| fieldname.EndsWith("RA") || fieldname.EndsWith("RS") || fieldname.EndsWith("RC"))
-			{
-				return fieldname.Substring(0, fieldname.Length - 2);
-			}
-			return fieldname;
+			int flid = GetFlid(slice);
+			return flid == 0 ? "" : m_cache.MetaDataCacheAccessor.GetFieldName(flid);
 		}
 
 		private int GetFlid(Slice slice)
@@ -1580,7 +1468,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(EventConstants.PostponePropChanged, PostponePropChanged);
-				Subscriber.Unsubscribe(EventConstants.JumpToField, JumpToField);
 
 				// Do this first, before setting m_fDisposing to true.
 				if (m_sda != null)
@@ -4389,7 +4276,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				RestorePreferences();
 
 			Subscriber.Subscribe(EventConstants.PostponePropChanged, PostponePropChanged, m_propertyTable.GetWindow());
-			Subscriber.Subscribe(EventConstants.JumpToField, JumpToField, m_propertyTable.GetWindow());
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
@@ -4780,6 +4666,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			// we should now be ready to put our focus in a slice.
 			m_fSuspendSettingCurrentSlice = false;
+			var fieldJump = m_fieldJumpWhenReady;
+			m_fieldJumpWhenReady = null;
 			try
 			{
 				SetDefaultCurrentSlice((bool) parameter);
@@ -4788,6 +4676,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				m_fCurrentContentControlObjectTriggered = false;
 			}
+			if (fieldJump != null)
+				JumpToField(fieldJump.Item1, fieldJump.Item2, fieldJump.Item3);
 			return true;
 		}
 

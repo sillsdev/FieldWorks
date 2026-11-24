@@ -143,6 +143,8 @@ namespace SIL.FieldWorks.XWorks
 			m_fullyInitialized = true;
 
 			Subscriber.Subscribe(EventConstants.ConsideringClosing, ConsideringClosing, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(EventConstants.JumpToField, JumpToField, m_propertyTable.GetWindow());
+			Clerk.RecordWantsKeyboard += OnRecordWantsKeyboard;
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -163,6 +165,9 @@ namespace SIL.FieldWorks.XWorks
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(EventConstants.ConsideringClosing, ConsideringClosing);
+				Subscriber.Unsubscribe(EventConstants.JumpToField, JumpToField);
+				if (ExistingClerk != null)
+					ExistingClerk.RecordWantsKeyboard -= OnRecordWantsKeyboard;
 
 				if (components != null)
 					components.Dispose();
@@ -449,6 +454,7 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					m_dataEntryForm.ShowObject(obj, m_layoutName, m_layoutChoiceField, Clerk.CurrentObject, ShouldSuppressFocusChange(rni));
+					JumpToPendingFieldOnceShown(obj);
 				}
 			}
 			catch (Exception error)
