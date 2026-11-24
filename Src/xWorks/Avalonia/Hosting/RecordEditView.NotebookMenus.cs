@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.XWorks
 		internal const string NotebookEditTool = "notebookEdit";
 
 		/// <summary>The message of the record list's inserts, such as Insert Subrecord.</summary>
-		internal const string InsertItemInVectorMessage = "InsertItemInVector";
+		internal const string InsertItemInVectorMessage = RecordClerkCommandAuthority.InsertItemMessage;
 
 		/// <summary>The message of a subrecord's Move Up.</summary>
 		internal const string MoveRecordUpMessage = "MoveItemUpInVector";

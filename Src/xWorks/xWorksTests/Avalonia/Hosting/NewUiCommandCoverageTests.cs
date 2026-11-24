@@ -170,6 +170,25 @@ namespace SIL.FieldWorks.XWorks
 				+ "RecordEditView.CreateCommandAuthority.");
 		}
 
+		/// <summary>
+		/// The view's authority and its record clerk's authority are asked in an order that
+		/// changes whenever the clerk is activated again, so no message may have an answer
+		/// from both.
+		/// </summary>
+		[Test]
+		public void NoNewUiTool_AnswersAMessageItsRecordClerkAnswers()
+		{
+			var answeredByBoth = new List<string>();
+			foreach (var tool in LexiconFeatureCatalog.ToolNames)
+			{
+				var answered = LoadView(tool).CreateCommandAuthority().AnsweredMessages;
+				answeredByBoth.AddRange(answered.Intersect(RecordClerkCommandAuthority.AnsweredMessages)
+					.Select(message => tool + " also answers " + message));
+			}
+
+			Assert.That(answeredByBoth, Is.Empty);
+		}
+
 		[Test]
 		public void AnInsertCommand_AppliesToATool_WhoseRecordsCanHoldWhatItInserts()
 		{

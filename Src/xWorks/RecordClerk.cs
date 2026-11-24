@@ -159,6 +159,9 @@ namespace SIL.FieldWorks.XWorks
 		internal event Action<int> PublishedJumpStarting;
 		#endregion Event Handling
 
+		// Held while this clerk is in use in the window: its answers to its window's commands.
+		private IDisposable m_commandAuthorityRegistration;
+
 		#region IDisposable & Co. implementation
 		// Region last reviewed: never
 
@@ -1951,6 +1954,8 @@ namespace SIL.FieldWorks.XWorks
 			Subscriber.Unsubscribe(EventConstants.FilterListChanged, FilterListChanged);
 			Subscriber.Unsubscribe(EventConstants.DeleteRecord, DeleteRecord);
 			Subscriber.Unsubscribe(EventConstants.JumpToRecord, JumpToRecordViaPublisher);
+			m_commandAuthorityRegistration?.Dispose();
+			m_commandAuthorityRegistration = null;
 
 			// We need the list to get the cache.
 			if (m_list == null || m_list.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
@@ -2058,6 +2063,11 @@ namespace SIL.FieldWorks.XWorks
 
 			m_fIsActiveInGui = true;
 			CheckDisposed();
+			if (m_commandAuthorityRegistration == null)
+			{
+				m_commandAuthorityRegistration = CommandAuthorities.Register(m_propertyTable,
+					new RecordClerkCommandAuthority(this));
+			}
 
 			m_useRecordTreeBar = useRecordTreeBar;
 			m_updateStatusBar = updateStatusBar;
@@ -2547,41 +2557,35 @@ namespace SIL.FieldWorks.XWorks
 		#region Duplication
 
 		/// <summary>
-		/// Influence the display of a particular *command* (which we don't know the name of)
-		/// by giving an opinion on whether we are prepared to handle its corresponding "DuplicateItemInVector"
-		/// *message*.
+		/// Sets whether a command whose message is "DuplicateItemInVector" is enabled: when
+		/// its class can be inserted into this list and its "noCopy" parameter does not name
+		/// this clerk.
 		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public bool OnDisplayDuplicateItemInVector(object commandObject, ref UIItemDisplayProperties display)
+		internal void DisplayDuplicateItemInVector(Command command, UIItemDisplayProperties display)
 		{
-			var command = (Command)commandObject;
-
 			// Can't copy an item if items can't be inserted
-			bool canInsert = OnDisplayInsertItemInVector(commandObject, ref display);
-			if (!canInsert)
-				return display.Enabled = false;
+			if (!OnDisplayInsertItemInVector(command, ref display))
+			{
+				display.Enabled = false;
+				return;
+			}
 
 			// "noCopy" gets an xml value a group of list id's from lists that should not display the button
 			string noCopy = XmlUtils.GetOptionalAttributeValue(command.Parameters[0], "noCopy") ?? "";
-			return display.Enabled = !noCopy.Contains(Id);
+			display.Enabled = !noCopy.Contains(Id);
 		}
 
 		/// <summary>
-		/// This is triggered by any command whose message attribute is "DuplicateItemInVector"
+		/// Runs a command whose message is "DuplicateItemInVector": duplicates the current
+		/// item of a possibility list, unless it is a subitem or has no name.
 		/// </summary>
-		/// <param name="argument"></param>
-		/// <returns></returns>
-		public bool OnDuplicateItemInVector(object argument)
+		internal void DuplicateItemInVector(Command command)
 		{
 			CheckDisposed();
 
 			if (!Editable)
-				return false;
+				return;
 
-			var command = (Command) argument;
-			bool result = false;
 			m_suppressSaveOnChangeRecord = true;
 			try
 			{
@@ -2598,8 +2602,6 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_suppressSaveOnChangeRecord = false;
 			}
-
-			return result;
 		}
 
 		/// <summary>
