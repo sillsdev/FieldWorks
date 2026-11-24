@@ -219,9 +219,9 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		protected override void OnGotFocus(EventArgs e)
 		{
+			base.OnGotFocus(e);
 			if (ExistingFocusBox != null)
 				ExistingFocusBox.Focus();
-			base.OnGotFocus(e);
 		}
 
 		#endregion
