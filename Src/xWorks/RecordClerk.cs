@@ -157,6 +157,12 @@ namespace SIL.FieldWorks.XWorks
 		/// A jump that reaches the clerk any other way does not raise it.
 		/// </summary>
 		internal event Action<int> PublishedJumpStarting;
+		/// <summary>
+		/// Raised with the hvo of a record that should open with the keyboard in its first
+		/// field: one this clerk has just inserted or duplicated, or one a pop-up window was
+		/// asked to show.
+		/// </summary>
+		internal event Action<int> RecordWantsKeyboard;
 		#endregion Event Handling
 
 		#region IDisposable & Co. implementation
@@ -1018,7 +1024,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (Id == "entries")
 			{
-				return JumpToRecord(argument);
+				bool handled = JumpToRecord(argument);
+				// A jump the user gave up on is handled too, with the record unchanged.
+				if (handled && CurrentObjectHvo == (int)argument)
+					RecordWantsKeyboard?.Invoke((int)argument);
+				return handled;
 			}
 			return false;
 		}
@@ -2518,13 +2528,14 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 
 			bool result = false;
+			ICmObject inserted = null;
 			m_suppressSaveOnChangeRecord = true;
 			try
 			{
 				UndoableUnitOfWorkHelper.Do(string.Format(xWorksStrings.ksUndoInsert, command.UndoRedoTextInsert),
 					string.Format(xWorksStrings.ksRedoInsert, command.UndoRedoTextInsert), Cache.ActionHandlerAccessor, () =>
 				{
-					result = m_list.CreateAndInsert(className, out _);
+					result = m_list.CreateAndInsert(className, out inserted);
 				});
 			}
 			catch (ApplicationException ae)
@@ -2536,6 +2547,8 @@ namespace SIL.FieldWorks.XWorks
 				m_suppressSaveOnChangeRecord = false;
 			}
 
+			if (inserted != null)
+				RecordWantsKeyboard?.Invoke(inserted.Hvo);
 #pragma warning disable 618 // suppress obsolete warning
 			m_mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
 #pragma warning restore 618
@@ -2672,6 +2685,8 @@ namespace SIL.FieldWorks.XWorks
 				m_suppressSaveOnChangeRecord = false;
 			}
 
+			if (newObj != null)
+				RecordWantsKeyboard?.Invoke(newObj.Hvo);
 #pragma warning disable 618 // suppress obsolete warning
 			m_mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
 #pragma warning restore 618

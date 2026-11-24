@@ -752,13 +752,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				ILexEntry entryLexEntry = GetGeckoLexEntry(entryElement, cache);
 				ILexEntry fieldLexEntry = GetGeckoLexEntry(fieldElement, cache);
-				if (entryLexEntry != null && fieldLexEntry != null && fieldLexEntry != entryLexEntry)
-				{
-					Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToRecord, fieldLexEntry.Hvo, propertyTable.GetWindow()));
-				}
-				// Jump to field on idle to allow JumpToRecord to finish.
-				object[] arguments = new object[] { fieldObj.Hvo, fieldName, fieldElement.TextContent };
-				Publisher.PublishAtEndOfAction(new PublisherParameterObject(EventConstants.JumpToField, arguments, propertyTable.GetWindow()));
+				// A field of another entry shown inside the previewed one needs that entry
+				// shown first.
+				int recordHvo = entryLexEntry != null && fieldLexEntry != null && fieldLexEntry != entryLexEntry
+					? fieldLexEntry.Hvo
+					: 0;
+				Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToField,
+					new JumpToFieldRequest(recordHvo, fieldObj.Hvo, fieldName, fieldElement.TextContent),
+					propertyTable.GetWindow()));
 			}
 		}
 

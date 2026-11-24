@@ -551,13 +551,14 @@ namespace SIL.FieldWorks.XWorks
 				m_detailEditContext.AttachDeactivateHook(FindForm());
 			SetShownRecord(obj, detail);
 			DetailShowCount++;
+			RowsAskedToFocus = TakeRowsToFocus(obj, detail);
 			m_avaloniaEntryForm.ShowDetail(detail, editContext,
 				OnDetailWritingSystemFocused,
 				GetPersistedExpansionState, PersistExpansionState,
 				OnDetailMenuRequested, OnDetailLinkRequested,
 				new FwTsStringClipboard(Cache.WritingSystemFactory),
 				GetPersistedLabelColumnWidth, PersistLabelColumnWidth,
-				rootHvo: obj.Hvo, hotlinkItems: HotlinkItemsFor);
+				rootHvo: obj.Hvo, hotlinkItems: HotlinkItemsFor, focusRows: RowsAskedToFocus);
 		}
 
 		private void SetShownRecord(ICmObject record, DetailModel detail)
