@@ -26,7 +26,7 @@ FieldWorks has two pairs of writers today:
 - **XHTML + CSS:** `LcmXhtmlGenerator` writes `class` attributes, and `CssGenerator` writes selectors built from the same names.
 - **Word:** `LcmWordGenerator` implements both interfaces, so the names become paragraph and character style names.
 
-Both pairs move to liblcm with the engine, into the new `SIL.LCModel.DictionaryConfiguration` assembly. The JSON writer, which reuses CSS for Webonary, stays in FieldWorks. Any future format supplies its own pair against the same contract.
+Both pairs move to liblcm with the engine, into the new `SIL.LCModel.DictionaryConfiguration` assembly. The JSON writer, which reuses CSS for Webonary, stays in FieldWorks (Decision 1). Any future format supplies its own pair against the same contract.
 
 ## Baseline
 
@@ -72,7 +72,7 @@ FieldWorks keeps the JSON writer, the FW-specific document drivers (preview, pag
 
 ### Stays in FieldWorks
 
-- **Writers:** `LcmJsonGenerator`.
+- **Writers:** `LcmJsonGenerator`. It supports only the upload to the current (legacy) Webonary and will be dropped in the future (Decision 1).
 - **Word export caller code (0.O-3):** `DictionaryExportService` maps the clerk to a sort kind and supplies the media resolver and scheduler. It maps `DocxExportStage` to the localized `xWorksStrings` progress messages.
 - **FW document drivers for XHTML (0.M):** `SavePreviewHtmlWithStyles`, `SavePublishedHtmlWithStyles`, `GenerateEntryHtmlWithStyles`, `GenerateNextFewEntries`, page buttons and page ranges, the current-entry marker, preview paths, and progress messages. Also the preview-only CSS (`GenerateCssForPageButtons`, `GenerateCssForSelectedEntry`).
 - **Config UI:** `DictionaryConfigurationDlg`, `DictionaryConfigurationController`, the Manager and Import dialogs and controllers, `DictionaryDetailsController` with `DictionaryDetailsView/*`, and `DictionaryConfigurationTreeControl`.
@@ -82,6 +82,8 @@ FieldWorks keeps the JSON writer, the FW-specific document drivers (preview, pag
 ## Decisions made in the design session
 
 1. **The XHTML, CSS, and Word writers move; JSON stays.** All export writers move together so that the engine, the style resolver (0.L), and every writer that translates its output live and are tested in one place, and interface changes never cross repositories. Webonary 2.0 (XHTML and CSS) is Lexbox's initial target; Lexbox wants to offer Word in the future, and consolidating now keeps that path open. FW-specific document code (preview, paging, progress) is split off and stays.
+   - **Why JSON stays:** the JSON writer exists only to support the upload to the current (legacy) Webonary. It will be dropped in the future, so moving it is not worth the work, and Lexbox does not need it.
+   - **Accepted costs until it is dropped:** `LcmJsonGenerator` implements liblcm's `ILcmContentGenerator` from FieldWorks, so a change to that interface needs a matching FW change at the next `SilLcmVersion` bump. 0.M adds a public CSS-string method that only the JSON writer calls. `LcmJsonGeneratorTests` uses the published test-helper package.
 2. **Decompose `PropertyTable` and `RecordClerk`; do not abstract them.** `GeneratorSettings` gets explicit typed inputs.
 3. **Entry selection and ordering belong to the caller,** through an entry-source interface. liblcm supplies a clerk-free default; FieldWorks supplies a clerk adapter.
 4. **Static functions, no static data.** The engine stays a set of static functions over (settings, model, decorator, object). All mutable static state is removed.
@@ -179,7 +181,7 @@ These follow from the design rather than from any single phase.
 - A matching scratch test project compiles `DictionaryConfigurationTestHelpers` (0.M) the same way.
 - Both build in CI on every Phase 0 PR. In Phase 1 the scratch project becomes the template for `SIL.LCModel.DictionaryConfiguration.csproj`. Both are deleted in 2.A, in the same change that deletes the moved code.
 
-The order of items inside the phase matters only where a dependency is noted.
+The order of items inside the phase matters only where a dependency is noted. The items that change the Word writer (0.L, 0.O-1, 0.O-2, 0.O-3) wait for the Word export tests in 0.O-0. The other items do not.
 
 ### 0.A Remove static mutable state
 
@@ -239,11 +241,15 @@ The order of items inside the phase matters only where a dependency is noted.
 ### 0.E Media resolver
 
 - **Define `IDictionaryMediaResolver`:** `(file path or ICmFile, MediaKind {Picture, Audio, Video}, owner) → src string`.
-- **The engine keeps:** locating the file in LCM (`LinkedFilesRootDir`, `AbsoluteInternalPath`, `InternalPath`) and the `\` → `/` fix-up (`:657`), which uses `Platform.IsWindows` from `SIL.PlatformUtilities`. That is allowed.
+- **The engine keeps:**
+  - locating the file in LCM (`LinkedFilesRootDir`, `AbsoluteInternalPath`, `InternalPath`)
+  - `MakeSafeFilePath` (`:1180-1190`), as part of locating the file. It is not copy code: it also runs on the paths that are never copied (`:1034`, `:1056`: the absolute path Word uses and the preview's file URI). LCM keeps file names as NFD in memory, and the method converts a non-ASCII path to NFC so it matches the file on disk. It also replaces an invalid path with `__INVALID_FILE_NAME__`. The engine applies it to every path before it calls the resolver, so no resolver sees an NFD path.
+  - the `\` → `/` fix-up (`:657`), which uses `Platform.IsWindows` from `SIL.PlatformUtilities`. That is allowed.
+- **`MakeSafeFilePath` dependencies:** `CustomIcu.GetIcuNormalizer` and `FileUtils.IsFilePathValid` are already liblcm. `Common.FwUtils.Unicode.CheckForNonAsciiCharacters` (`:1182`) is FW; replace it with a private check for any character above U+007F.
+- **Add a test first:** no existing test covers a media file with a non-ASCII name on the paths that are not copied. Add one for a picture and one for an audio file whose names contain a decomposed character, and assert that the `src` is NFC. The tests move with the engine.
 - **The engine loses:**
-  - `GenerateSrcAttributeFromFilePath` and `GenerateSrcAttributeForMediaFromFilePath` (`:1021-1058`) are reduced to locating the file plus one resolver call
+  - `GenerateSrcAttributeFromFilePath` and `GenerateSrcAttributeForMediaFromFilePath` (`:1021-1058`) are reduced to locating the file, `MakeSafeFilePath`, and one resolver call
   - `CopyFileSafely` (`:1122-1178`)
-  - `MakeSafeFilePath` and `Common.FwUtils.Unicode.CheckForNonAsciiCharacters` (`:1180-1190`)
   - `WavConverter.WavToMp3`
   - the settings flags `UseRelativePaths`, `UseUri`, `CopyFiles`, and `ExportPath`
   - the media use of `IsWebExport` (the WAV-to-MP3 decision, `:1126`)
@@ -299,7 +305,8 @@ The order of items inside the phase matters only where a dependency is noted.
 - **`XmlViewsUtils.GetGuidForUnspecified{Variant,ComplexForm,ExtendedNote}Type`** (`Src/Common/Controls/XMLViews/XmlViewsUtils.cs:1262` onward): these "fake" GUIDs are persisted in config files and used by the engine (`:2691-2707`) and by `MergeTypesIntoDictionaryModel`. Move the constants into a moving file; `XmlViewsUtils` references them.
 - **Strings:** `xWorksStrings.InvalidRootConfigurationNode` (`:1314`, exception text) and `InvalidUSFM_TextAfterTR` (`:3332`, written into the dictionary output by `GenerateError`) move into a new `DictionaryConfigurationStrings.resx` that moves with the code. FW's existing liblcm localization (`Build/Localize.targets:94-102`, `crowdin.json` `Localizations/LCM/**`) picks up any `src/**/*.resx` in liblcm, so the strings stay localized for FW. Lexbox gets English. See 2.D for the checks.
 - **`SIL.Reporting` and `SIL.Code` usings** in the engine come from `SIL.Core`, which liblcm already references. Confirm during the exit-criterion compile.
-- **`Common.FwUtils.Unicode.CheckForNonAsciiCharacters`** and `FileUtils.IsFilePathValid` (`:1182-1187`) leave with `CopyFileSafely` (0.E).
+- **`Common.FwUtils.Unicode.CheckForNonAsciiCharacters`** (`:1182`) is replaced by a private check, because `MakeSafeFilePath` stays in the engine (0.E). `FileUtils.IsFilePathValid` (`:1187`) is already liblcm.
+- **`ConfigurableDictionaryNode.StringTable`** (`ConfigurableDictionaryNode.cs:33`) is an FwUtils type. `DisplayLabel` (`:58-78`) uses it to show the translated node labels in the configuration dialog. The only writer is `DictionaryConfigurationController.cs:323` (`node.StringTable = StringTable.Table`). Replace the property with `Func<string, string> LabelLocalizer` (`[XmlIgnore]`, public get and set). `DisplayLabel` calls it for `Label` and `LabelSuffix` when it is set and returns the untranslated text when it is not. The controller sets `node.LabelLocalizer = StringTable.Table.LocalizeAttributeValue`. Lexbox leaves it unset or supplies its own. The property joins the public API list in 1.A.
 - **`IThreadedProgress`:** confirm that the engine's use resolves to the liblcm type, not an FW one.
 
 ### 0.J Migrator refactor
@@ -315,7 +322,7 @@ The order of items inside the phase matters only where a dependency is noted.
 - **`ReversalIndexServices.CreateOrRemoveReversalIndexConfigurationFiles`** is pure LCM plus file I/O. Switch its `defaultConfigDir` parameter to `IDefaultConfigurationSource`.
 - **`DictionaryConfigurationUtils`:** `GatherBuiltInAndUserConfigurations(cache, configObjectName)` moves (after the 0.H directory fix). `SetReversalIndexGuidBasedOnReversalIndexConfiguration(PropertyTable, ...)` and `RemoveAllReversalChoiceFromList(UIListDisplayProperties)` stay in FW. Split the file.
 
-### 0.L Resolved style model (depends on 0.B, 0.G)
+### 0.L Resolved style model (depends on 0.B, 0.G, 0.O-0)
 
 **Problem:** two writers each turn a project style into output with the same steps, and the copies have drifted. Lexbox would need a third copy.
 - `CssGenerator.GenerateCssStyleFromLcmStyleSheet` + `AddFontInfoCss` (`CssGenerator.cs:1236-1815`)
@@ -333,7 +340,7 @@ Known drift: Word disables borders and falls back to the default analysis writin
 3. **Rewrite `CssGenerator` and `WordStylesGenerator`** to translate `ResolvedStyle`. Format-specific choices stay in the writers: Word's disabled borders, CSS `flex-line-height`, `page-break-*`, and CSS counters. Decide per difference whether the Normal-style font fallback belongs in the resolver (both writers) or stays Word-only, using output diffs.
 4. **Remove the model mutation** at `CssGenerator.cs:1393`, where style generation sets `node.CSSClassNameOverride` for numbered lists. That property is persisted configuration and is written from worker threads. `CssGenerator` computes the counter name through `ConfigurationNodeNaming` without writing to the node.
 
-**Done when:** `CssGeneratorTests` (131 tests) and `LcmWordGeneratorTests` (33 tests) pass, new resolver unit tests cover each property group, and CSS and Word output for a sample project is unchanged apart from any reconciliation agreed in step 3.
+**Done when:** `CssGeneratorTests` (131 tests), `LcmWordGeneratorTests` (33 tests), and the 0.O-0 document tests pass, new resolver unit tests cover each property group, and CSS and Word output for a sample project is unchanged apart from any reconciliation agreed in step 3.
 
 ### 0.M Prepare the XHTML and CSS writers to move (depends on 0.B–0.E, 0.G, 0.L)
 
@@ -376,30 +383,47 @@ Known drift: Word disables borders and falls back to the default analysis writin
   4. Add a GitHub Actions workflow that builds, packs, and pushes to nuget.org with the org secret `SILLSDEV_PUBLISH_NUGET_ORG`, the same way libpalaso (`build.yml`) and chorus (`ci+cd.yml`) do.
   5. Compare the new `net462` DLL with the 2.0.2 DLL (ILSpy diff), then publish 2.1.0.
   6. Bump FW's pin. The other FW users (`xWorks`, `ITextDll`) take the same version.
+- **Status (2026-11-24):** steps 1 to 5 are done. The repo is `sillsdev/ExCSS`, and tag `v2.1.0` pushed `SIL.ExCSS` 2.1.0 to nuget.org. The new builds match 2.0.2 in every type and member and render the test stylesheets identically. Step 6 remains.
 - **Done when:** FW builds against 2.1.0, and CSS output for a sample project is byte-identical.
 - **Rejected alternatives:** moving to upstream ExCSS 4 or writing our own CSS builder. Both mean rewriting every rule-building call in `CssGenerator`.
 
 ### 0.O Prepare the Word writer to move
 
-Split into three items. 0.O-1 and 0.O-2 have no dependencies and hold the riskiest work, so start them first. Phase 0 still has one exit check.
+Split into four items. 0.O-0 adds the tests that the other three, and 0.L, rely on, so it comes first. 0.O-1 and 0.O-2 depend only on 0.O-0 and hold the riskiest work, so start them next. Phase 0 still has one exit check.
 
-#### 0.O-1 Image sizing without WPF (no dependencies; start early)
+#### 0.O-0 Word export tests (no dependencies; do first)
+
+- **Problem:** the existing Word tests are the done-criterion for 0.L, 0.O-1, and 0.O-2, and after the move they are what proves the Word writer on Linux (1.D). They are too light for that:
+  - Only two tests in `LcmWordGeneratorTests` reach `SavePublishedDocx` (`:464`, `:474`, through `GenerateManualDocxArtifact`). Both write files for manual inspection. Nothing asserts on a complete document: sections, headers, the styles part, or numbering.
+  - No test covers right-to-left output: paragraph and section direction, right-to-left runs, or the complex-script font, size, bold, and italic properties. That code took several fixes to get right (LT-21633, LT-21673, LT-22006, LT-22112), and 0.L step 3 and 0.O-2 rewrite it.
+- **Write the tests at the document level.** Each test calls `SavePublishedDocx` on a small fixture project, opens the .docx, and asserts on its XML parts: the main document (paragraphs, runs, sections, section properties), the header parts, the styles part, and the numbering part. Tests at this level do not depend on the writer's internals, so they survive the Phase 0 refactoring. They need only the mechanical parameter changes of 0.O-3.
+- **Fixtures:**
+  - a left-to-right dictionary with letter headings, senses in paragraphs, a numbered or bulleted list, and a picture
+  - a right-to-left vernacular with a right-to-left entry style
+  - a left-to-right dictionary with a right-to-left analysis language
+  - a reversal index
+- **Run `OpenXmlValidator` on each generated document now,** against the unchanged writer. List any errors it reports in the PR. Each one is decided on its own: fix it as a separate change before 0.L, or record it as a known baseline that the 1.D validation test allows. Fixing one changes Word output, so that is better done before the move than during it.
+- **Scope:** these are tests only. The Word writer does not change in this item.
+- **Later phases:** the tests move to liblcm with the Word writer and run on Linux (1.D). A right-to-left project joins the 0.P smoke list, because XML assertions do not show how Word renders the result.
+- **Done when:** the new tests pass against the Word writer as it is on `main`, and the validator results are recorded.
+
+#### 0.O-1 Image sizing without WPF (depends on 0.O-0; start early)
 
 - **Problem:** `CreateImage` (`LcmWordGenerator.cs:2170`) loads each picture into a WPF `BitmapImage` (`System.Windows.Media.Imaging`, from `PresentationCore`/`WindowsBase`) only to read pixel size and DPI. WPF does not exist on `netstandard2.0`, `net8.0`, or Linux.
 - **Fix:** replace it with a small header reader that returns pixel size and DPI, defaulting to 96 DPI when the file has none. Avoid a new image library dependency.
 - **Formats:** the formats Windows' built-in image codecs read today: PNG, JPEG, GIF, BMP, TIFF, and ICO.
 - **Errors:** if the reader cannot read a file, throw, as `BitmapImage` does today (the export fails).
 - **TODO comment:** keep `ImagePartType.Jpeg` for every picture. Today `AddImage` calls `AddImagePartToPackage(srcAttribute)` (`:1808`) without a type, so the default (`:2156`) applies. Add a `// TODO` at that call saying that the reader already knows the real format, and that passing it would correct the content type for non-JPEG pictures (see Follow-ups).
-- **Done when:** for a set of test images in each format, the reader returns the same size and DPI as `BitmapImage`, compared side by side while WPF is still available. Word output is unchanged.
+- **Done when:** for a set of test images in each format, the reader returns the same size and DPI as `BitmapImage`, compared side by side while WPF is still available. The 0.O-0 document tests pass and Word output is unchanged.
 
-#### 0.O-2 Word export state per instance (no dependencies; start early)
+#### 0.O-2 Word export state per instance (depends on 0.O-0; start early)
 
 - `LcmWordGenerator` keeps per-export state in statics: `s_styleCollection` (`:43`), `IsBidi` (`:50`), `MasterFragment` (`:51`), and the locks `_collectionLock` / `_masterFragmentLock` (`:44-45`). Two Word exports in one process share them.
 - Move all of it onto the `LcmWordGenerator` instance (one per export).
 - `WordStyleCollection.cs:238` reads `LcmWordGenerator.IsWritingSystemRightToLeft`; keep that a pure static helper.
-- **Done when:** `LcmWordGeneratorTests` (33 tests) pass and Word output is unchanged.
+- **Done when:** `LcmWordGeneratorTests` (33 tests) and the 0.O-0 document tests pass, and Word output is unchanged.
 
-#### 0.O-3 Remove FW types from `SavePublishedDocx` (depends on 0.B, 0.C, 0.D, 0.E, 0.F, 0.L, 0.O-2)
+#### 0.O-3 Remove FW types from `SavePublishedDocx` (depends on 0.B, 0.C, 0.D, 0.E, 0.F, 0.L, 0.O-0, 0.O-2)
 
 `SavePublishedDocx` (`:64-336`) keeps its shape and moves with the writer. Only the FW types change:
 
@@ -426,7 +450,7 @@ Split into three items. 0.O-1 and 0.O-2 have no dependencies and hold the riskie
 
 1. **Scratch compile:** the scratch project and scratch test project (see the start of Phase 0) build for `netstandard2.0`, `net462`, and `net8.0`. They include every moving file: `ILcmContentGenerator.cs`, the new interfaces and services, the moving parts of the XHTML, CSS, and Word writers, `DictionaryConfigurationStrings.resx`, and `DictionaryConfigurationTestHelpers`. Zero FW references.
 2. **Tests:** the full xWorks and XMLViews test suites pass unchanged in behavior. Expected edits are signature churn, the type-resolver swap, test-relative paths, and line-ending normalization.
-3. **Manual smoke tests:** dictionary preview, XHTML export, Word export (expect no loose media files next to the .docx, per 0.E), Webonary upload (JSON), the configuration dialog (share, unshare, clone, custom fields), the import and manager dialogs, and opening a project that has v<26 configs. The same list integration-tests intermediate Phase 0 builds.
+3. **Manual smoke tests:** dictionary preview, XHTML export, Word export (expect no loose media files next to the .docx, per 0.E), Word export of a right-to-left project opened in Word (0.O-0), Webonary upload (JSON), the configuration dialog (share, unshare, clone, custom fields), the import and manager dialogs, and opening a project that has v<26 configs. The same list integration-tests intermediate Phase 0 builds.
 
 ---
 
@@ -447,7 +471,7 @@ Split into three items. 0.O-1 and 0.O-2 have no dependencies and hold the riskie
 - **The default type resolver** resolves `"SIL.LCModel.DomainImpl." + name` from `typeof(CmObject).Assembly` (`SIL.LCModel`).
 - **Visibility:** apply the API decisions. Public: group A, option 3 read-only queries, and the explicit mutation methods. Internal: everything else. The test-only internals (`AreThereEnabledSubsensesWithNumberingStyle`, `GenerateContentForFieldByReflection`, `IsCollectionType`, `ShouldThisSenseBeNumbered`, `LookupComplexEntryType`) stay internal and are reached through the `InternalsVisibleTo` above.
 - **Group A members** become public:
-  - engine and model: `GenerateContentForEntry`, `BuildNodeList`, `GetWsForEntryType`, `IsEntryStyleRtl`, `GetPropertyTypeForConfigurationNode` + `PropertyType`, `GetTypeForConfigurationNode`, `IsBlockProperty`, `IsCollectionNode`, `IsFactoredReference`, `GetCustomFieldFlid`, `GetClassNameForCustomFieldParent`, node `IsHeadWord`/`IsMainEntry`, model `IsReversal`/`IsClassified`/`IsHybrid`, `NoteInParaStyles`, `LoudSpeaker`/`MovieCamera`, `IsListItemSelectedForExport` (used by `DictionaryExportService.IsGenerated`)
+  - engine and model: `GenerateContentForEntry`, `BuildNodeList`, `GetWsForEntryType`, `IsEntryStyleRtl`, `GetPropertyTypeForConfigurationNode` + `PropertyType`, `GetTypeForConfigurationNode`, `IsBlockProperty`, `IsCollectionNode`, `IsFactoredReference`, `GetCustomFieldFlid`, `GetClassNameForCustomFieldParent`, node `IsHeadWord`/`IsMainEntry`, model `IsReversal`/`IsClassified`/`IsHybrid`, `NoteInParaStyles`, `LoudSpeaker`/`MovieCamera`, `IsListItemSelectedForExport` (used by `DictionaryExportService.IsGenerated`), node `LabelLocalizer` (0.I)
   - services: `ConfigurationNodeNaming`, `LetterHeadService` (including `GetLetterLengthAt`), `DictionaryStyleResolver` + `ResolvedStyle`, `ExportStyleInfo`, `TableCellAlignment`
   - `Xhtml` namespace: `LcmXhtmlGenerator`, `CssGenerator` (interface members, `GetStylesString`, the CSS-string style method from 0.M, `GenerateLetterHeaderCss`, `CopyCustomCssAndGetPath`), `XhtmlDocumentWriter`, `GenerateXHTMLTemplatesForConfigurationModel`, and `SpecialCharacterHandling`
   - `Word` namespace: `LcmWordGenerator` (including `SavePublishedDocx`) and `DocxExportStage`
@@ -490,7 +514,7 @@ Split into three items. 0.O-1 and 0.O-2 have no dependencies and hold the riskie
   - in-memory migration without write-back
   - pre-8.3 detection
   - `XhtmlDocumentWriter`: a full document for a small project, with and without letter headings
-  - `SavePublishedDocx`: a full .docx for a small project; open it with OpenXml validation (`OpenXmlValidator`)
+  - `SavePublishedDocx`: the document tests from 0.O-0 move here with their fixtures, including the right-to-left ones and the `OpenXmlValidator` check (with any known baseline recorded in 0.O-0)
   - the image size reader from 0.O-1, using test images in each supported format
 - **Sort parity:** add a test, or a documented manual check, that compares FW's clerk ordering with `DefaultDictionaryEntrySource` on a sample project. It cannot run in liblcm CI because it needs FW, so put it in FW in Phase 2 (2.D).
 
@@ -521,6 +545,9 @@ Split into three items. 0.O-1 and 0.O-2 have no dependencies and hold the riskie
 - **Remove** `DistFiles/Language Explorer/DefaultConfigurations/**` and `DistFiles/Language Explorer/Configuration/DictionaryConfiguration.xsd` from source control.
 - **Add a build step** that extracts them from the `SIL.LCModel.DictionaryConfiguration` embedded resources into `DistFiles/...` before installer harvesting, so the WiX 3 PatchableInstaller flow and FW's own code still find the files on disk.
 - **Gitignore** the generated paths.
+- **The localization harvest also reads these files.** `XmlToPo` collects the configuration node labels for Crowdin from `DefaultConfigurations` (`Build/Src/FwBuildTasks/Localization/XmlToPo.cs:194`) and skips the folder silently when it is missing. The target that runs it, `uploadUpdatesForTranslation` (`Build/Localize.targets:74`), does not depend on a build. Once the files are generated and ignored, an upload from a clean checkout would drop every dictionary configuration label from `messages.pot`, and their translations with them. Nothing in the build or the tests would report it.
+  - Make the extraction step a dependency of `uploadUpdatesForTranslation`.
+  - Make `XmlToPo` report an error when the `DefaultConfigurations` folder is missing, instead of skipping it.
 - **FW's runtime source is `DirectoryDefaultConfigurationSource` over `FwDirectoryFinder.DefaultConfigurations`.** This keeps today's behavior: an edit to an installed default file still takes effect. In a normal install the files on disk are the extracted copies of the embedded resources.
 
 ### 2.C Visibility fallout
@@ -536,6 +563,7 @@ Split into three items. 0.O-1 and 0.O-2 have no dependencies and hold the riskie
   1. `LocalizeFieldWorks` builds `SIL.LCModel.DictionaryConfiguration.resources.dll` for each locale, not only the existing liblcm satellites.
   2. The WiX 3 harvesting includes that satellite in each locale folder.
   3. On Crowdin, the two strings appear under the new `Localizations/LCM/**` path. Pre-translate them from translation memory so existing translations of `InvalidUSFM_TextAfterTR` and `InvalidRootConfigurationNode` carry over.
+- **Localization of the configuration labels** (2.B): generate `messages.pot` from a clean checkout before and after 2.B and confirm that the dictionary configuration labels are the same in both. Confirm that a localized build still shows translated labels in the Dictionary Configuration dialog (`LabelLocalizer`, 0.I).
 - **Full regression smoke:** repeat the 0.P smoke list against the package build.
 - **Release note:** FW's Word export no longer copies media files next to the .docx (0.E).
 
@@ -567,7 +595,9 @@ Split into three items. 0.O-1 and 0.O-2 have no dependencies and hold the riskie
 | `RecordClerk` / `"ActiveClerk"` | `ConfiguredLcmGenerator.cs:424`, `StartEntry`, `GetSortWordForLetterHead`, `CurrentDecorator`/`GetDecorator`, decorator `:441` | 0.B, 0.C |
 | `FontHeightAdjuster` (Widgets), `ExportStyleInfo` (Framework) | `ConfiguredLcmGenerator.cs:103` | 0.B, 0.L |
 | `ConfiguredExport.GetLeadChar`, `XmlViewsUtils` GUIDs (Controls) | `:124-132`, `:2691-2707` | 0.D, 0.I |
-| `FwUtils.GetCollatorForWs`, `Unicode`, `WavConverter`, `FwDirectoryFinder` | engine, model, migrators, utils | 0.D, 0.E, 0.H |
+| `FwUtils.GetCollatorForWs`, `WavConverter`, `FwDirectoryFinder` | engine, model, migrators, utils | 0.D, 0.E, 0.H |
+| `Common.FwUtils.Unicode.CheckForNonAsciiCharacters` | `MakeSafeFilePath`, engine `:1182` | 0.E, 0.I (replaced; `MakeSafeFilePath` stays in the engine) |
+| `StringTable` (FwUtils) | `ConfigurableDictionaryNode.cs:33`, `DisplayLabel` `:58-78` | 0.I (`LabelLocalizer`) |
 | `CssGenerator`, `LcmXhtmlGenerator`, `LcmWordGenerator.DocFragment` | `:435`, `:464-466`, `:2389`, `:2581-2583`, `:3549-3550` | 0.G, 0.B |
 | `System.Web.UI.WebControls.HorizontalAlign` (.NET Framework only) | engine `:3341-3353`, `ILcmContentGenerator.AddTableCell`, three writers | 0.G |
 | `SIL.ExCSS` 2.0.2 (.NET Framework assets only) | `CssGenerator`, `LcmXhtmlGenerator.SetRunStyle` | 0.N, 0.M |
