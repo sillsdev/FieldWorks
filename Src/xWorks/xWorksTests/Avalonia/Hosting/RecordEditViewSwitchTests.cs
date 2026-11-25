@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwAvalonia;
@@ -73,7 +72,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetProperty("UIMode", "Legacy", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
 
-			LoadRecordEditView();
+			DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, "lexiconEdit");
 			DrainMediatorAndIdleQueues();
 
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
@@ -90,7 +89,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetProperty("UIMode", "Legacy", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
 
-			LoadRecordEditView();
+			DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, "lexiconEdit");
 			DrainMediatorAndIdleQueues();
 
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
@@ -123,7 +122,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetProperty("UIMode", "New", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
 
-			LoadRecordEditView();
+			DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, "lexiconEdit");
 			DrainMediatorAndIdleQueues();
 
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
@@ -164,7 +163,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetProperty("UIMode", "New", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
 
-			LoadRecordEditView(toolValue);
+			DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, toolValue);
 			DrainMediatorAndIdleQueues();
 
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
@@ -189,7 +188,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetProperty("UIMode", "New", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
 
-			LoadRecordEditView(toolValue);
+			DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, toolValue);
 			DrainMediatorAndIdleQueues();
 
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
@@ -209,7 +208,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetProperty("UIMode", "New", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
 
-			LoadRecordEditView("ProdRestrictEdit");
+			DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, "ProdRestrictEdit");
 			DrainMediatorAndIdleQueues();
 
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
@@ -232,7 +231,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetProperty("UIMode", "New", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
 
-			LoadRecordEditView();
+			DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, "lexiconEdit");
 			DrainMediatorAndIdleQueues();
 
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
@@ -275,7 +274,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_propertyTable.SetProperty("UIMode", "New", true);
 				m_propertyTable.SetPropertyPersistence("UIMode", false);
-				LoadRecordEditView("notebookEdit");
+				DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, "notebookEdit");
 				DrainMediatorAndIdleQueues();
 				var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
 				Assert.That(control, Is.Not.Null);
@@ -318,7 +317,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetProperty("UIMode", "New", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
 
-			LoadRecordEditView();
+			DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, "lexiconEdit");
 			DrainMediatorAndIdleQueues();
 
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
@@ -380,7 +379,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetProperty("UIMode", "Legacy", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
 
-			LoadRecordEditView();
+			DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, "lexiconEdit");
 			DrainMediatorAndIdleQueues();
 
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
@@ -398,25 +397,6 @@ namespace SIL.FieldWorks.XWorks
 
 		private static double ShownValueFontSize(RecordEditView control)
 			=> GetPrivateField<DetailHostControl>(control, "m_avaloniaEntryForm").ShownDetail.ValueFontSize;
-
-		private void LoadRecordEditView()
-		{
-			LoadRecordEditView("lexiconEdit");
-		}
-
-		private void LoadRecordEditView(string toolValue)
-		{
-			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			Assert.That(windowConfiguration, Is.Not.Null, "The xWorks test window should load a merged WindowConfiguration before RecordEditView is activated.");
-			var controlNode = windowConfiguration.SelectSingleNode(
-				string.Format("//tool[@value='{0}']/control//control[dynamicloaderinfo/@class='SIL.FieldWorks.XWorks.RecordEditView']", toolValue));
-			Assert.That(controlNode, Is.Not.Null, "Expected to find the RecordEditView configuration node for tool '{0}'.", toolValue);
-
-			m_propertyTable.SetProperty("currentContentControlParameters", controlNode, true);
-			m_propertyTable.SetPropertyPersistence("currentContentControlParameters", false);
-			m_propertyTable.SetProperty("currentContentControl", toolValue, true);
-			m_propertyTable.SetPropertyPersistence("currentContentControl", false);
-		}
 
 		private void CreateLexiconTestData()
 		{

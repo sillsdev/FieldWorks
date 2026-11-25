@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Xml;
 using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Threading;
@@ -62,7 +61,7 @@ namespace SIL.FieldWorks.XWorks
 
 			m_propertyTable.SetProperty("UIMode", "New", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
-			LoadRecordEditView("lexiconEdit");
+			DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, "lexiconEdit");
 			DrainMediatorAndIdleQueues();
 
 			m_view = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
@@ -181,20 +180,6 @@ namespace SIL.FieldWorks.XWorks
 		private string CurrentWritingSystemHvoProperty()
 		{
 			return m_propertyTable.GetStringProperty(PropertyConstants.WritingSystemHvo, null);
-		}
-
-		private void LoadRecordEditView(string toolValue)
-		{
-			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			Assert.That(windowConfiguration, Is.Not.Null);
-			var controlNode = windowConfiguration.SelectSingleNode(
-				string.Format("//tool[@value='{0}']/control//control[dynamicloaderinfo/@class='SIL.FieldWorks.XWorks.RecordEditView']", toolValue));
-			Assert.That(controlNode, Is.Not.Null, "Expected the RecordEditView configuration node for tool '{0}'.", toolValue);
-
-			m_propertyTable.SetProperty("currentContentControlParameters", controlNode, true);
-			m_propertyTable.SetPropertyPersistence("currentContentControlParameters", false);
-			m_propertyTable.SetProperty("currentContentControl", toolValue, true);
-			m_propertyTable.SetPropertyPersistence("currentContentControl", false);
 		}
 
 		private void CreateLexiconTestData()
