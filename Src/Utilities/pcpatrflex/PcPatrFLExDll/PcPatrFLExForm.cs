@@ -658,9 +658,39 @@ namespace SIL.PcPatrFLEx
 				message = PcPatrFLExDll_Strings.ksPcPatrGrammarError;
 			}
 			MessageBox.Show(message + "",
-			PcPatrFLExDll_Strings.ksGrammarError, MessageBoxButtons.OK, MessageBoxIcon.Error);
-			Process.Start(andResult.Replace(".and", ".log"));
+				PcPatrFLExDll_Strings.ksGrammarError, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			string logFile = andResult.Replace(".and", ".log");
+			string logContent = extractErrosAndWarningsFromLog(logFile);
+			var utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+			File.WriteAllText(logFile, logContent, utf8NoBom);
+			Process.Start(logFile);
 			return;
+		}
+
+		private static string extractErrosAndWarningsFromLog(string logFile)
+		{
+			StringBuilder sb = new StringBuilder();
+			using (var reader = new StreamReader(logFile, Encoding.UTF8))
+			{
+				string line;
+				bool copyNext = false;
+				while ((line = reader.ReadLine()) != null)
+				{
+					if (line.Contains("WARNING") || line.Contains("ERROR"))
+					{
+						sb.Append(line);
+						sb.Append('\n');
+						copyNext = true;
+					}
+					else if (copyNext)
+					{
+						sb.Append(line);
+						sb.Append("\n\n");
+						copyNext = false;
+					}
+				}
+			}
+			return sb.ToString();
 		}
 
 		private bool ProcessIndividuallyAndShowResults(IText selectedTextToShow, out string andResult, out PcPatrBrowserApp browser)
