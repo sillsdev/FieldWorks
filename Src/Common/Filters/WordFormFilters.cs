@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.Filters
 //			m_wordSet = wordSet;
 //			m_cases = m_wordSet.CasesRC;
 			this.m_id = wordSet.Hvo.ToString();
-			m_name = wordSet.Name.AnalysisDefaultWritingSystem.Text;
+			m_name = wordSet.Name.BestAnalysisAlternative.Text;
 			LoadCases(wordSet);
 		}
 

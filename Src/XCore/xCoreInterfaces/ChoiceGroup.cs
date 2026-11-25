@@ -7,6 +7,8 @@ using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.Utils;
 
 namespace XCore
@@ -711,9 +713,9 @@ namespace XCore
 			//}
 
 
-			//remember, each of these calls to SetProperty() generate a broadcast, so the order of these two calls
-			//is relevant.
-			propertyTable.SetProperty(propertyName, choiceValue, settingsGroup, true);
+			var publishesChoice = PublishesChoice(propertyName);
+			// The parameters are stored first: a listener told of the choice reads them.
+			var changed = propertyTable.SetProperty(propertyName, choiceValue, settingsGroup, !publishesChoice);
 
 			if (choiceParameters != null)
 			{
@@ -721,6 +723,18 @@ namespace XCore
 				propertyTable.SetPropertyPersistence(propertyName, false, settingsGroup);
 			}
 
+			// Subscribers act on the choice at once, so this comes last.
+			if (changed && publishesChoice)
+			{
+				Publisher.Publish(new PublisherParameterObject(PropertyConstants.PropertyChanged(propertyName),
+					choiceValue, propertyTable.GetWindow()));
+			}
+		}
+
+		// Whether the listeners of this property hear of a new choice through Pub/Sub.
+		private static bool PublishesChoice(string propertyName)
+		{
+			return propertyName.StartsWith(PropertyConstants.CurrentFilterForRecordClerkPrefix, StringComparison.Ordinal);
 		}
 
 		protected void HandleClickedWhenSinglePropertySequenceValue(ListPropertyChoice choice)

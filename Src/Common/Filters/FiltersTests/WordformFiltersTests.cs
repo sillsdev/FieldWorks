@@ -4,6 +4,7 @@
 
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel;
 using XCore;
 
@@ -40,6 +41,23 @@ namespace SIL.FieldWorks.Filters
 				Assert.That(flp.Filters, Has.None.InstanceOf<WordSetNullFilter>(),
 					"no word-set filter in use removes the Clear item");
 			}
+		}
+
+		[Test]
+		public void WordSetFilter_SetNamedOnlyInAnotherAnalysisWritingSystem_TakesThatName()
+		{
+			CoreWritingSystemDefinition spanish;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("es", out spanish);
+			Cache.ServiceLocator.WritingSystems.AddToCurrentAnalysisWritingSystems(spanish);
+			var wordSet = Cache.ServiceLocator.GetInstance<IWfiWordSetFactory>().Create();
+			Cache.LangProject.MorphologicalDataOA.TestSetsOC.Add(wordSet);
+			wordSet.Name.set_String(spanish.Handle, "Palabras");
+			Assume.That(wordSet.Name.AnalysisDefaultWritingSystem.Text, Is.Null);
+
+			// SUT
+			var filter = new WordSetFilter(wordSet);
+
+			Assert.That(filter.Name, Is.EqualTo("Palabras"));
 		}
 	}
 }
