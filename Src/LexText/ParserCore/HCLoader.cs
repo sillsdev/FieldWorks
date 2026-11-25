@@ -45,6 +45,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return loader.m_language;
 		}
 
+		/// <summary>Largest per-affix application count accepted from HC/AffixRules.</summary>
+		internal const int MaxAffixApplicationCount = 10;
+
 		private static readonly string[] VariableNames =
 		{
 			"α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ",
@@ -71,6 +74,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly Dictionary<IPhNaturalClass, NaturalClass> m_naturalClasses;
 		private readonly Dictionary<IPhTerminalUnit, CharacterDefinition> m_charDefs;
 		private readonly Dictionary<string, int> m_CompoundRuleLookup;
+		private readonly Dictionary<Guid, int> m_affixMaxApps;
 
 		private readonly bool m_noDefaultCompounding;
 		private readonly bool m_notOnClitics;
@@ -121,6 +125,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				{
 					int maxApps = Int32.Parse(cRule.Attribute("maxApps").Value);
 					m_CompoundRuleLookup[cRule.Attribute("guid").Value] = maxApps;
+				}
+			}
+
+			m_affixMaxApps = new Dictionary<Guid, int>();
+			foreach (XElement affixRule in hcElem?.Elements("AffixRules").Elements("AffixRule") ?? Enumerable.Empty<XElement>())
+			{
+				// An unparseable count or guid keeps the rule at the default of one application.
+				if (Guid.TryParse((string)affixRule.Attribute("guid"), out Guid msaGuid)
+					&& int.TryParse((string)affixRule.Attribute("maxApps"), NumberStyles.Integer, CultureInfo.InvariantCulture, out int maxApps))
+				{
+					m_affixMaxApps[msaGuid] = Math.Max(1, Math.Min(MaxAffixApplicationCount, maxApps));
 				}
 			}
 
@@ -952,6 +967,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (mrule != null)
 			{
 				mrule.Gloss = GetGloss(msa);
+				if (m_affixMaxApps.TryGetValue(msa.Guid, out int maxApps))
+					mrule.MaxApplicationCount = maxApps;
 				AddMorphologicalRule(s, mrule, msa);
 			}
 		}

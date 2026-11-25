@@ -699,6 +699,107 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(2));
 		}
 
+		private void SetAffixMaxApps(params (string guid, string maxApps)[] rules)
+		{
+			string affixRules = string.Concat(rules.Select(r => $"<AffixRule guid=\"{r.guid}\" maxApps=\"{r.maxApps}\"/>"));
+			Cache.LanguageProject.MorphologicalDataOA.ParserParameters =
+				"<ParserParameters><ActiveParser>HC</ActiveParser><HC><NoDefaultCompounding>true</NoDefaultCompounding>" +
+				"<AcceptUnspecifiedGraphemes>false</AcceptUnspecifiedGraphemes><AffixRules>" + affixRules + "</AffixRules></HC></ParserParameters>";
+		}
+
+		private IMoMorphSynAnalysis AddSuffixWithMaxApps(string maxApps)
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA { MsaType = MsaType.kUnclassified, MainPOS = m_verb });
+			IMoMorphSynAnalysis msa = entry.MorphoSyntaxAnalysesOC.First();
+			if (maxApps != null)
+				SetAffixMaxApps((msa.Guid.ToString(), maxApps));
+			return msa;
+		}
+
+		private int LoadedMaxApplicationCount()
+		{
+			LoadLanguage();
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
+			return ((AffixProcessRule) m_lang.Strata[0].MorphologicalRules[0]).MaxApplicationCount;
+		}
+
+		[Test]
+		public void AffixMaxApps_AbsentKey_DefaultsToOne()
+		{
+			AddSuffixWithMaxApps(null);
+			Assert.That(LoadedMaxApplicationCount(), Is.EqualTo(1));
+		}
+
+		[Test]
+		public void AffixMaxApps_Two_IsApplied()
+		{
+			AddSuffixWithMaxApps("2");
+			Assert.That(LoadedMaxApplicationCount(), Is.EqualTo(2));
+		}
+
+		[Test]
+		public void AffixMaxApps_InvalidValue_DefaultsToOne([Values("abc", "", "0", "-3", "1.5")] string value)
+		{
+			AddSuffixWithMaxApps(value);
+			Assert.That(LoadedMaxApplicationCount(), Is.EqualTo(1));
+		}
+
+		[Test]
+		public void AffixMaxApps_AboveRange_IsClamped()
+		{
+			AddSuffixWithMaxApps("1000");
+			Assert.That(LoadedMaxApplicationCount(), Is.EqualTo(HCLoader.MaxAffixApplicationCount));
+		}
+
+		[Test]
+		public void AffixMaxApps_GuidMatchesNoMsa_DefaultsToOne()
+		{
+			AddSuffixWithMaxApps(null);
+			SetAffixMaxApps((Guid.NewGuid().ToString(), "3"), ("not-a-guid", "3"));
+			Assert.That(LoadedMaxApplicationCount(), Is.EqualTo(1));
+		}
+
+		[Test]
+		public void AffixMaxApps_MergeMSAs_KeyedOnRepresentativeMsa()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA { MsaType = MsaType.kUnclassified, MainPOS = m_verb });
+			IMoMorphSynAnalysis representative = entry.MorphoSyntaxAnalysesOC.First();
+			var lexSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(lexSense);
+			IMoUnclassifiedAffixMsa duplicate = Cache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>().Create();
+			entry.MorphoSyntaxAnalysesOC.Add(duplicate);
+			lexSense.MorphoSyntaxAnalysisRA = duplicate;
+			duplicate.PartOfSpeechRA = m_verb;
+			SetAffixMaxApps((representative.Guid.ToString(), "3"));
+
+			m_loadErrors.Clear();
+			m_lang = HCLoader.Load(Cache, new TestHCLoadErrorLogger(m_loadErrors), out _);
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
+			Assert.That(((AffixProcessRule) m_lang.Strata[0].MorphologicalRules[0]).MaxApplicationCount, Is.EqualTo(3));
+		}
+
+		[Test]
+		public void AffixMaxApps_MergeMSAsFalse_KeyedOnTheMsaItself()
+		{
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphSuffix, "ɯd", "gloss", new SandboxGenericMSA { MsaType = MsaType.kUnclassified, MainPOS = m_verb });
+			IMoMorphSynAnalysis first = entry.MorphoSyntaxAnalysesOC.First();
+			var lexSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(lexSense);
+			IMoUnclassifiedAffixMsa second = Cache.ServiceLocator.GetInstance<IMoUnclassifiedAffixMsaFactory>().Create();
+			entry.MorphoSyntaxAnalysesOC.Add(second);
+			lexSense.MorphoSyntaxAnalysisRA = second;
+			second.PartOfSpeechRA = m_verb;
+			SetAffixMaxApps((second.Guid.ToString(), "2"));
+
+			LoadLanguage();
+
+			var rules = m_lang.Strata[0].MorphologicalRules.OfType<AffixProcessRule>().ToList();
+			Assert.That(rules.Count, Is.EqualTo(2));
+			Assert.That(rules.Single(r => (int) r.Properties[HCParser.MsaID] == second.Hvo).MaxApplicationCount, Is.EqualTo(2));
+			Assert.That(rules.Single(r => (int) r.Properties[HCParser.MsaID] == first.Hvo).MaxApplicationCount, Is.EqualTo(1));
+		}
+
 		[Test]
 		public void AffixNoMorphTypeSet()
 		{
