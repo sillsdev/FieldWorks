@@ -7,7 +7,6 @@ using System.IO;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Xml;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwAvalonia;
 using SIL.FieldWorks.Common.FwAvalonia.Seams;
@@ -70,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 			m_propertyTable.SetProperty("UIMode", "New", true);
 			m_propertyTable.SetPropertyPersistence("UIMode", false);
 
-			LoadRecordEditView("lexiconEdit");
+			DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, "lexiconEdit");
 			DrainMediatorAndIdleQueues();
 
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
@@ -108,20 +107,6 @@ namespace SIL.FieldWorks.XWorks
 			// Note: realizing the Avalonia WinForms-interop host requires a real UI context, which this
 			// headless xWorks harness does not provide, so we do not assert the host was created here. The
 			// FwAvaloniaTests headless suite covers Avalonia entry-form construction/rendering directly.
-		}
-
-		private void LoadRecordEditView(string toolValue)
-		{
-			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			Assert.That(windowConfiguration, Is.Not.Null);
-			var controlNode = windowConfiguration.SelectSingleNode(
-				string.Format("//tool[@value='{0}']/control//control[dynamicloaderinfo/@class='SIL.FieldWorks.XWorks.RecordEditView']", toolValue));
-			Assert.That(controlNode, Is.Not.Null, "Expected the RecordEditView configuration node for tool '{0}'.", toolValue);
-
-			m_propertyTable.SetProperty("currentContentControlParameters", controlNode, true);
-			m_propertyTable.SetPropertyPersistence("currentContentControlParameters", false);
-			m_propertyTable.SetProperty("currentContentControl", toolValue, true);
-			m_propertyTable.SetPropertyPersistence("currentContentControl", false);
 		}
 
 		private void CreateLexiconTestData()

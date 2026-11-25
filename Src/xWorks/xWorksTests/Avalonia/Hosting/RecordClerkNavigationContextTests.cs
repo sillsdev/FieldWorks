@@ -75,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void SelectionBridge_FollowsRealBroadcast_AndPublishesSelectionBack()
 		{
-			LoadRecordEditView("lexiconEdit");
+			DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, "lexiconEdit");
 			DrainMediatorAndIdleQueues();
 
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
@@ -121,7 +121,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void SelectionBridge_PublishSelection_ByHvo_AndRejectsUnknownKeys()
 		{
-			LoadRecordEditView("lexiconEdit");
+			DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, "lexiconEdit");
 			DrainMediatorAndIdleQueues();
 
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void JumpToCurrentRecord_MarksTheBroadcast_ButReassertingTheIndexDoesNot()
 		{
-			LoadRecordEditView("lexiconEdit");
+			DetailMenuTestSupport.LoadRecordEditView(m_propertyTable, "lexiconEdit");
 			DrainMediatorAndIdleQueues();
 			var control = m_propertyTable.GetValue<object>("currentContentControlObject", null) as RecordEditView;
 			Assert.That(control, Is.Not.Null);
@@ -192,20 +192,6 @@ namespace SIL.FieldWorks.XWorks
 				Last = argument as RecordNavigationInfo;
 				return false;
 			}
-		}
-
-		private void LoadRecordEditView(string toolValue)
-		{
-			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			Assert.That(windowConfiguration, Is.Not.Null);
-			var controlNode = windowConfiguration.SelectSingleNode(
-				string.Format("//tool[@value='{0}']/control//control[dynamicloaderinfo/@class='SIL.FieldWorks.XWorks.RecordEditView']", toolValue));
-			Assert.That(controlNode, Is.Not.Null, "Expected the RecordEditView configuration node for tool '{0}'.", toolValue);
-
-			m_propertyTable.SetProperty("currentContentControlParameters", controlNode, true);
-			m_propertyTable.SetPropertyPersistence("currentContentControlParameters", false);
-			m_propertyTable.SetProperty("currentContentControl", toolValue, true);
-			m_propertyTable.SetPropertyPersistence("currentContentControl", false);
 		}
 
 		private void CreateLexiconTestData()
