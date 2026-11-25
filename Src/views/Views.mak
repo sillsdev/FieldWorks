@@ -136,7 +136,7 @@ $(COM_OUT_DIR)\FwKernelTlb.tlb: $(COM_OUT_DIR)\FwKernelTlb.idl
 
 $(COM_OUT_DIR)\ViewsTlb.tlb: $(COM_OUT_DIR)\FwKernelTlb.tlb
 
-# The preprocessed IDL inlines these #includes, so an interface edit must regenerate it.
-$(COM_OUT_DIR)\ViewsTlb.idl: $(VIEWS_SRC)\Views.idh $(VIEWS_SRC)\Render.idh $(KERNEL_SRC)\common.idh
+# The preprocessed IDLs inline these #includes, so an interface edit must regenerate them.
+$(COM_OUT_DIR)\ViewsTlb.idl $(COM_OUT_DIR)\ViewsPs.idl: $(VIEWS_SRC)\Views.idh $(VIEWS_SRC)\Render.idh $(KERNEL_SRC)\common.idh
 
 # === Custom Targets ===

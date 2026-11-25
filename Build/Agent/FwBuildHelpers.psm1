@@ -583,7 +583,7 @@ function Test-ViewsNativeArtifactsStale {
 		(Join-Path $RepoRoot 'Directory.Build.props'),
 		(Join-Path $RepoRoot 'Directory.Build.targets')
     )
-	$sourcePatterns = @('*.cpp', '*.c', '*.cc', '*.h', '*.hpp', '*.hxx', '*.inl', '*.ixx', '*.idl', '*.rc', '*.rc2', '*.rh', '*.mak', '*.def', '*.bat', '*.cmd', '*.vcxproj', '*.vcxproj.filters', '*.props', '*.targets')
+	$sourcePatterns = @('*.cpp', '*.c', '*.cc', '*.h', '*.hpp', '*.hxx', '*.inl', '*.ixx', '*.idl', '*.idh', '*.rc', '*.rc2', '*.rh', '*.mak', '*.def', '*.bat', '*.cmd', '*.vcxproj', '*.vcxproj.filters', '*.props', '*.targets')
     $artifactPaths = @(
         (Join-Path $RepoRoot "Output\$Configuration\Views.dll"),
         (Join-Path $RepoRoot "Output\$Configuration\views.lib"),
