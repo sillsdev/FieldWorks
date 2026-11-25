@@ -457,6 +457,17 @@
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 		/>
+		<!-- The copies keep the package's timestamps, which can predate the last build. The stamp
+			changes only when their content does, so the native makefiles can depend on it. -->
+		<GetFileHash Files="@(LcmFwKernelFiles -&gt; '$(fwrt)/Src/Kernel/%(Filename)%(Extension)')">
+			<Output TaskParameter="Items" ItemName="LcmFwKernelFileHashes" />
+		</GetFileHash>
+		<WriteLinesToFile
+			File="$(fwrt)/Src/Kernel/LcmKernelFiles.stamp"
+			Lines="@(LcmFwKernelFileHashes -&gt; '%(Filename)%(Extension) %(FileHash)')"
+			Overwrite="true"
+			WriteOnlyWhenDifferent="true"
+		/>
 		<Copy
 			SourceFiles="@(LcmDistFiles -&gt; '$(LcmModelArtifactsDir)/%(Identity)')"
 			DestinationFolder="$(fwrt)/DistFiles"

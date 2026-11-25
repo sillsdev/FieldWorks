@@ -72,5 +72,9 @@ ARG_SRCDIR=$(CELLAR_SRC)
 
 # === Custom Rules ===
 
+# The restore copies these IDL sources with their liblcm package timestamps; its stamp changes
+# whenever their content does, so a liblcm update regenerates the preprocessed IDLs.
+$(COM_OUT_DIR)\FwKernelTlb.idl $(COM_OUT_DIR)\FwKernelPs.idl: $(FWKERNEL_SRC)\LcmKernelFiles.stamp
+
 
 # === Custom Targets ===

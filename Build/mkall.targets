@@ -252,6 +252,7 @@
 		<ItemGroup>
 			<LcmFilesToDelete Include="$(fwrt)/Src/Kernel/*.idh" />
 			<LcmFilesToDelete Include="$(fwrt)/Src/Kernel/FwKernelTlb.idl" />
+			<LcmFilesToDelete Include="$(fwrt)/Src/Kernel/LcmKernelFiles.stamp" />
 			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Styles.dtd" />
 			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/GOLDEtic.xml" />
 			<LcmFilesToDelete Include="$(fwrt)/DistFiles/Templates/NewLangProj.fwdata" />
