@@ -4,6 +4,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 
 namespace SIL.FieldWorks.Common.FwUtils
@@ -344,6 +346,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 			subscriberA.DoUnsubscriptions();
 			subscriberB.DoUnsubscriptions();
 			unscopedSubscriber.DoUnsubscriptions();
+		}
+
+		/// <summary>
+		/// A property-change message is built from a property name that configuration files
+		/// choose, so it must never equal the name of another message.
+		/// </summary>
+		[Test]
+		public void PropertyChangedMessages_ShareNoNameWithAnotherMessage()
+		{
+			var otherMessages = typeof(EventConstants).GetFields(BindingFlags.Public | BindingFlags.Static)
+				.Where(field => field.IsLiteral)
+				.Select(field => (string)field.GetRawConstantValue()).ToList();
+
+			Assert.That(otherMessages, Is.Not.Empty);
+			Assert.That(otherMessages.Where(message => message.StartsWith(PropertyConstants.ChangedMessagePrefix)), Is.Empty);
+			Assert.That(PropertyConstants.PropertyChanged("JumpToRecord"),
+				Is.EqualTo(PropertyConstants.ChangedMessagePrefix + "JumpToRecord"));
 		}
 
 		[Test]

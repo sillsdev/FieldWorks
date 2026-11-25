@@ -507,12 +507,13 @@ namespace XCore
 		/// "true" if the property should be broadcast, and then, only if it has changed.
 		/// "false" to not broadcast it at all.
 		/// </param>
-		public void SetProperty(string name, object newValue, SettingsGroup settingsGroup, bool doBroadcastIfChanged)
+		/// <returns>true if the property is new or its value changed</returns>
+		public bool SetProperty(string name, object newValue, SettingsGroup settingsGroup, bool doBroadcastIfChanged)
 		{
 			CheckDisposed();
 			string key;
 			GetBestSettingsGroupAndKey(name, settingsGroup, out key);
-			SetPropertyInternal(key, newValue, doBroadcastIfChanged);
+			return SetPropertyInternal(key, newValue, doBroadcastIfChanged);
 		}
 
 		/// <summary>
@@ -525,10 +526,11 @@ namespace XCore
 		/// "true" if the property should be broadcast, and then, only if it has changed.
 		/// "false" to not broadcast it at all.
 		/// </param>
-		public void SetProperty(string name, object newValue, bool doBroadcastIfChanged)
+		/// <returns>true if the property is new or its value changed</returns>
+		public bool SetProperty(string name, object newValue, bool doBroadcastIfChanged)
 		{
 			CheckDisposed();
-			SetProperty(name, newValue, SettingsGroup.BestSettings, doBroadcastIfChanged);
+			return SetProperty(name, newValue, SettingsGroup.BestSettings, doBroadcastIfChanged);
 		}
 
 		/// <summary>
@@ -540,7 +542,8 @@ namespace XCore
 		/// "true" if the property should be broadcast, and then, only if it has changed.
 		/// "false" to not broadcast it at all.
 		/// </param>
-		private void SetPropertyInternal(string key, object newValue, bool doBroadcastIfChanged)
+		/// <returns>true if the property is new or its value changed</returns>
+		private bool SetPropertyInternal(string key, object newValue, bool doBroadcastIfChanged)
 		{
 			CheckDisposed();
 
@@ -581,6 +584,7 @@ namespace XCore
 				TraceVerboseLine("Property '"+key+"' --> '"+newValue.ToString()+"'");
 			}
 #endif
+			return didChange;
 		}
 
 		private void BroadcastPropertyChange(string key)

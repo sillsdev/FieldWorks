@@ -1265,13 +1265,6 @@ namespace SIL.FieldWorks.XWorks
 					break;
 
 				default:
-					//this happens when the user chooses a MenuItem or sidebar item that selects a filter
-					if(name == CurrentFilterPropertyTableId)
-					{
-						OnChangeFilterToCheckedListPropertyChoice();
-						break;
-					}
-
 					//if we are  "dependent" on another clerk to provide the owning object of our list:
 					if (m_clerkProvidingRootObject != null)
 					{
@@ -1282,6 +1275,12 @@ namespace SIL.FieldWorks.XWorks
 					}
 					break;
 			}
+		}
+
+		// Applies the item the user chose in this clerk's Filters menu.
+		private void CurrentFilterChosen(object chosenFilterId)
+		{
+			OnChangeFilterToCheckedListPropertyChoice();
 		}
 
 		/// <summary>
@@ -1724,7 +1723,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private string CurrentFilterPropertyTableId
 		{
-			get { return "currentFilterForRecordClerk_" + Id; }
+			get { return PropertyConstants.CurrentFilterForRecordClerkPrefix + Id; }
 		}
 
 		/// <summary>
@@ -1964,6 +1963,9 @@ namespace SIL.FieldWorks.XWorks
 			Subscriber.Unsubscribe(EventConstants.FilterListChanged, FilterListChanged);
 			Subscriber.Unsubscribe(EventConstants.DeleteRecord, DeleteRecord);
 			Subscriber.Unsubscribe(EventConstants.JumpToRecord, JumpToRecordViaPublisher);
+			// Dispose unsubscribes before it clears the id; a later call has no id to use.
+			if (!m_isDisposed)
+				Subscriber.Unsubscribe(PropertyConstants.PropertyChanged(CurrentFilterPropertyTableId), CurrentFilterChosen);
 			m_commandAuthorityRegistration?.Dispose();
 			m_commandAuthorityRegistration = null;
 
@@ -2070,6 +2072,8 @@ namespace SIL.FieldWorks.XWorks
 			Subscriber.Subscribe(EventConstants.FilterListChanged, FilterListChanged, m_propertyTable.GetWindow());
 			Subscriber.Subscribe(EventConstants.DeleteRecord, DeleteRecord, m_propertyTable.GetWindow());
 			Subscriber.Subscribe(EventConstants.JumpToRecord, JumpToRecordViaPublisher, m_propertyTable.GetWindow());
+			Subscriber.Subscribe(PropertyConstants.PropertyChanged(CurrentFilterPropertyTableId), CurrentFilterChosen,
+				m_propertyTable.GetWindow());
 
 			m_fIsActiveInGui = true;
 			CheckDisposed();

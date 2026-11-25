@@ -743,6 +743,17 @@ namespace XCore
 			Assert.That(ugpsa, Is.EqualTo("global_BestStringPropertyC_value"), String.Format("Invalid value for {0} {1}.", "best", "BestStringPropertyC"));
 		}
 
+		[Test]
+		public void SetProperty_ReportsWhetherTheValueChanged()
+		{
+			Assert.That(m_propertyTable.SetProperty("ReportedProperty", "first", false), Is.True, "a new property");
+			Assert.That(m_propertyTable.SetProperty("ReportedProperty", "first", false), Is.False, "the same value");
+			Assert.That(m_propertyTable.SetProperty("ReportedProperty", "second", PropertyTable.SettingsGroup.GlobalSettings, false),
+				Is.True, "another value");
+			Assert.That(m_propertyTable.SetProperty("ReportedProperty", "second", true), Is.False,
+				"the same value, whatever the flag");
+		}
+
 		/// <summary>
 		/// Test the various versions of SetDefault.
 		/// </summary>
