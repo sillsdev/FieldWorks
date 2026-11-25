@@ -136,4 +136,8 @@ $(COM_OUT_DIR)\FwKernelTlb.tlb: $(COM_OUT_DIR)\FwKernelTlb.idl
 
 $(COM_OUT_DIR)\ViewsTlb.tlb: $(COM_OUT_DIR)\FwKernelTlb.tlb
 
+# The preprocessed IDLs inline these #includes, so an interface edit must regenerate them.
+# common.idh keeps its liblcm package timestamp, so the restore's stamp stands in for it.
+$(COM_OUT_DIR)\ViewsTlb.idl $(COM_OUT_DIR)\ViewsPs.idl: $(VIEWS_SRC)\Views.idh $(VIEWS_SRC)\Render.idh $(KERNEL_SRC)\LcmKernelFiles.stamp
+
 # === Custom Targets ===

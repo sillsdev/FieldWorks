@@ -116,6 +116,7 @@ Lib/src/unit++/VS/*/
 Lib/src/Enchant/fieldworks-enchant-1.6.1/
 Src/Kernel/FwKernelTlb.idl
 Src/Kernel/*.idh
+Src/Kernel/LcmKernelFiles.stamp
 Src/Kernel/libFwKernel
 Src/Utilities/pcpatrflex/PrepFLExDBDll/PrepFLExDBTests/TestData/SharedSettings
 Src/Utilities/pcpatrflex/PrepFLExDBDll/PrepFLExDBTests/TestData/WritingSystemStore
